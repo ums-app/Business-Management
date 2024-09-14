@@ -17,7 +17,7 @@ const Settings = React.lazy(() => import("../components/Settings/Settings"));
 
 const browserRouter = createHashRouter([
   {
-    path: "/Business-Management",
+    path: "/",
     element: <Layout />,
     children: [
       {
