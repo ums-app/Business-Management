@@ -1,6 +1,6 @@
 {
-  "short_name": "UMS App",
-  "name": "University Management System",
+  "short_name": "BebeVit App",
+  "name": "BebeVit App",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#3785fa",
+  "background_color": "#3785fa"
 }
