@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
@@ -15,7 +15,7 @@ const Dashboard = React.lazy(() => import("../components/Dashboard/Dashboard"));
 const Home = React.lazy(() => import("../components/Home/Home"));
 const Settings = React.lazy(() => import("../components/Settings/Settings"));
 
-const browserRouter = createBrowserRouter([
+const browserRouter = createHashRouter([
   {
     path: "/Business-Management",
     element: <Layout />,
