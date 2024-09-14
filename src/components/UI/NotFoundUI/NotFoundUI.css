@@ -1,0 +1,10 @@
+.not_found_ui_heading {
+  font-size: 120px;
+  color: var(--gen-color);
+}
+
+.not_found_ui_description {
+  margin: 20px 0;
+  font-size: 18px;
+  color: #374151;
+}

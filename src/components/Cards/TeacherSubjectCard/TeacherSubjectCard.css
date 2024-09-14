@@ -1,0 +1,50 @@
+/* Style for menu card */
+.teacher_subject_card_menu .settings_btn {
+  padding: 2px 7px;
+  font-size: 17px;
+  margin: -5px;
+}
+
+.teacher_subject_card_menu .settings_menu {
+  top: -11px;
+  width: 115px;
+  padding: 8px;
+  transform: translateX(100px);
+}
+
+.rtl .teacher_subject_card_menu .settings_menu {
+  right: -118px;
+}
+
+.ltr .teacher_subject_card_menu .settings_menu {
+  transform: translateX(-141px);
+}
+
+.ltr .teacher_subject_card_menu .settings_menu:hover {
+  transform: translateX(0px);
+  left: -118px;
+}
+
+.teacher_subject_card_menu .settings_menu:hover {
+  transform: translateX(0px);
+}
+
+.teacher_subject_card_menu .settings_menu .btn {
+  width: 100px;
+  padding: 3px 8px;
+}
+
+/* End of Style for menu card */
+
+/* Teacher Card Details */
+.teacher_subject_card_details {
+  font-size: 14px;
+}
+
+/* Responsive for Teacher Subject Card */
+@media (max-width: 375px) {
+  .teacher_subject_card_sem_credits {
+    flex-direction: column;
+    padding: 0;
+  }
+}

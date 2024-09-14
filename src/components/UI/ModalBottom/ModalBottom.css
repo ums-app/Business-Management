@@ -1,0 +1,41 @@
+.modal_bottom {
+  position: fixed;
+  background-color: var(--loading-template-bg);
+  z-index: 1000;
+  overflow-y: scroll;
+  height: 100%;
+  min-height: 100vh;
+  width: 100%;
+  /* padding: 0px 10rem; */
+  border-top-left-radius: 30px;
+}
+
+.modal_bottom_backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+}
+
+.modal_bottom_colse {
+  font-size: 44px;
+  font-weight: bold;
+  color: #fff;
+  padding: 6px 8px;
+  text-align: center;
+  width: max-content;
+}
+
+/* Responsive Layout */
+@media (max-width: 490px) {
+  .modal_bottom {
+    padding: 0 4rem 0 1rem;
+  }
+
+  .modal_bottom_colse {
+    font-size: 34px;
+  }
+}

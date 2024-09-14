@@ -1,0 +1,31 @@
+.score_sheet_title {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+  .score_sheet_title_box {
+    img {
+      max-width: 100px;
+      height: auto;
+    }
+    p {
+      text-align: center;
+    }
+  }
+}
+
+/* score sheet header */
+.score_sheet_header {
+  margin: 1rem 0;
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* gap: 20px; */
+
+  .score_sheet_header_box {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+}

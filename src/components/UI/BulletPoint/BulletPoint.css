@@ -1,0 +1,27 @@
+/* toggle dropdown boxes */
+.dropdown_toggle_box {
+  margin-bottom: 5px;
+  padding: 10px 20px;
+  margin: 30px 20px;
+  background-color: var(--light-dark);
+}
+
+.dropdown_toggle_box .show_content {
+  max-height: 9999px;
+  transition: all 0.3s cubic-bezier(1, 0, 1, 0);
+}
+
+.dropdown_toggle_box .hide_content {
+  height: 0;
+  overflow: hidden;
+  max-height: 9999px;
+  transition: all 0.3s cubic-bezier(1, 0, 1, 0);
+}
+
+/* Responsive Layout */
+@media (max-width: 491px) {
+  .dropdown_toggle_box {
+    padding: 10px;
+    margin: 20px 0px;
+  }
+}

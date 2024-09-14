@@ -1,0 +1,50 @@
+.input_container .input {
+    font-size: 16px;
+    padding: 6px 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text-color);
+    background-color: var(--light-dark);
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    min-width: 270px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    margin: 5px;
+}
+
+.input_container label {
+    align-self: flex-start;
+    margin: 0 6px;
+}
+
+
+.input_container .input:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+
+.input_container .input::placeholder,
+.input::placeholder {
+    color: #ced4da;
+}
+
+.input_error_msg {
+    color: #fc2a2a;
+    font-size: 13px;
+    margin: 5px;
+    word-break: break-word;
+    max-width: 270px;
+}
+
+.password_box {
+    position: relative;
+}
+
+
+.password_box i {
+    position: absolute;
+    left: 14px;
+    top: 12px;
+}

@@ -1,0 +1,89 @@
+.settings_btn {
+  padding: 2px 8px;
+  font-size: 20px;
+  transition: all 0.2s ease-in;
+}
+
+.settings_btn:hover {
+  background-color: var(--show-color);
+}
+
+.settings_btn:hover + .settings_menu,
+.settings_menu:hover {
+  transform: translateY(0);
+  visibility: visible;
+  opacity: 1;
+}
+
+.settings_menu {
+  align-items: flex-start;
+  width: 200px;
+  padding: 10px;
+  left: 0;
+  top: 33px;
+  transform: translateY(50px);
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  background-color: var(--light-dark);
+  z-index: 100;
+  gap: 3px;
+}
+
+.rtl .settings_menu {
+  right: 0px;
+  left: unset;
+  top: 33px;
+}
+
+.ltr .settings_menu {
+  left: 0;
+  right: unset;
+  top: 33px;
+}
+
+.settings_menu .btn {
+  padding: 3px 10px;
+  border: 1px solid transparent;
+  background-color: var(--gen-bg-color);
+  width: 180px;
+  word-wrap: break-word !important;
+}
+
+.ltr .settings_menu .btn {
+  text-align: right;
+}
+
+.ltr .settings_menu .btn {
+  text-align: left;
+}
+
+@media (max-width: 530px) {
+  .settings_menu {
+    padding: 7px;
+    width: 180px;
+    top: 30px;
+  }
+
+  .rtl .settings_menu {
+    top: 30px;
+  }
+
+  .settings_btn {
+    font-size: 18px;
+  }
+
+  .settings_menu .btn {
+    font-size: 13px;
+    width: 167px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .settings_menu {
+    width: 145px;
+  }
+  .settings_menu .btn {
+    width: 130px;
+  }
+}

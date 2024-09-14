@@ -1,0 +1,36 @@
+ .restrict_warning {
+     background: #fff;
+     padding: 40px 20px 0px 20px;
+     border-radius: 10px;
+     width: 400px;
+     height: 230px;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     position: relative;
+ }
+
+ .restrict_warning p {
+     font-weight: 600;
+     font-size: 15px;
+ }
+
+ .close_btn {
+     position: absolute;
+     right: 14px;
+     top: 10px;
+     font-size: 26px;
+     cursor: pointer;
+     color: red;
+ }
+
+ .password_input_container span {
+     position: absolute;
+     top: 13px;
+     left: 13px;
+ }
+
+ .password_input_container+.btn_container {
+     margin-top: 10px;
+ }

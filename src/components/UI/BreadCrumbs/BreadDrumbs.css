@@ -1,0 +1,110 @@
+.breadcrumbs {
+  background-color: var(--navbar-bg);
+  padding-left: 0;
+  margin: 10px 0;
+  /* text-align: left; */
+  direction: ltr;
+  border-radius: 5px;
+  position: relative;
+  min-width: 50%;
+  box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.05);
+  height: 30px;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+
+.breadcrumbs::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+.rtl .breadcrumbs {
+  direction: rtl;
+}
+
+.breadcrumbs .btn_container .btn {
+  padding: 2px 10px;
+}
+
+.rtl .breadcrumbs .btn_container .btn {
+  margin-right: 50px;
+}
+
+.bread_drumb_item {
+  cursor: context-menu;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02rem;
+  padding: 5px;
+  text-transform: capitalize;
+  background-color: var(--gen-color);
+  transition: background 0.3s ease-in;
+  position: relative;
+  white-space: nowrap;
+}
+
+.ltr .bread_drumb_item {
+  padding-right: 12px;
+  padding-left: 32px;
+}
+
+.ltr .bread_drumb_item:last-child {
+  margin-right: 50px;
+}
+
+.ltr .bread_drumb_item::after {
+  content: "";
+  position: absolute;
+  right: -16px;
+  width: 18px;
+  height: 30px;
+  background-color: var(--gen-color);
+  top: 0;
+  z-index: 10;
+  border-top-right-radius: 90px;
+  border-bottom-right-radius: 90px;
+}
+
+.ltr .bread_drumb_item::before {
+  content: "";
+  position: absolute;
+  right: -12px;
+  width: 20px;
+  height: 30px;
+  top: 0;
+  z-index: 10;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+  box-shadow: 8px 0px 10px 0px rgba(0, 0, 0, 0.2);
+}
+
+.rtl .bread_drumb_item {
+  padding-left: 12px;
+  padding-right: 32px;
+}
+
+.rtl .bread_drumb_item::after {
+  content: "";
+  position: absolute;
+  left: -16px;
+  width: 18px;
+  height: 30px;
+  background-color: var(--gen-color);
+  top: 0;
+  z-index: 10;
+  border-top-left-radius: 90px;
+  border-bottom-left-radius: 90px;
+}
+
+.rtl .bread_drumb_item::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  width: 20px;
+  height: 30px;
+  top: 0;
+  z-index: 10;
+  border-top-left-radius: 90px;
+  border-bottom-left-radius: 90px;
+  box-shadow: -8px 0px 10px 0px rgba(0, 0, 0, 0.2);
+}

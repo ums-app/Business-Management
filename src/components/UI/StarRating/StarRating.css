@@ -1,0 +1,17 @@
+.star_rating {
+  direction: ltr !important;
+}
+
+.star_rating span {
+  font-size: 18px;
+  color: #ddd;
+  margin: 0 1px;
+}
+
+.star_rating span.on {
+  color: var(--gen-color);
+}
+
+.star_rating span.off {
+  color: #ddd;
+}

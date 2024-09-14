@@ -1,0 +1,58 @@
+.spinner__wrapper {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.spinner__circle {
+  vertical-align: middle;
+  position: relative;
+  background-color: var(--gen-main-bg);
+  padding: 9px;
+  border-radius: 12px;
+  box-shadow: 0px 40px 60px -20px rgba(0, 0, 0, 0.2);
+}
+
+.spinner__circle>div {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  animation: spinner 0.6s linear infinite;
+}
+
+.spinner__circle span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: black;
+  border-radius: 50%;
+}
+
+
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 786px) {
+  .spinner__circle {
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .spinner__circle>div {
+    gap: 3.7px;
+  }
+
+  .spinner__circle span {
+    display: inline-block;
+    width: 7.9px;
+    height: 7.9px;
+  }
+}

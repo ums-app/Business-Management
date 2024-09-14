@@ -1,0 +1,199 @@
+.home {
+  width: 100%;
+  height: 100%;
+}
+
+/* Section title */
+.section_title {
+  text-align: center;
+  padding: 70px 0 30px 0;
+}
+
+.section_title p {
+  position: relative;
+  font-size: 32px;
+  color: var(--gen-color);
+  font-weight: bold;
+  z-index: 2;
+  text-align: center;
+}
+
+.section_title p::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 65px;
+  background: url("../../assets/img/section-title-bg.png") no-repeat;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+
+/* End of Section title */
+
+/* Statistics */
+.statistics_boxes {
+  margin: 0px 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, auto));
+  gap: 20px;
+}
+
+.statistics_boxes .statistics_card {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgb(134, 225, 253);
+  line-height: 2.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statistics_boxes .statistics_card i {
+  margin: 20px 0;
+  border-radius: 8px;
+  padding: 10px 20px;
+  box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
+  font-size: 28px;
+  color: var(--gen-color);
+}
+
+.statistics_boxes .statistics_card .statistics_title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.statistics_boxes .statistics_card .statistics_value {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* End of Statistics */
+
+/* Faculty Boxes */
+.faculty_boxes {
+  margin: 0px 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, auto));
+  gap: 20px;
+}
+
+.faculty_boxes .faculty_box {
+  background-color: rgba(245, 219, 136, 0.767);
+  border-radius: 25px;
+  padding: 20px 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.faculty_boxes .faculty_box:nth-child(2) {
+  background-color: rgba(136, 245, 240, 0.767);
+}
+
+.faculty_boxes .faculty_box:nth-child(3) {
+  background-color: rgba(180, 245, 136, 0.767);
+}
+
+.faculty_boxes .faculty_box:nth-child(4) {
+  background-color: rgba(238, 245, 136, 0.767);
+}
+
+.faculty_boxes .faculty_box h3 {
+  font-size: 17px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.faculty_boxes .faculty_box span {
+  font-size: 14px;
+}
+
+/* End of Faculties */
+
+/* Elite Students */
+.elite_students .elite_stu {
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1.7rem;
+}
+
+.elite_students .elite_stu_card_text {
+  position: relative;
+  background-color: var(--gen-main-bg);
+  padding: 20px 15px 30px;
+  border-radius: 6px;
+  box-sizing: content-box;
+  min-height: 130px;
+}
+
+.elite_students .elite_stu_card_text::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 18px solid var(--gen-main-bg);
+  border-right: 18px solid transparent;
+  border-left: 18px solid transparent;
+  position: absolute;
+  bottom: -18px;
+  left: calc(50% - 18px);
+}
+
+.elite_students .elite_stu_card_text p {
+  color: var(--text-color);
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.4em;
+}
+
+.elite_stu_card .elite_stu_card_personalInfo {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.elite_stu_card .elite_stu_card_personalInfo img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-position: top;
+  object-fit: cover;
+}
+
+.elite_stu_card .elite_stu_card_personalInfo p {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.elite_stu_card .elite_stu_card_personalInfo p:last-child {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* colleague institute */
+.colleague_institute_boxes {
+  grid-template-columns: repeat(auto-fit, minmax(100px, auto));
+  grid-column: 2rem;
+}
+
+.colleague_institute_boxes .colleague_institute_box {
+  margin: 2px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 4px;
+}
+
+.colleague_institute_boxes .colleague_institute_box img {
+  max-width: 50%;
+  padding: 15px 0;
+  transition: all 0.4s ease-in-out;
+  filter: grayscale(100);
+}
+
+.colleague_institute_boxes .colleague_institute_box img:hover {
+  filter: none;
+  transform: scale(1.15);
+}
+
+@media (max-width: 768px) {
+  .elite_students .elite_stu {
+    grid-template-columns: 1fr;
+  }
+}

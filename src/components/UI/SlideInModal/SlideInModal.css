@@ -1,0 +1,11 @@
+.slide_in_modal {
+  position: fixed;
+  height: 100vh;
+  /* width: 30%; */
+  background-color: var(--loading-template-bg);
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
