@@ -3,20 +3,26 @@ import Modal from '../UI/modal/Modal'
 import { t } from 'i18next'
 import Button from '../UI/Button/Button'
 import { toast } from 'react-toastify'
-import { ErrorMessage, Field, Formik } from 'formik'
-import { Form } from 'react-router-dom'
-import * as yup from "yup";
-import avatar from "../../assets/img/profile_avatar.png";
-import ICONS from '../../constants/Icons'
 import AddEmployee from './AddEmployee/AddEmployee'
+import { db } from '../../constants/FirebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
+
 
 function Employees() {
     const [addFormModal, setaddFormModal] = useState(false)
-    const [formData, setformData] = useState({
 
-    })
-    const [profileImage, setprofileImage] = useState();
+    const [data, setData] = useState([]);
 
+    // useEffect(() => {
+
+    //     const fetchData = async () => {
+    //         const querySnapshot = await getDocs(collection(db, ''));
+    //         const items = querySnapshot.docs.map((doc) => doc.data());
+    //         setData(items);
+    //     };
+
+    //     fetchData();
+    // }, []);
 
 
 

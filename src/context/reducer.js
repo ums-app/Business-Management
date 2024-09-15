@@ -1,3 +1,4 @@
+import { auth } from "../constants/FirebaseConfig";
 import i18n from "../locale/locale";
 
 function getAuthInfoFromLocalStorage() {
@@ -82,6 +83,7 @@ const reducer = (state, action) => {
       let locale = localStorage.getItem("locale");
       localStorage.clear();
       localStorage.setItem("locale", locale);
+      auth.signOut()
       return {
         ...state,
         authentication: {

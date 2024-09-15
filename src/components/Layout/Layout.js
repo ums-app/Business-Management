@@ -1,14 +1,17 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Wrapper from "../HOC/Wrapper";
 import Header from "../Header/Header";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import ErrorBoundary from "../ErrorBoundary/ErrorBoundary";
 import BreadCrumbs from "../UI/BreadCrumbs/BreadCrumbs";
 import Circle from "../UI/Loading/Circle";
 import { useStateValue } from "../../context/StateProvider";
+import { auth } from "../../constants/FirebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 function Layout() {
+  const navigate = useNavigate()
   const [{ smallLoading }, dispatch] = useStateValue();
   // switch between light or dark mode
   const [isDark, setIsDark] = useState(
@@ -23,6 +26,21 @@ function Layout() {
     localStorage.setItem("isDark", !isDark);
     setIsDark(!isDark);
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        // setUser(currentUser);  // User is logged in
+        navigate('/')
+      } else {
+        //setUser(null);  // User is logged out
+        navigate('/login')
+      }
+    });
+
+  }, [auth])
+
+
   return (
     <Suspense fallback={<Circle />}>
       <div className={`app ${isDark ? "theme-dark" : "theme-light"}`}>

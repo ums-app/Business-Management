@@ -1,8 +1,9 @@
 import React from "react";
-import { createHashRouter } from "react-router-dom";
-
+import { createBrowserRouter } from "react-router-dom";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
+
+const Login = React.lazy(() => import("../components/Login/Login"));
 const Layout = React.lazy(() => import("../components/Layout/Layout"));
 const Employees = React.lazy(() => import("../components/Employees/Employees"));
 const Customers = React.lazy(() => import("../components/Customers/Customers"));
@@ -15,11 +16,15 @@ const Dashboard = React.lazy(() => import("../components/Dashboard/Dashboard"));
 const Home = React.lazy(() => import("../components/Home/Home"));
 const Settings = React.lazy(() => import("../components/Settings/Settings"));
 
-const browserRouter = createHashRouter([
+const browserRouter = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
+      {
+        path: "/login",
+        element: <Login />,
+      },
       {
         path: "/home",
         element: <Home />,
