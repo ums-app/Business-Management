@@ -291,7 +291,10 @@ const en = {
         results: "Results",
         dayOfWeek: "Day of week",
         table: "Table",
-        note: "Note"
+        note: "Note",
+        bebevit: "Bebevit",
+        visitor: 'Visitor',
+        none: 'None'
     },
 };
 

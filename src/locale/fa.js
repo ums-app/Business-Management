@@ -296,7 +296,10 @@ const fa = {
         incompleteMessage: "هنوز تکمیل نشده است!",
         dayOfWeek: "روز های هفته",
         table: "جدول",
-        note: "نوت"
+        note: "نوت",
+        bebevit: 'بیبی ویت',
+        visitor: "ویزیتور",
+        none: 'هیچکدام'
     },
 };
 

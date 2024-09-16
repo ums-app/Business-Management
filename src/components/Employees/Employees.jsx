@@ -70,41 +70,41 @@ function Employees() {
 
             <h1 className='margin_10 title'>{t('employees')}</h1>
 
-            <table className="full_width custom_table table_row_hover">
-                <thead >
-                    <tr>
-                        <th>{t('number')}</th>
-                        <th>{t('name')}</th>
-                        <th>{t('lastName')}</th>
-                        <th>{t('jobTitle')}</th>
-                        <th>{t('phoneNumber')}</th>
-                        <th>{t('salary')}</th>
-                        <th>{t('percent')} {t('sales')}</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees?.map((emp, index) => {
-                        return <tr
-                            className=" cursor_pointer hover"
-                            onClick={() =>
-                                nav('/employees/' + emp.id)
-                            }
-                        >
-                            <td>{index + 1}</td>
-                            <td>{emp.name}</td>
-                            <td>{emp.lastName}</td>
-                            <td>{emp.jobTitle} </td>
-                            <td>{emp.phoneNumber}</td>
-                            <td>{emp.salary}</td>
-                            <td>{emp.salesPercent}%</td>
+            <div className='table_container '>
+                <table className="full_width custom_table table_row_hover">
+                    <thead >
+                        <tr>
+                            <th>{t('number')}</th>
+                            <th>{t('name')}</th>
+                            <th>{t('lastName')}</th>
+                            <th>{t('jobTitle')}</th>
+                            <th>{t('phoneNumber')}</th>
+                            <th>{t('salary')}</th>
+                            <th>{t('percent')} {t('sales')}</th>
                         </tr>
-                    })
-                    }
+                    </thead>
+                    <tbody>
+                        {employees?.map((emp, index) => {
+                            return <tr
+                                className=" cursor_pointer hover"
+                                onClick={() => nav('/employees/' + emp.id)}
+                                key={emp.id}
+                            >
+                                <td>{index + 1}</td>
+                                <td>{emp.name}</td>
+                                <td>{emp.lastName}</td>
+                                <td>{emp.jobTitle} </td>
+                                <td>{emp.phoneNumber}</td>
+                                <td>{emp.salary}</td>
+                                <td>{emp.salesPercent}%</td>
+                            </tr>
+                        })
+                        }
 
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
 
 
 

@@ -554,6 +554,10 @@ img {
 
 /* table */
 
+.table_container {
+  overflow-x: scroll;
+}
+
 .custom_table {
   border-spacing: 0;
   border-radius: 2px;

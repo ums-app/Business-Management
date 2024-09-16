@@ -117,8 +117,6 @@ function Employee() {
         );
     }
 
-
-
     return (
         <div className='employee'>
             <section className="profile_header display_flex justify_content_space_between">
@@ -158,8 +156,8 @@ function Employee() {
             </section>
 
 
-
             {/* the navbar of the profile page */}
+
             <TabMenu>
                 <li
                     className={
@@ -183,9 +181,7 @@ function Employee() {
                 >
                     {t("customers")}
                 </li>
-
             </TabMenu>
-
 
             <div>
                 {<displayComponent.component data={employee} />}

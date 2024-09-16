@@ -9,6 +9,7 @@ import "./Login.css"
 import { auth } from '../../constants/FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import Button from '../UI/Button/Button';
+import bebevit from "../../assets/img/bebvit.jpg"
 
 function Login() {
     const [, dispatch] = useStateValue();
@@ -56,12 +57,14 @@ function Login() {
             })}
             onSubmit={login}
         >
-            <div className="login">
-                <div className="rtl display_flex flex_direction_column justify_content_center align_items_center">
-                    <h1 className=' title text_align_center'>{"BebeVit"}</h1>
-                    <div className="login_form_container">
+            <div className="login display_flex" style={{ backgroundImage: `url(${bebevit})` }}>
 
-                        <h2 className="text_align_center">{t("loginPageTitle")}</h2>
+
+                <div
+                    className="login_form   full_width display_flex flex_direction_column justify_content_center align_items_center">
+                    <h1 className=' title text_align_center bold'>{t('bebevit')}</h1>
+                    <div className="login_form_container">
+                        <h2 className="text_align_center bold">{t("loginPageTitle")}</h2>
                         <Form className="display_flex flex_direction_column">
                             {error && (
                                 <div className="not_found_email_error_msg">{error}</div>

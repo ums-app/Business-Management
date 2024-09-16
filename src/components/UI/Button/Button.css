@@ -59,7 +59,9 @@
 }
 
 .loginBtn {
-  border: 2px solid var(--main-color);
+
+  border-radius: 30px;
+  background-color: rgb(247, 68, 226);
 }
 
 .danger:before {

@@ -2,6 +2,7 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import AddEmployee from "../components/Employees/AddEmployee/AddEmployee";
 import Employee from "../components/Employees/Employee/Employee";
+import AddCustomer from "../components/Customers/AddCustomer";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -62,6 +63,14 @@ const browserRouter = createBrowserRouter([
       {
         path: "/customers",
         element: <Customers />,
+      },
+      {
+        path: "/customers/add",
+        element: <AddCustomer />,
+      },
+      {
+        path: "/customers/:customerId/update",
+        element: <AddCustomer updateMode={true} />,
       },
       {
         path: "/employees",

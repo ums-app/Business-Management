@@ -32,7 +32,6 @@ function AddEmployee({ updateMode = false }) {
         email: '',
         jobTitle: '',
         password: ''
-
     })
 
     const [error, seterror] = useState()
@@ -263,7 +262,6 @@ function AddEmployee({ updateMode = false }) {
                             btnType="submit"
                             id="addButton"
                             text={t("save")}
-                            onClick={sendDataToAPI}
                             loading={loading}
                         />
                     </div>
