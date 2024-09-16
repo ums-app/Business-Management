@@ -1,16 +1,31 @@
 import React from "react";
 import "./NotFound.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { t } from "i18next";
+import Button from "../../components/UI/Button/Button"
+import ICONS from "../../constants/Icons";
 
 const NotFound = () => {
+  const nav = useNavigate();
   return (
     <div className="not_found display_flex margin_top_20" >
       <h1>404</h1>
       <p>{t("notFoundMsg")}</p>
-      <button className="btn">
-        <Link to="/">{t("backToHome")}</Link>
-      </button>
+
+
+      <div className="display_flex ">
+        <Button
+          onClick={() => nav('/')}
+          text={t("home")}
+          icon={ICONS.door}
+          type={' margin_10'}
+        />
+        <Button
+          onClick={() => nav(-1)}
+          text={t('previousPage')}
+          type={'margin_10'}
+          icon={ICONS.back}
+        /></div>
     </div>
   );
 };

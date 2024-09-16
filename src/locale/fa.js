@@ -149,6 +149,7 @@ const fa = {
         THURSDAY: "پنج شنبه",
         FRIDAY: "جمعه",
         backToHome: "برگشت به صفحه اصلی",
+        previousPage: " صفحه قبل",
         notFoundMsg: "صفحه مورد نظر یافت نشد!",
         payments: "پرداخت ها",
         startDate: "تاریخ شروع",

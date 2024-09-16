@@ -170,6 +170,7 @@ const en = {
         THURSDAY: "Thu",
         FRIDAY: "Fri",
         backToHome: "Back to Main Page",
+        previousPage: 'Previous Page',
         notFoundMsg: "Page Not Found!",
         payment: "Payment",
         payments: "Payments",
