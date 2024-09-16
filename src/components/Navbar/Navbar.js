@@ -85,9 +85,9 @@ const Navbar = () => {
             <span>{t("sales")}</span>
           </CustomeLinks>
 
-          <CustomeLinks to="/buying-products" title={t("buy") + " " + t('products')}>
+          <CustomeLinks to="/buying-products" title={t('purchases')}>
             <i className={ICONS.hangBag}></i>
-            <span>{t("buy")} {t('products')}</span>
+            <span>{t('purchases')}</span>
           </CustomeLinks>
 
           <CustomeLinks to="/consumptions" title={t("consumptions")}>

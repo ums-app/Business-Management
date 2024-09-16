@@ -300,7 +300,8 @@ const fa = {
         note: "نوت",
         bebevit: 'بیبی ویت',
         visitor: "ویزیتور",
-        none: 'هیچکدام'
+        none: 'هیچکدام',
+        purchases: "خرید ها"
     },
 };
 

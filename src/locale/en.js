@@ -295,7 +295,8 @@ const en = {
         note: "Note",
         bebevit: "Bebevit",
         visitor: 'Visitor',
-        none: 'None'
+        none: 'None',
+        purchases: 'Purchases'
     },
 };
 
