@@ -79,7 +79,7 @@ function Customers() {
                         {customers?.map((emp, index) => {
                             return <tr
                                 className=" cursor_pointer hover"
-                                onClick={() => nav('/customer/' + emp.id)}
+                                onClick={() => nav('/customers/' + emp.id)}
                                 key={emp.id}
                             >
                                 <td>{index + 1}</td>

@@ -60,7 +60,7 @@ function Layout() {
             <ErrorBoundary>
               <Wrapper>
                 {currentUser && <Header isDark={isDark} darkModeHandler={darkModeHandler} />}
-                {/* <BreadCrumbs /> */}
+                <BreadCrumbs />
                 <section className="margin_top_20">
                   <Outlet />
                 </section>

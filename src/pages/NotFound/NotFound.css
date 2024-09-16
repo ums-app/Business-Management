@@ -8,6 +8,12 @@
   height: 100%;
 }
 
+.nav_btn_container .btn {
+  width: 130px;
+  justify-content: center;
+  text-align: center;
+}
+
 
 .not_found h1 {
   font-size: 10rem;

@@ -110,7 +110,6 @@ function Login() {
                             <div className="button_container display_flex justify_content_center align_items_center">
 
                                 <Button
-                                    isLock={loading}
                                     text={loading ? t("signInLoading") : t("signInBtn")}
                                     btnType={'submit'}
                                     type={'loginBtn'}

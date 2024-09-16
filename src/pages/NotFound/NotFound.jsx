@@ -13,19 +13,21 @@ const NotFound = () => {
       <p>{t("notFoundMsg")}</p>
 
 
-      <div className="display_flex ">
+      <div className="nav_btn_container display_flex ">
+
+        <Button
+          onClick={() => nav(-1)}
+          text={t('previousPage')}
+          type={'margin_10'}
+          icon={ICONS.back}
+        />
         <Button
           onClick={() => nav('/')}
           text={t("home")}
           icon={ICONS.door}
           type={' margin_10'}
         />
-        <Button
-          onClick={() => nav(-1)}
-          text={t('previousPage')}
-          type={'margin_10'}
-          icon={ICONS.back}
-        /></div>
+      </div>
     </div>
   );
 };
