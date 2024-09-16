@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useStateValue } from '../../context/StateProvider';
 import { t } from 'i18next';
 import * as yup from "yup";
-import { actionTypes } from '../../context/reducer';
 import ICONS from '../../constants/Icons';
 import "./Login.css"
 import { auth } from '../../constants/FirebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import Button from '../UI/Button/Button';
 
 function Login() {
     const [, dispatch] = useStateValue();
@@ -24,20 +24,6 @@ function Login() {
             // createUserWithEmailAndPassword(auth, values.email, values.password)
             .then(res => {
                 console.log(res);
-                // const data = '';
-                // console.log(data)
-                // localStorage.setItem("token", data?.token);
-                // localStorage.setItem("name", data?.name);
-                // localStorage.setItem("lastname", data.lastname);
-                // localStorage.setItem("email", data?.email);
-                // localStorage.setItem("userId", data?.userId);
-                // localStorage.setItem("originalEntityId", data?.originalEntityId);
-                // localStorage.setItem("imageUrl", data?.imageUrl);
-                // localStorage.setItem("roles", data?.roles.toString());
-                // dispatch({
-                //     type: actionTypes.SET_AUTHENTICATION,
-                //     payload: data,
-                // });
                 navigate("/");
             })
             .catch(err => {
@@ -119,13 +105,13 @@ function Login() {
                                 />
                             </div>
                             <div className="button_container display_flex justify_content_center align_items_center">
-                                <button
-                                    type="submit"
-                                    className="btn justify_content_center align_items_center text_align_center cursor_pointer"
-                                    disabled={loading}
-                                >
-                                    {loading ? t("signInLoading") : t("signInBtn")}
-                                </button>
+
+                                <Button
+                                    isLock={loading}
+                                    text={loading ? t("signInLoading") : t("signInBtn")}
+                                    btnType={'submit'}
+                                    type={'loginBtn'}
+                                />
                             </div>
                         </Form>
                     </div>

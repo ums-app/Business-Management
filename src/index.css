@@ -561,6 +561,17 @@ img {
   overflow: visible;
   text-align: center;
   border-collapse: collapse;
+
+}
+
+.table_row_hover tr {
+  transition: all 150ms ease-in-out;
+}
+
+.table_row_hover tr:hover {
+  border: 1px solid #000;
+  box-shadow: 0 0 2px 8px var(--main-color) inset, 0 0 0 0 var(--main-color);
+
 }
 
 .custom_table thead {

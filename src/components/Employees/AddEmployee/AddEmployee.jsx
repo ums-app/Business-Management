@@ -1,51 +1,125 @@
 
 import { t } from 'i18next'
-import React, { useState } from 'react'
-import { ErrorMessage, Field, Formik } from 'formik'
-import { Form } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
+import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from "yup";
 import avatar from "../../../assets/img/profile_avatar.png";
 import ICONS from '../../../constants/Icons'
 import { toast } from 'react-toastify';
 import Button from '../../UI/Button/Button';
+import "./AddEmployee.css"
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../../../constants/FirebaseConfig';
+import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-function AddEmployee() {
-    const [addFormModal, setaddFormModal] = useState(false)
+
+function AddEmployee({ updateMode = false }) {
+    const nav = useNavigate();
+    const { employeeId } = useParams();
+    const employeesCollectionRef = collection(db, 'Employees');
+    const usersCollectionRef = collection(db, 'Users');
+    const [loading, setloading] = useState(false)
+
     const [formData, setformData] = useState({
+        name: '',
+        lastName: '',
+        phoneNumber: '',
+        salary: '',
+        salesPercent: '',
+        email: '',
+        jobTitle: '',
+        password: ''
 
     })
+
+    const [error, seterror] = useState()
     const [profileImage, setprofileImage] = useState();
 
+    useEffect(() => {
+        console.log('useeffect');
+        if (updateMode) {
+            const getData = async () => {
+                try {
+                    const data = await getDoc(doc(db, 'Employees', employeeId));
+                    console.log('data is exist and set');
+                    if (data.exists()) {
+                        setformData({ ...data.data() })
+                    }
+
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+
+            getData();
+        }
+
+    }, [employeeId])
+
+    console.log(formData);
+
+    const sendDataToAPI = async (values, { setSubmitting }) => {
+        // e.preventDefault();
+        setloading(true)
+        try {
+
+            if (updateMode) {
+                const employeeDoc = doc(db, 'Employees', employeeId)
+                console.log(employeeDoc, values);
+                await updateDoc(employeeDoc, values)
+                toast.success(t('successfullyUpdated'))
+            } else {
+                const employeeRes = await addDoc(employeesCollectionRef, values)
+                const userDoc = await addDoc(usersCollectionRef, {
+                    joinedDate: new Date(),
+                    lastName: values.lastName,
+                    name: values.name,
+                    originalEntityId: employeeRes.id,
+                    password: values.password,
+                    phoneNumber: values.phoneNumber,
+                    email: values.email,
+                    roles: [],
+                    userType: 'Employee'
+                })
+                createUserWithEmailAndPassword(auth, values.email, values.password)
+                toast.success(t('successfullyAdded'))
+            }
+            nav(-1)
+        } catch (err) {
+            toast.error(err)
+
+        } finally {
+            setloading(false)
+            setSubmitting(false);
+        }
+        // navigate to the employees page
+    }
 
 
-
-    const sendDataToAPI = () => {
-        toast.success("data added")
+    if (updateMode && formData.name.length == 0) {
+        return <LoadingTemplateContainer>
+            <ShotLoadingTemplate />
+        </LoadingTemplateContainer>
     }
 
     return (
-        <div>
-            <h1 className='title'>{t('add')} {t('employee')}</h1>
-            <Formik
-                // initialValues={{
-                //     name: editMode ? subject?.name : "",
-                //     credit: editMode ? subject?.credit : "",
-                //     subjectCode: editMode ? subject?.subjectCode : "",
-                //     goals: editMode ? subject?.goals : "",
-                //     contents: editMode ? subject?.content : "",
-                //     courseCategory: editMode ? subject?.courseCategory : "",
-                //     prerequisite: editMode ? subject?.prerequisite : "",
-                // }}
-                validationSchema={EmployeeSchema}
-                onSubmit={sendDataToAPI}
-            >
-                {({ isSubmitting }) => (
-                    <Form
-                        className="add_form display_flex flex_direction_column"
-                        style={{ gap: "3px" }}
-                    >
-                        {/* Here you can select Profile Student img */}
-                        <div className="add_img_profile">
+        <Formik
+            initialValues={formData}
+            validationSchema={EmployeeSchema}
+            onSubmit={sendDataToAPI}
+        >
+            <div className='add_employee padding_bottom_10'>
+                <Button
+                    text={t('back')}
+                    onClick={() => nav(-1)}
+                />
+                <h1 className='title'>{updateMode ? t('update') : t('add')} {t('employee')}</h1>
+                <Form className="add_form display_flex flex_direction_column">
+                    {/* Here you can select Profile Student img */}
+                    {/* <div className="add_img_profile">
                             <img
                                 src={
                                     profileImage?.isOk
@@ -66,127 +140,136 @@ function AddEmployee() {
                                 name="profileImage"
                             />
                         </div>
-                        <ErrorMessage name="image" component="div" className="error_msg" />
+                        <ErrorMessage name="image" component="div" className="error_msg" /> */}
 
-                        <div
-                            className=" margin_top_20  "
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns: "repeat(3, 1fr)"
-                            }}
-                        >
-                            <div className='display_flex flex_direction_column margin_5'>
-                                <label htmlFor="name">{t('name')}</label>
-                                <Field
-                                    name="name"
-                                    type="text"
-                                    className="input"
-                                    autoFocus
-                                />
-                                <ErrorMessage
-                                    name="name"
-                                    component="div"
-                                    className="error_msg"
-                                />
-                            </div>
-
-                            <div className='display_flex flex_direction_column margin_5'>
-                                <label htmlFor="lastName">{t('lastName')}</label>
-                                <Field
-                                    name="lastName"
-                                    type="text"
-                                    className="input"
-                                    min={1}
-                                />
-                                <ErrorMessage
-                                    name="lastName"
-                                    component="div"
-                                    className="error_msg"
-                                />
-                            </div>
-                            <div className='display_flex flex_direction_column margin_5'>
-                                <label htmlFor="jobTitle">{t('jobTitle')}</label>
-                                <Field
-                                    name="jobTitle"
-                                    type="text"
-                                    className="input"
-                                    min={10}
-                                />
-                                <ErrorMessage
-                                    name="jobTitle"
-                                    component="div"
-                                    className="error_msg"
-                                />
-                            </div>
-                            <div className='display_flex flex_direction_column margin_5'>
-                                <label htmlFor="phoneNumber">{t('phoneNumber')}</label>
-                                <Field
-                                    name="phoneNumber"
-                                    type="text"
-                                    className="input"
-                                    min={10}
-                                />
-                                <ErrorMessage
-                                    name="phoneNumber"
-                                    component="div"
-                                    className="error_msg"
-                                />
-                            </div>
-
-                            <div className='display_flex flex_direction_column margin_5'>
-                                <label htmlFor="salary">{t('salary')}</label>
-                                <Field
-                                    name="salary"
-                                    type="number"
-                                    className="input"
-                                    min={10}
-                                />
-                                <ErrorMessage
-                                    name="salary"
-                                    component="div"
-                                    className="error_msg"
-                                />
-                            </div>
-                            <div className='display_flex flex_direction_column margin_5'>
-                                <label htmlFor="salesPercent">{t('percent')} {t('sales')}</label>
-                                <Field
-                                    name="salesPercent"
-                                    type="number"
-                                    className="input"
-                                    min={10}
-                                />
-                                <ErrorMessage
-                                    name="salesPercent"
-                                    component="div"
-                                    className="error_msg"
-                                />
-                            </div>
-                            <div className='display_flex flex_direction_column margin_5'>
-                                <label htmlFor="password">{t('password')}</label>
-                                <Field
-                                    name="password"
-                                    type="text"
-                                    className="input"
-                                    min={10}
-                                />
-                                <ErrorMessage
-                                    name="password"
-                                    component="div"
-                                    className="error_msg"
-                                />
-                            </div>
-                        </div>
-                        <div className=' margin_top_10 margin_left_10 margin_right_10'>
-                            <Button
-                                text={t('save')}
-                                onClick={sendDataToAPI}
+                    <div className="form_inputs margin_top_20  " >
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="name">{t('name')}</label>
+                            <Field
+                                name="name"
+                                type="text"
+                                className="input"
+                                autoFocus
+                            />
+                            <ErrorMessage
+                                name="name"
+                                component="div"
+                                className="error_msg"
                             />
                         </div>
-                    </Form>
-                )}
 
-            </Formik>
-        </div>
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="lastName">{t('lastName')}</label>
+                            <Field
+                                name="lastName"
+                                type="text"
+                                className="input"
+                                min={1}
+                            />
+                            <ErrorMessage
+                                name="lastName"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="jobTitle">{t('jobTitle')}</label>
+                            <Field
+                                name="jobTitle"
+                                type="text"
+                                className="input"
+                                min={10}
+                            />
+                            <ErrorMessage
+                                name="jobTitle"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="phoneNumber">{t('phoneNumber')}</label>
+                            <Field
+                                name="phoneNumber"
+                                type="text"
+                                className="input"
+                                min={10}
+                            />
+                            <ErrorMessage
+                                name="phoneNumber"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="email">{t('email')}</label>
+                            <Field
+                                name="email"
+                                type="text"
+                                className="input"
+                                min={10}
+                            />
+                            <ErrorMessage
+                                name="email"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+
+
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="salary">{t('salary')}</label>
+                            <Field
+                                name="salary"
+                                type="number"
+                                className="input"
+                            />
+                            <ErrorMessage
+                                name="salary"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="salesPercent">{t('percent')} {t('sales')}</label>
+                            <Field
+                                name="salesPercent"
+                                type="number"
+                                className="input"
+                            />
+                            <ErrorMessage
+                                name="salesPercent"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="password">{t('password')}</label>
+                            <Field
+                                name="password"
+                                type="text"
+                                className="input"
+                                min={10}
+                            />
+                            <ErrorMessage
+                                name="password"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                    </div>
+                    <div className=' margin_top_10 margin_left_10 margin_right_10'>
+                        <Button
+                            btnType="submit"
+                            id="addButton"
+                            text={t("save")}
+                            onClick={sendDataToAPI}
+                            loading={loading}
+                        />
+                    </div>
+                </Form>
+            </div >
+        </Formik>
     )
 }
 
@@ -213,6 +296,10 @@ const EmployeeSchema = yup.object().shape({
         .string()
         .matches(/^07[0-9]{8}$/, t("invalidContactNumber"))
         .required(`${t("contactNumber")} ${t("isRequireText")}`),
+    email: yup
+        .string()
+        .email(t("invalidEmail"))
+        .required(`${t("email")} ${t("isRequireText")}`),
     password: yup
         .string()
         .min(5, t("passwordMinWidth"))

@@ -5,27 +5,12 @@ import { useStateValue } from "../../context/StateProvider";
 import ICONS from "../../constants/Icons";
 import { t } from "i18next";
 import APIEndpoints from "../../constants/APIEndpoints";
-import { Link } from "react-router-dom";
-import { actionTypes } from "../../context/reducer";
 import AvatarLoadingTemplate from "../UI/LoadingTemplate/AvatarLoadingTemplate";
-import axiosClient from "../../axios/axios";
 import LangBox from "../LangBox/LangBox";
 const Header = ({ isDark, darkModeHandler }) => {
-  const navigate = useNavigate();
+
   const [{ authentication }, dispatch] = useStateValue();
   const [avatarLoading, setAvatarLoading] = useState(true)
-
-  useEffect(() => {
-    axiosClient.get(APIEndpoints.notifications.countAllUnSeenNotification)
-      .then(res => {
-        dispatch({
-          type: actionTypes.ADD_NOTIFCATION_COUNT,
-          payload: {
-            notificationCount: res.data,
-          }
-        })
-      })
-  }, [])
 
 
   return (

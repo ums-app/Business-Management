@@ -1,5 +1,7 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
+import AddEmployee from "../components/Employees/AddEmployee/AddEmployee";
+import Employee from "../components/Employees/Employee/Employee";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -64,6 +66,18 @@ const browserRouter = createBrowserRouter([
       {
         path: "/employees",
         element: <Employees />,
+      },
+      {
+        path: "/employees/add",
+        element: <AddEmployee />,
+      },
+      {
+        path: "/employees/:employeeId/update",
+        element: <AddEmployee updateMode={true} />,
+      },
+      {
+        path: "/employees/:employeeId",
+        element: <Employee />,
       },
       {
         path: "/settings",

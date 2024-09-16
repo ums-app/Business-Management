@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ResetPassword from "../../../pages/Login/ResetPassword";
 import Button from "../../UI/Button/Button";
 import { t } from "i18next";
 
@@ -19,7 +18,7 @@ function AccountSettings() {
             onClick={() => setShowPasswordChange(false)}
           />
         )}
-        {showPasswordChange && <ResetPassword />}
+        {/* {showPasswordChange && <ResetPassword />} */}
       </section>
     </div>
   );

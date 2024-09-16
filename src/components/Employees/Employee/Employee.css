@@ -1,0 +1,7 @@
+.personal_info div {
+    width: 200px;
+}
+
+.personal_info div span:last-child {
+    font-weight: bold;
+}

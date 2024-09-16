@@ -58,6 +58,10 @@
   transition: background 0s;
 }
 
+.loginBtn {
+  border: 2px solid var(--main-color);
+}
+
 .danger:before {
   background: #ee1818;
 }
