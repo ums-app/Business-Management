@@ -5,6 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import ICONS from "../../../constants/Icons";
 import Button from "../Button/Button";
 import { t } from "i18next";
+import { Tooltip } from "react-tooltip";
 
 const BreadCrumbs = () => {
   const breadcrumbs = useBreadcrumbs();
@@ -37,7 +38,16 @@ const BreadCrumbs = () => {
           );
         })}
       </div>
-      <Button icon={ICONS.back} onClick={goBack} />
+
+      <Button icon={ICONS.back} onClick={goBack} id={'back_button'} />
+
+      <Tooltip
+        anchorSelect="#back_button"
+        place="top"
+        className="toolTip_style"
+      >
+        {t("back")}
+      </Tooltip>
     </div>
   );
 };
