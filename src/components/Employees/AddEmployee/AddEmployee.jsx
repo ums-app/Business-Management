@@ -14,13 +14,14 @@ import { auth, db } from '../../../constants/FirebaseConfig';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { createUserWithEmailAndPassword, updateEmail } from 'firebase/auth';
+import Collections from '../../../constants/Collections';
 
 
 function AddEmployee({ updateMode = false }) {
     const nav = useNavigate();
     const { employeeId } = useParams();
-    const employeesCollectionRef = collection(db, 'Employees');
-    const usersCollectionRef = collection(db, 'Users');
+    const employeesCollectionRef = collection(db, Collections.Employees);
+    const usersCollectionRef = collection(db, Collections.Users);
     const [loading, setloading] = useState(false)
 
     const [formData, setformData] = useState({
@@ -44,7 +45,7 @@ function AddEmployee({ updateMode = false }) {
         if (updateMode) {
             const getData = async () => {
                 try {
-                    const data = await getDoc(doc(db, 'Employees', employeeId));
+                    const data = await getDoc(doc(db, Collections.Employees, employeeId));
                     console.log('data is exist and set');
                     if (data.exists()) {
                         setformData({ ...data.data() })
@@ -71,8 +72,7 @@ function AddEmployee({ updateMode = false }) {
         try {
 
             if (updateMode) {
-                console.log('gettig employee doc');
-                const employeeDoc = doc(db, 'Employees', employeeId)
+                const employeeDoc = doc(db, Collections.Employees, employeeId)
                 await updateDoc(employeeDoc, values)
                 toast.success(t('successfullyUpdated'))
             } else {

@@ -8,12 +8,13 @@ import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemp
 import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { toast } from 'react-toastify';
+import Collections from '../../../../constants/Collections';
 
 function EmployeeCustomers({ data }) {
     const nav = useNavigate()
     const { employeeId } = useParams();
     const [customers, setCustomers] = useState();
-    const customersCollectionRef = collection(db, 'Customers');
+    const customersCollectionRef = collection(db, Collections.Customers);
     console.log(data);
 
     useEffect(() => {

@@ -18,6 +18,7 @@ import { t } from 'i18next';
 import NotFound from '../../../pages/NotFound/NotFound';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
+import Collections from '../../../constants/Collections';
 
 
 // components for tabs
@@ -47,7 +48,7 @@ function Customer() {
     useEffect(() => {
         const getData = async () => {
             try {
-                const data = await getDoc(doc(db, 'Customers', customerId));
+                const data = await getDoc(doc(db, Collections.Customers, customerId));
                 if (data.exists()) {
                     setCustomer(data.data())
                 }
@@ -82,7 +83,7 @@ function Customer() {
         dispatch({
             type: actionTypes.HIDE_ASKING_MODAL,
         });
-        const customerDoc = doc(db, 'Customers', customerId)
+        const customerDoc = doc(db, Collections.Customers, customerId)
         try {
             await deleteDoc(customerDoc)
             navigate("/customers");

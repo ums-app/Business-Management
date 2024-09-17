@@ -1,30 +1,24 @@
-import { ErrorMessage, Field, Formik } from 'formik'
+
 import React, { useEffect, useState } from 'react'
-import { Form, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Button from '../UI/Button/Button'
-import Modal from '../UI/modal/Modal'
 import { t } from 'i18next'
-import * as yup from "yup";
-import { toast } from 'react-toastify'
-import AddCustomer from './AddCustomer'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../constants/FirebaseConfig'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
+import Collections from '../../constants/Collections'
 
 
 function Customers() {
-    const [addFormModal, setaddFormModal] = useState(false)
     const nav = useNavigate();
-    const customersCollectionRef = collection(db, 'Customers');
-    const employeesCollectionRef = collection(db, 'Employees');
+    const customersCollectionRef = collection(db, Collections.Customers);
+    const employeesCollectionRef = collection(db, Collections.Employees);
 
     const [customers, setCustomers] = useState();
     const [employees, setEmployees] = useState()
-
-
 
     useEffect(() => {
         getCustomers();

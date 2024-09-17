@@ -10,12 +10,13 @@ import { auth, db } from '../../constants/FirebaseConfig'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
+import Collections from '../../constants/Collections'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
     const [employees, setEmployees] = useState([]);
     const { customerId } = useParams();
-    const usersCollectionRef = collection(db, 'Users');
+    const usersCollectionRef = collection(db, Collections.Users);
 
     const [formData, setformData] = useState({
         name: '',
@@ -31,14 +32,14 @@ function AddCustomer({ updateMode = false }) {
 
     const [loading, setloading] = useState(false)
 
-    const employeesCollectionRef = collection(db, 'Employees');
-    const cusomtersCollectionRef = collection(db, 'Customers');
+    const employeesCollectionRef = collection(db, Collections.Employees);
+    const cusomtersCollectionRef = collection(db, Collections.Customers);
 
     useEffect(() => {
         if (updateMode) {
             const getData = async () => {
                 try {
-                    const data = await getDoc(doc(db, 'Customers', customerId));
+                    const data = await getDoc(doc(db, Collections.Customers, customerId));
                     if (data.exists()) {
                         setformData({ ...data.data() })
                         setCustomer({ ...data.data() })
@@ -73,7 +74,7 @@ function AddCustomer({ updateMode = false }) {
         try {
 
             if (updateMode) {
-                const customerDoc = doc(db, 'Customers', customerId)
+                const customerDoc = doc(db, Collections.Customers, customerId)
                 await updateDoc(customerDoc, values);
                 toast.success(t('successfullyUpdated'))
             } else {

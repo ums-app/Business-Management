@@ -4,6 +4,7 @@ import "../Employee.css"
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../constants/FirebaseConfig';
+import Collections from '../../../../constants/Collections';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
 
@@ -14,7 +15,7 @@ function PersonalInformation() {
     useEffect(() => {
         const getData = async () => {
             try {
-                const data = await getDoc(doc(db, 'Employees', employeeId));
+                const data = await getDoc(doc(db, Collections.Employees, employeeId));
                 if (data.exists()) {
                     setemployee(data.data())
                 }
