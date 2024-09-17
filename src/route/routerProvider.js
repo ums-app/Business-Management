@@ -4,8 +4,8 @@ import AddEmployee from "../components/Employees/AddEmployee/AddEmployee";
 import Employee from "../components/Employees/Employee/Employee";
 import AddCustomer from "../components/Customers/AddCustomer";
 import Customer from "../components/Customers/Customer/Customer";
-import AddProducts from "../components/Products/AddProduct/AddProducts";
 import Product from "../components/Products/Product/Product";
+import AddProduct from "../components/Products/AddProduct/AddProducts";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -69,7 +69,7 @@ const browserRouter = createBrowserRouter([
       },
       {
         path: "/products/add",
-        element: <AddProducts />,
+        element: <AddProduct />,
       },
 
       {
@@ -78,7 +78,7 @@ const browserRouter = createBrowserRouter([
       },
       {
         path: "/products/:productId/update",
-        element: <AddProducts updateMode={true} />,
+        element: <AddProduct updateMode={true} />,
       },
       {
         path: "/customers",

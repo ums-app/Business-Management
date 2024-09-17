@@ -13,7 +13,7 @@ import Collections from '../../../constants/Collections'
 import { ref, uploadBytes } from 'firebase/storage'
 import Folders from '../../../constants/Folders'
 
-function AddProducts({ updateMode = false }) {
+function AddProduct({ updateMode = false }) {
 
     const nav = useNavigate();
     const { productId } = useParams();
@@ -271,4 +271,4 @@ const Schema = yup.object().shape({
 });
 
 
-export default AddProducts
+export default AddProduct

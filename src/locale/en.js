@@ -302,7 +302,9 @@ const en = {
         code: "Code",
         company: "Company",
         inventory: "Inventory",
-        manufacturer: "Manufacturer"
+        manufacturer: "Manufacturer",
+        image: "Image",
+        analysis: "Data Analysis"
     },
 };
 

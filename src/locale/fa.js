@@ -307,7 +307,9 @@ const fa = {
         code: "کد",
         company: "شرکت",
         inventory: "موجودی",
-        manufacturer: "سازنده"
+        manufacturer: "سازنده",
+        image: 'عکس',
+        analysis: "تحلیل اطلاعات"
 
     },
 };
