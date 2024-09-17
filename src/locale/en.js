@@ -296,7 +296,8 @@ const en = {
         bebevit: "Bebevit",
         visitor: 'Visitor',
         none: 'None',
-        purchases: 'Purchases'
+        purchases: 'Purchases',
+        alreadyExist: "already exists"
     },
 };
 

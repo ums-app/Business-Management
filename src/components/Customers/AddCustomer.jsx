@@ -5,9 +5,11 @@ import Button from '../UI/Button/Button'
 import { t } from 'i18next'
 import * as yup from "yup";
 import { toast } from 'react-toastify'
-import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
 import { auth, db } from '../../constants/FirebaseConfig'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
+import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -25,6 +27,7 @@ function AddCustomer({ updateMode = false }) {
         location: '',
         password: ''
     });
+    const [customer, setCustomer] = useState();
 
     const [loading, setloading] = useState(false)
 
@@ -38,6 +41,7 @@ function AddCustomer({ updateMode = false }) {
                     const data = await getDoc(doc(db, 'Customers', customerId));
                     if (data.exists()) {
                         setformData({ ...data.data() })
+                        setCustomer({ ...data.data() })
                     }
                 } catch (err) {
                     console.log(err);
@@ -70,12 +74,12 @@ function AddCustomer({ updateMode = false }) {
 
             if (updateMode) {
                 const customerDoc = doc(db, 'Customers', customerId)
-                console.log(customerDoc, values);
-                await updateDoc(customerDoc, values)
+                await updateDoc(customerDoc, values);
                 toast.success(t('successfullyUpdated'))
             } else {
+                createUserWithEmailAndPassword(auth, values.email, values.password)
                 const employeeRes = await addDoc(cusomtersCollectionRef, values)
-                const userDoc = await addDoc(usersCollectionRef, {
+                await addDoc(usersCollectionRef, {
                     joinedDate: new Date(),
                     lastName: values.lastName,
                     name: values.name,
@@ -86,7 +90,7 @@ function AddCustomer({ updateMode = false }) {
                     roles: [],
                     userType: 'Customer'
                 })
-                createUserWithEmailAndPassword(auth, values.email, values.password)
+
                 toast.success(t('successfullyAdded'))
             }
             nav(-1)
@@ -100,12 +104,19 @@ function AddCustomer({ updateMode = false }) {
         // navigate to the employees page
     }
 
+    if (updateMode && formData.name.length == 0) {
+        return <LoadingTemplateContainer>
+            <ShotLoadingTemplate />
+        </LoadingTemplateContainer>
+    }
+
 
     return (
         <Formik
             initialValues={formData}
             validationSchema={CustomerSchema}
             onSubmit={sendDataToAPI}
+            enableReinitialize={true}
         >
             <div>
                 <Button
@@ -135,7 +146,6 @@ function AddCustomer({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
-
                         <div className='display_flex flex_direction_column margin_5'>
                             <label htmlFor="lastName">{t('lastName')}</label>
                             <Field
@@ -195,7 +205,7 @@ function AddCustomer({ updateMode = false }) {
                             />
                         </div>
 
-                        <div className='display_flex flex_direction_column margin_5'>
+                        <div className={`display_flex flex_direction_column margin_5  ${updateMode && ' display_none'}`}>
                             <label htmlFor="email">{t('email')}</label>
                             <Field
                                 name="email"
@@ -209,7 +219,7 @@ function AddCustomer({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
-                        <div className='display_flex flex_direction_column margin_5'>
+                        <div className={`display_flex flex_direction_column margin_5  ${updateMode && ' display_none'}`}>
                             <label htmlFor="password">{t('password')}</label>
                             <Field
                                 name="password"

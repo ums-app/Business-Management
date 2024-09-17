@@ -19,12 +19,16 @@ function Customers() {
     const [addFormModal, setaddFormModal] = useState(false)
     const nav = useNavigate();
     const customersCollectionRef = collection(db, 'Customers');
+    const employeesCollectionRef = collection(db, 'Employees');
+
     const [customers, setCustomers] = useState();
+    const [employees, setEmployees] = useState()
 
 
 
     useEffect(() => {
         getCustomers();
+        getEmployees();
 
     }, []);
 
@@ -40,7 +44,16 @@ function Customers() {
     };
 
 
-    if (!customers) {
+    const getEmployees = async () => {
+        const querySnapshot = await getDocs(employeesCollectionRef);
+        const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setEmployees(items);
+
+        console.log(items);
+    };
+
+
+    if (!customers || !employees) {
         return (
             <LoadingTemplateContainer>
                 <ButtonLoadingTemplate />
@@ -50,6 +63,9 @@ function Customers() {
         );
     }
 
+
+    console.log(customers);
+    console.log(employees);
 
 
     return (
@@ -72,11 +88,14 @@ function Customers() {
                             <th>{t('name')} {t('organization')}</th>
                             <th>{t('phoneNumber')}</th>
                             <th>{t('location')}</th>
-                            <th></th>
+                            <th>{t('visitor')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {customers?.map((emp, index) => {
+
+                            const visitor = employees.find(item => item.id == emp.visitor)
+
                             return <tr
                                 className=" cursor_pointer hover"
                                 onClick={() => nav('/customers/' + emp.id)}
@@ -88,7 +107,7 @@ function Customers() {
                                 <td>{emp.organizationName} </td>
                                 <td>{emp.phoneNumber}</td>
                                 <td>{emp.location}</td>
-                                <td></td>
+                                <td>{visitor?.name} {visitor?.lastName}</td>
                             </tr>
                         })
                         }

@@ -301,7 +301,8 @@ const fa = {
         bebevit: 'بیبی ویت',
         visitor: "ویزیتور",
         none: 'هیچکدام',
-        purchases: "خرید ها"
+        purchases: "خرید ها",
+        alreadyExist: "از قبل موجود است"
     },
 };
 

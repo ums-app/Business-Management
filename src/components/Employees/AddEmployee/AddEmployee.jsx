@@ -9,11 +9,11 @@ import ICONS from '../../../constants/Icons'
 import { toast } from 'react-toastify';
 import Button from '../../UI/Button/Button';
 import "./AddEmployee.css"
-import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../../../constants/FirebaseConfig';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateEmail } from 'firebase/auth';
 
 
 function AddEmployee({ updateMode = false }) {
@@ -34,6 +34,8 @@ function AddEmployee({ updateMode = false }) {
         password: ''
     })
 
+    const [employee, setEmployee] = useState()
+
     const [error, seterror] = useState()
     const [profileImage, setprofileImage] = useState();
 
@@ -46,6 +48,7 @@ function AddEmployee({ updateMode = false }) {
                     console.log('data is exist and set');
                     if (data.exists()) {
                         setformData({ ...data.data() })
+                        setEmployee({ ...data.data() })
                     }
 
                 } catch (err) {
@@ -62,15 +65,20 @@ function AddEmployee({ updateMode = false }) {
 
     const sendDataToAPI = async (values, { setSubmitting }) => {
         // e.preventDefault();
+
+        console.log('send method called');
         setloading(true)
         try {
 
             if (updateMode) {
+                console.log('gettig employee doc');
                 const employeeDoc = doc(db, 'Employees', employeeId)
-                console.log(employeeDoc, values);
                 await updateDoc(employeeDoc, values)
                 toast.success(t('successfullyUpdated'))
             } else {
+
+                createUserWithEmailAndPassword(auth, values.email, values.password)
+
                 const employeeRes = await addDoc(employeesCollectionRef, values)
                 const userDoc = await addDoc(usersCollectionRef, {
                     joinedDate: new Date(),
@@ -83,7 +91,7 @@ function AddEmployee({ updateMode = false }) {
                     roles: [],
                     userType: 'Employee'
                 })
-                createUserWithEmailAndPassword(auth, values.email, values.password)
+
                 toast.success(t('successfullyAdded'))
             }
             nav(-1)
@@ -200,7 +208,7 @@ function AddEmployee({ updateMode = false }) {
                             />
                         </div>
 
-                        <div className='display_flex flex_direction_column margin_5'>
+                        <div className={`display_flex flex_direction_column margin_5  ${updateMode && ' display_none'}`}>
                             <label htmlFor="email">{t('email')}</label>
                             <Field
                                 name="email"
@@ -242,7 +250,7 @@ function AddEmployee({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
-                        <div className='display_flex flex_direction_column margin_5'>
+                        <div className={`display_flex flex_direction_column margin_5  ${updateMode && ' display_none'}`}>
                             <label htmlFor="password">{t('password')}</label>
                             <Field
                                 name="password"

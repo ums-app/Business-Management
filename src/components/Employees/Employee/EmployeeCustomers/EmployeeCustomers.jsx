@@ -1,11 +1,51 @@
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { t } from 'i18next';
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
+import { db } from '../../../../constants/FirebaseConfig';
+import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
+import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemplate';
+import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
+import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { toast } from 'react-toastify';
 
 function EmployeeCustomers({ data }) {
     const nav = useNavigate()
-    const [customers, setcustomers] = useState();
+    const { employeeId } = useParams();
+    const [customers, setCustomers] = useState();
+    const customersCollectionRef = collection(db, 'Customers');
     console.log(data);
+
+    useEffect(() => {
+        getAllEmployeeCustomers();
+    }, [employeeId])
+
+    const getAllEmployeeCustomers = async () => {
+        try {
+
+            console.log(employeeId);
+            const q = query(customersCollectionRef, where("visitor", "==", employeeId))
+            const data = await getDocs(q);
+            const items = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            setCustomers(items);
+        } catch (err) {
+            // toast.error(err.message)
+            console.log(err);
+            setCustomers([])
+        }
+    }
+
+    console.log(customers);
+
+    if (!customers) {
+        return (
+            <LoadingTemplateContainer>
+                <ButtonLoadingTemplate />
+                <HeadingMenuTemplate />
+                <ShotLoadingTemplate />
+            </LoadingTemplateContainer>
+        );
+    }
 
     return (
         <div className='customers'>
@@ -22,18 +62,18 @@ function EmployeeCustomers({ data }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.customers?.map((emp, index) => {
+                    {customers?.map((cus, index) => {
                         return <tr
                             className=" cursor_pointer hover"
                             onClick={() =>
-                                nav('/employees/' + emp.id)
+                                nav('/customers/' + cus.id)
                             }
                         >
                             <td>{index + 1}</td>
-                            <td>{emp.name}</td>
-                            <td>{emp.lastName}</td>
-                            <td>{emp.oraganization} </td>
-                            <td>{emp.phoneNumber}</td>
+                            <td>{cus.name}</td>
+                            <td>{cus.lastName}</td>
+                            <td>{cus.organizationName} </td>
+                            <td>{cus.phoneNumber}</td>
 
                         </tr>
                     })
