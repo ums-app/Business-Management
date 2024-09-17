@@ -302,7 +302,11 @@ const fa = {
         visitor: "ویزیتور",
         none: 'هیچکدام',
         purchases: "خرید ها",
-        alreadyExist: "از قبل موجود است"
+        alreadyExist: "از قبل موجود است",
+        englishName: 'نام به انگلیسی',
+        code: "کد",
+        company: "شرکت",
+
     },
 };
 

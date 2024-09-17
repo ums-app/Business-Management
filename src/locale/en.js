@@ -297,7 +297,11 @@ const en = {
         visitor: 'Visitor',
         none: 'None',
         purchases: 'Purchases',
-        alreadyExist: "already exists"
+        alreadyExist: "already exists",
+        englishName: "Name in English",
+        code: "Code",
+        company: "Company"
+
     },
 };
 
