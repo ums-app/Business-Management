@@ -26,12 +26,16 @@ const browserRouter = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/login",
-        element: <Login />,
+        path: "/",
+        element: <Home />,
       },
       {
-        path: "/home",
-        element: <Home />,
+        path: "/Business-Management",
+        element: <Home />
+      },
+      {
+        path: "/login",
+        element: <Login />,
       },
       {
         path: "/dashboard",
