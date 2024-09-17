@@ -306,6 +306,8 @@ const fa = {
         englishName: 'نام به انگلیسی',
         code: "کد",
         company: "شرکت",
+        inventory: "موجودی",
+        manufacturer: "سازنده"
 
     },
 };

@@ -300,8 +300,9 @@ const en = {
         alreadyExist: "already exists",
         englishName: "Name in English",
         code: "Code",
-        company: "Company"
-
+        company: "Company",
+        inventory: "Inventory",
+        manufacturer: "Manufacturer"
     },
 };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PersonalInformation from './PeronsalInformation/PersonalInformation';
-import CustomerBuyingProducts from './CustomerBuyingProducts/CustomerBuyingProducts';
+import CustomerProductPurchases from './CustomerProductPurchases/CustomerProductPurchases';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStateValue } from '../../../context/StateProvider';
 import usePersistentComponent from '../../../Hooks/usePersistentComponent';
@@ -27,7 +27,7 @@ const components = {
         componentName: "PersonalInformation",
         component: PersonalInformation,
     },
-    BuyingProducts: { componentName: "BuyingProducts", component: CustomerBuyingProducts },
+    CustomerProductPurchases: { componentName: "CustomerProductPurchases", component: CustomerProductPurchases },
 
 };
 
@@ -174,11 +174,11 @@ function Customer() {
                 <li
                     className={
                         displayComponent?.componentName ==
-                            components?.BuyingProducts?.componentName
+                            components?.CustomerProductPurchases?.componentName
                             ? "active"
                             : ""
                     }
-                    onClick={() => setDisplayComponent(components?.BuyingProducts)}
+                    onClick={() => setDisplayComponent(components?.CustomerProductPurchases)}
                 >
                     {t('purchases')}
                 </li>
@@ -188,7 +188,7 @@ function Customer() {
                 {<displayComponent.component data={customer} />}
             </div>
 
-        </div>
+        </div >
     )
 }
 
