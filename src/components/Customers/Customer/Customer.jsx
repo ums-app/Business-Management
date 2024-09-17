@@ -128,11 +128,11 @@ function Customer() {
                         text={t("delete")}
                         onClick={showDeleteModal}
                     />
-                    <Button
+                    {/* <Button
                         icon={customer?.isEnable ? ICONS.lockFill : ICONS.unlock}
                         onClick={lockOrUnlockStudentAccount}
                         text={customer?.isEnable ? t("disable") : t("enable")}
-                    />
+                    /> */}
                     <Button
                         icon={ICONS.edit}
                         text={t("updateInformation")}

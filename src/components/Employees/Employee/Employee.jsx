@@ -127,11 +127,11 @@ function Employee() {
                         text={t("delete")}
                         onClick={showDeleteModal}
                     />
-                    <Button
+                    {/* <Button
                         icon={employee?.isEnable ? ICONS.lockFill : ICONS.unlock}
                         onClick={lockOrUnlockStudentAccount}
                         text={employee?.isEnable ? t("disable") : t("enable")}
-                    />
+                    /> */}
                     <Button
                         icon={ICONS.edit}
                         text={t("updateInformation")}

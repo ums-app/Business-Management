@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from 'firebase/auth'
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,3 +23,10 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+
+// const admin = require('firebase-admin');
+// admin.initializeApp({
+//     credential: admin.credential.applicationDefault(), // or use a service account key
+//     // databaseURL: "https://<YOUR_PROJECT_ID>.firebaseio.com"
+// });
