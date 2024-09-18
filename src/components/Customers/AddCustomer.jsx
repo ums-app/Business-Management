@@ -80,7 +80,7 @@ function AddCustomer({ updateMode = false }) {
                 toast.success(t('successfullyUpdated'))
             } else {
                 if (checkIfEmailIsAlreadyExist(values.email)) {
-                    toast.email(t('email') + " " + t('alreadyExist'))
+                    toast.error(t('email') + " " + t('alreadyExist'))
                     return
                 }
 

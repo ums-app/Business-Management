@@ -77,9 +77,9 @@ function AddEmployee({ updateMode = false }) {
                 await updateDoc(employeeDoc, values)
                 toast.success(t('successfullyUpdated'))
             } else {
-
+                console.log('checking if email is already exists');
                 if (checkIfEmailIsAlreadyExist(values.email)) {
-                    toast.email(t('email') + " " + t('alreadyExist'))
+                    toast.error(t('email') + " " + t('alreadyExist'))
                     return
                 }
                 createUserWithEmailAndPassword(auth, values.email, values.password)
