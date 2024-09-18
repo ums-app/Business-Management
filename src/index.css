@@ -355,7 +355,7 @@ a {
 }
 
 .border_1px_solid {
-  border: 1px solid var(--light-dark);
+  border: 1px solid var(--text-color);
 }
 
 .background_color_transparent {

@@ -1,9 +1,9 @@
 import React from 'react'
 import "./LoadingTemplate.css"
 
-function ShotLoadingTemplate() {
+function ShotLoadingTemplate({ style }) {
     return (
-        <div className='loading-template full_width animate-translate shot'></div>
+        <div className='loading-template full_width animate-translate shot' style={style}></div>
     )
 }
 

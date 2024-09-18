@@ -68,6 +68,8 @@ function Product() {
     //     return <NotFound />;
     // }
 
+    console.log(product);
+
     if (!product) {
         return (
             <LoadingTemplateContainer>
