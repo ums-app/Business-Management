@@ -42,7 +42,7 @@ function PersonalInformation() {
         <div className='personal_info display_flex flex_flow_wrap '>
             <div className=' display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('name')} </span>
-                <span className=''>{employee.name}</span>
+                <span>{employee.name}</span>
             </div>
             <div className='display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('lastName')} </span>
