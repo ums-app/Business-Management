@@ -78,48 +78,6 @@ function Products() {
             <h1 className='margin_10 title'>{t('products')}</h1>
 
             <div className='display_flex flex_flow_wrap justify_content_center '>
-                {/* <table className="full_width custom_table table_row_hover">
-                    <thead >
-                        <tr>
-                            <th>{t('number')}</th>
-                            <th>{t('image')}</th>
-                            <th>{t('name')}</th>
-                            <th>{t('englishName')}</th>
-                            <th>{t('manufacturer')}</th>
-                            <th>{t('inventory')}</th>
-                            <th>{t('price')}</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products?.map((pro, index) => {
-                            return <tr
-                                className=" cursor_pointer hover"
-                                onClick={() => nav('/products/' + pro?.id)}
-                                key={pro?.id}
-                            >
-                                <td>{index + 1}</td>
-                                <td>
-                                    <img
-                                        src={imageUrls[pro?.id] || 'placeholder.jpg'} // Placeholder image if the image is not loaded
-                                        alt={pro.name}
-                                        style={{ width: '80px', height: '100px' }} // Set image size
-                                    />
-                                </td>
-                                <td>{pro.name}</td>
-                                <td>{pro.englishName}</td>
-                                <td>{pro.manufacturer} </td>
-                                <td>{pro.inventory}</td>
-                                <td>{pro.price}</td>
-
-                            </tr>
-                        })
-                        }
-
-
-                    </tbody>
-                </table> */}
-
                 {products.map(prd => {
                     return <ProductCard
                         image={imageUrls[prd?.id] || 'placeholder.jpg'}
