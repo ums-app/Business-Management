@@ -11,6 +11,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import Collections from '../../constants/Collections'
+import { checkIfEmailIsAlreadyExist } from '../../Utils/FirebaseTools'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -78,6 +79,11 @@ function AddCustomer({ updateMode = false }) {
                 await updateDoc(customerDoc, values);
                 toast.success(t('successfullyUpdated'))
             } else {
+                if (checkIfEmailIsAlreadyExist(values.email)) {
+                    toast.email(t('email') + " " + t('alreadyExist'))
+                    return
+                }
+
                 createUserWithEmailAndPassword(auth, values.email, values.password)
                 const employeeRes = await addDoc(cusomtersCollectionRef, values)
                 await addDoc(usersCollectionRef, {
