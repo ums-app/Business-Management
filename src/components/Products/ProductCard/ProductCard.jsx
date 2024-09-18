@@ -11,7 +11,7 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, discount,
     return (
         <section className="card entering-animation " onClick={() => navigate(id)} ref={customeRef}>
             {discount > 0 ? <span className='discount-value'>{discount ? discount + "% " : ""}</span> : ""}
-            <img src={image} alt="slider" />
+            <img src={image} alt={t('product') + " " + t('name')} />
             {/* <RateStar rate={rating} size={'small'} /> */}
             <div className="product-info display_flex flex_direction_column align_items_center">
                 <div className=' full_width display_flex justify_content_space_between'>

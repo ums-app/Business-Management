@@ -14,6 +14,7 @@ import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import ProductCard from './ProductCard/ProductCard'
+import CardsContainerLoadingTemplate from "../UI/LoadingTemplate/CardsContainerLoadingTemplate";
 
 function Products() {
     const nav = useNavigate();
@@ -62,7 +63,7 @@ function Products() {
             <LoadingTemplateContainer>
                 <ButtonLoadingTemplate />
                 <HeadingMenuTemplate />
-                <ShotLoadingTemplate />
+                <CardsContainerLoadingTemplate />
             </LoadingTemplateContainer>
         );
     }
