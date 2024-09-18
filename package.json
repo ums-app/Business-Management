@@ -19,6 +19,7 @@
     "formik": "^2.4.5",
     "gh-pages": "^6.1.1",
     "i18next": "^23.7.7",
+    "jalaali-react-date-picker": "^1.0.18",
     "jspdf": "^2.5.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",

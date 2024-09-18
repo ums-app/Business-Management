@@ -84,7 +84,7 @@ function AddEmployee({ updateMode = false }) {
                 }
                 createUserWithEmailAndPassword(auth, values.email, values.password)
 
-                const employeeRes = await addDoc(employeesCollectionRef, values)
+                const employeeRes = await addDoc(employeesCollectionRef, { ...values, createdDate: new Date() })
                 const userDoc = await addDoc(usersCollectionRef, {
                     joinedDate: new Date(),
                     lastName: values.lastName,
