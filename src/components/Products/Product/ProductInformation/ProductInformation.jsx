@@ -58,8 +58,8 @@ function ProductInformation({ data }) {
                 {productImage ? <img
                     src={productImage}
                     alt={t('image') + " " + t('product')}
-                    width={300}
-                    height={350}
+                    width={340}
+                    height={300}
                 /> : <ShotLoadingTemplate style={{ height: '100%' }} />
                 }
             </div>

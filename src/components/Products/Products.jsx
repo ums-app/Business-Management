@@ -13,6 +13,7 @@ import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateConta
 import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
+import ProductCard from './ProductCard/ProductCard'
 
 function Products() {
     const nav = useNavigate();
@@ -76,8 +77,8 @@ function Products() {
 
             <h1 className='margin_10 title'>{t('products')}</h1>
 
-            <div className='table_container '>
-                <table className="full_width custom_table table_row_hover">
+            <div className='display_flex flex_flow_wrap justify_content_center '>
+                {/* <table className="full_width custom_table table_row_hover">
                     <thead >
                         <tr>
                             <th>{t('number')}</th>
@@ -117,7 +118,19 @@ function Products() {
 
 
                     </tbody>
-                </table>
+                </table> */}
+
+                {products.map(prd => {
+                    return <ProductCard
+                        image={imageUrls[prd?.id] || 'placeholder.jpg'}
+                        id={prd.id}
+                        name={prd.name}
+                        price={prd.price}
+                        inventory={prd.inventory}
+                        englishName={prd.englishName}
+
+                    />
+                })}
             </div>
 
 

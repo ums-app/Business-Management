@@ -4,7 +4,7 @@ import CustomerProductPurchases from './CustomerProductPurchases/CustomerProduct
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStateValue } from '../../../context/StateProvider';
 import usePersistentComponent from '../../../Hooks/usePersistentComponent';
-import { deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, query, where } from 'firebase/firestore';
 import { actionTypes } from '../../../context/reducer';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import CardLoadingTemplate from '../../UI/LoadingTemplate/CardLoadingTemplate';
@@ -19,6 +19,7 @@ import NotFound from '../../../pages/NotFound/NotFound';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
 import Collections from '../../../constants/Collections';
+import { deleteUser } from 'firebase/auth';
 
 
 // components for tabs
@@ -36,6 +37,7 @@ function Customer() {
     const { customerId } = useParams();
     const [, dispatch] = useStateValue()
     const navigate = useNavigate();
+    const usersCollectionRef = collection(db, Collections.Users);
 
     const [customer, setCustomer] = useState()
     const [displayComponent, setDisplayComponent] = usePersistentComponent(
@@ -84,8 +86,12 @@ function Customer() {
             type: actionTypes.HIDE_ASKING_MODAL,
         });
         const customerDoc = doc(db, Collections.Customers, customerId)
+        const q = query(usersCollectionRef, where("originalEntityId", "==", customerId))
+        const userDoc = doc(db, Collections.Users, customerId)
         try {
             await deleteDoc(customerDoc)
+            await deleteDoc(userDoc);
+
             navigate("/customers");
             toast.success('successfullyDeleted')
         } catch (err) {
