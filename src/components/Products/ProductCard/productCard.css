@@ -9,8 +9,7 @@
     box-sizing: border-box;
     padding: 30px;
     margin: 10px;
-    background-color: #f5f5f5;
-    box-shadow: 1px 1px 10px 2px #c9c9c9d5;
+    background-color: var(--light-dark);
     flex-shrink: 0;
     box-sizing: border-box;
     border-radius: 5px;

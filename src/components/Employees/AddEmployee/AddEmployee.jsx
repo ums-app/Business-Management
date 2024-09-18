@@ -15,6 +15,7 @@ import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateCo
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { createUserWithEmailAndPassword, updateEmail } from 'firebase/auth';
 import Collections from '../../../constants/Collections';
+import { checkIfEmailIsAlreadyExist } from '../../../Utils/FirebaseTools';
 
 
 function AddEmployee({ updateMode = false }) {
@@ -77,6 +78,10 @@ function AddEmployee({ updateMode = false }) {
                 toast.success(t('successfullyUpdated'))
             } else {
 
+                if (checkIfEmailIsAlreadyExist(values.email)) {
+                    toast.email(t('email') + " " + t('alreadyExist'))
+                    return
+                }
                 createUserWithEmailAndPassword(auth, values.email, values.password)
 
                 const employeeRes = await addDoc(employeesCollectionRef, values)

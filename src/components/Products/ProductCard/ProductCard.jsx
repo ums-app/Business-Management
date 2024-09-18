@@ -9,7 +9,7 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, discount,
     const navigate = useNavigate()
 
     return (
-        <section className="card entering-animation " onClick={() => navigate(id)} ref={customeRef}>
+        <section className="card entering-animation box_shadow" onClick={() => navigate(id)} ref={customeRef}>
             {discount > 0 ? <span className='discount-value'>{discount ? discount + "% " : ""}</span> : ""}
             <img src={image} alt={t('product') + " " + t('name')} />
             {/* <RateStar rate={rating} size={'small'} /> */}
