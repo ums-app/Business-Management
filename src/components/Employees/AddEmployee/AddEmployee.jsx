@@ -33,7 +33,8 @@ function AddEmployee({ updateMode = false }) {
         salesPercent: '',
         email: '',
         jobTitle: '',
-        password: ''
+        password: '',
+        joinedDate: new Date()
     })
 
     const [employee, setEmployee] = useState()
@@ -317,7 +318,9 @@ const EmployeeSchema = yup.object().shape({
         .matches(
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{5,}$/,
             t("invalidPassword"))
-        .required(`${t("password")} ${t("isRequireText")}`)
+        .required(`${t("password")} ${t("isRequireText")}`),
+    joinedDate: yup.string()
+        .required(`${t("joinedDate")} ${t("isRequireText")}`),
 });
 
 export default AddEmployee

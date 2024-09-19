@@ -69,7 +69,7 @@ function ProductInformation({ data }) {
                 {Object.keys(data).map(key => {
                     return <div
                         style={{ height: '80px', width: '200px' }}
-                        className='border_1px_solid margin_10 padding_10 border_radius_8 display_flex flex_direction_column align_items_center'>
+                        className='info_card border_1px_solid margin_10 padding_10 border_radius_8 display_flex flex_direction_column align_items_center'>
                         <span className='bold margin_bottom_10'>{t(key)}</span>
                         <span>{data[key]}</span>
                     </div>
