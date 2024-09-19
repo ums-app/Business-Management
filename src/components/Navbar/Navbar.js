@@ -26,7 +26,6 @@ const CustomeLinks = ({ to, children, ...props }) => {
 
 const Navbar = () => {
   const [{ authentication, navbarCollapse, }, dispatch] = useStateValue();
-  const [activeNav, setActiveNav] = useState(false);
   const navActiveHandler = () => {
     dispatch({
       type: actionTypes.COLLAPSE_NAVBAR,

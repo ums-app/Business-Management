@@ -53,7 +53,6 @@ export const initialState = {
   relations: [],
   globalLoading: false,
   navbarCollapse: false
-
 };
 
 export const actionTypes = {
