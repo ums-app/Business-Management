@@ -12,6 +12,8 @@ import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateConta
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import Collections from '../../constants/Collections'
 import { checkIfEmailIsAlreadyExist } from '../../Utils/FirebaseTools'
+import "./Customers.css"
+import CustomDatePicker from '../UI/DatePicker/CustomDatePicker'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -27,7 +29,8 @@ function AddCustomer({ updateMode = false }) {
         visitor: '',
         email: '',
         location: '',
-        password: ''
+        password: '',
+        joinedDate: new Date()
     });
     const [customer, setCustomer] = useState();
 
@@ -137,7 +140,6 @@ function AddCustomer({ updateMode = false }) {
                 >
                     <div
                         className="full_width"
-                        style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)" }}
                     >
                         <div className='display_flex flex_direction_column margin_5'>
                             <label htmlFor="name">{t('name')}</label>
@@ -192,6 +194,18 @@ function AddCustomer({ updateMode = false }) {
                             />
                             <ErrorMessage
                                 name="location"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                        <div className='display_flex flex_direction_column margin_5' style={{ direction: "rtl" }}>
+                            <label htmlFor="joinedDate">{t('joinedDate')}</label>
+                            <CustomDatePicker
+                                value={formData.joinedDate}
+
+                            />
+                            <ErrorMessage
+                                name="joinedDate"
                                 component="div"
                                 className="error_msg"
                             />

@@ -39,20 +39,20 @@ function PersonalInformation() {
 
 
     return (
-        <div className='personal_info display_flex flex_flow_wrap '>
-            <div className=' display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+        <div className='personal_info display_flex flex_flow_wrap justify_content_center '>
+            <div className='infor_card  display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('name')} </span>
                 <span>{employee.name}</span>
             </div>
-            <div className='display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+            <div className='infor_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('lastName')} </span>
                 <span>{employee.lastName}</span>
             </div>
-            <div className='display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+            <div className='infor_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('jobTitle')} </span>
                 <span>{employee.jobTitle}</span>
             </div>
-            <div className='display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+            <div className='infor_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('phoneNumber')} </span>
                 <span>{employee.phoneNumber}</span>
             </div>
@@ -60,11 +60,11 @@ function PersonalInformation() {
                 <span>{t('email')} </span>
                 <span>{employee.email}</span>
             </div>
-            <div className='display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+            <div className='infor_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('salary')} </span>
                 <span>{employee.salary}</span>
             </div>
-            <div className='display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+            <div className='infor_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('percent')} {t('sales')}</span>
                 <span>{employee.salesPercent}%</span>
             </div>

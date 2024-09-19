@@ -12,7 +12,7 @@ import { onAuthStateChanged } from "firebase/auth";
 
 function Layout() {
   const navigate = useNavigate()
-  const [{ smallLoading }, dispatch] = useStateValue();
+  const [{ smallLoading, navbarCollapse }, dispatch] = useStateValue();
   const [currentUser, setCurrentUser] = useState()
   // switch between light or dark mode
   const [isDark, setIsDark] = useState(
@@ -29,7 +29,8 @@ function Layout() {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    onAuthStateChanged(auth, (currentUser) => {
+      console.log(currentUser);
       if (currentUser) {
         // setUser(currentUser);  // User is logged in
         setCurrentUser(currentUser)
@@ -45,6 +46,13 @@ function Layout() {
 
   console.log(auth);
 
+  if (!currentUser) {
+    return <Circle />
+  }
+
+
+  console.log(currentUser);
+
 
   return (
     <Suspense fallback={<Circle />}>
@@ -53,7 +61,7 @@ function Layout() {
         <main className={`main`}>
           <div id="viewport">
             {currentUser &&
-              <div id="navbar_container">
+              <div id="navbar_container" className={navbarCollapse ? 'active_nav_right' : 'navbar_translate'}>
                 <Navbar />
               </div>
             }

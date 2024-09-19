@@ -25,9 +25,13 @@ const CustomeLinks = ({ to, children, ...props }) => {
 };
 
 const Navbar = () => {
-  const [{ authentication, notificationCount, navbar }, dispatch] = useStateValue();
+  const [{ authentication, navbarCollapse, }, dispatch] = useStateValue();
   const [activeNav, setActiveNav] = useState(false);
-  const navActiveHandler = () => setActiveNav(!activeNav);
+  const navActiveHandler = () => {
+    dispatch({
+      type: actionTypes.COLLAPSE_NAVBAR,
+    })
+  };
 
   const navigate = useNavigate();
 
@@ -54,19 +58,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className={`navbar ${activeNav && "active_nav_right"}`}>
-      <div className="toggle_header_navbar">
-        <div
-          className="toggle_header_icon display_flex align_items_center justify_content_center border_radius_50 position_absolute"
-          onClick={navActiveHandler}
-        >
-          {activeNav ? (
-            <i className={`${ICONS.list} text_color cursor_pointer`}></i>
-          ) : (
-            <i className={`${ICONS.cross} text_color cursor_pointer`}></i>
-          )}
-        </div>
-      </div>
+    <div className={`navbar ${navbarCollapse && " active_nav_right "} display_flex flex_direction_column justify_content_space_between`}>
 
       <div className="navbar_menu position_absolute">
         <ul className="navbar_content">
@@ -141,6 +133,21 @@ const Navbar = () => {
             </a>
           </li>
         </ul>
+      </div>
+
+
+      <div className="toggle_header_navbar position_relative display_flex justify_content_center ">
+        <div
+          className="toggle_header_icon display_flex align_items_center justify_content_center border_radius_50"
+          onClick={navActiveHandler}
+          style={{ backgroundColor: navbarCollapse ? 'var(--light-dark)' : 'red' }}
+        >
+          {navbarCollapse ? (
+            <i className={`${ICONS.list} text_color cursor_pointer`}></i>
+          ) : (
+            <i className={`${ICONS.cross} text_color cursor_pointer bold`} ></i>
+          )}
+        </div>
       </div>
     </div >
   );

@@ -4,13 +4,13 @@ import CardLoadingTemplate from './CardLoadingTemplate'
 
 function CardsContainerLoadingTemplate() {
     return (
-        <div className='text_align_center'>
-            <div className='display_flex justify_content_center'>
+        <div className='display_flex flex_direction_column'>
+            <div className='display_flex flex_flow_wrap justify_content_center'>
                 <CardLoadingTemplate />
                 <CardLoadingTemplate />
                 <CardLoadingTemplate />
             </div>
-            <div className='display_flex justify_content_center'>
+            <div className='display_flex flex_flow_wrap justify_content_center'>
                 <CardLoadingTemplate />
                 <CardLoadingTemplate />
                 <CardLoadingTemplate />

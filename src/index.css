@@ -684,6 +684,14 @@ img {
 /* End Button */
 
 
+.infor_card {
+  background-color: var(--light-dark);
+  box-shadow: 0 5px 10px #6c878733;
+  border: 1px solid var(--border-color);
+
+}
+
+
 th .btn i {
   margin: 0;
 }
@@ -691,7 +699,30 @@ th .btn i {
 /* End of Schedules */
 
 /* Input Field */
-.input {
+
+
+.rmdp-ep-arrow:after {
+  height: 14px;
+  width: 14px;
+}
+
+.rmdp-ep-arrow[direction=top]:after {
+  left: 50%;
+  top: 5px;
+}
+
+.ep-arrow {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.rmdp-input {
+  width: 100% !important;
+  height: 32px !important;
+}
+
+.input,
+.rmdp-input {
   font-size: 16px;
   padding: 6px 12px;
   font-weight: 400;

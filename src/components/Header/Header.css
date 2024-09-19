@@ -13,7 +13,6 @@
   height: 50px;
   width: 100%;
   background-color: var(--navbar-bg);
-  padding: 0 5px;
   left: 0;
   border-radius: 12px;
   box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.05);
@@ -60,7 +59,7 @@
   object-position: top;
 }
 
-.user_profile:hover + .account_menu {
+.user_profile:hover+.account_menu {
   top: 90%;
   opacity: 1;
   -webkit-user-select: auto;
@@ -105,4 +104,19 @@
   box-shadow: 1px 0 8px 0 rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
   z-index: -1;
+}
+
+
+/* toggle_header_navbar */
+.header_container .toggle_header_navbar {
+  z-index: 2000;
+  width: max-content;
+  height: 30px;
+
+}
+
+@media (min-width: 768px) {
+  .header_container .toggle_header_navbar {
+    display: none !important;
+  }
 }

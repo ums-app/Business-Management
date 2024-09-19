@@ -52,6 +52,8 @@ export const initialState = {
   confirmModal: { show: false, message: "", iconType: "" },
   relations: [],
   globalLoading: false,
+  navbarCollapse: false
+
 };
 
 export const actionTypes = {
@@ -66,10 +68,17 @@ export const actionTypes = {
   HIDE_RESTRICT_WARNING: "HIDE_RESTRICT_WARNING",
   SHOW_RESTRICT_WARNING: "SHOW_RESTRICT_WARNING",
   SET_SMALL_LOADING: "SET_SMALL_LOADING",
+  COLLAPSE_NAVBAR: 'COLLAPSE_NAVBAR'
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
+
+    case actionTypes.COLLAPSE_NAVBAR:
+      return {
+        ...state,
+        navbarCollapse: !state.navbarCollapse,
+      };
 
     case actionTypes.SET_AUTHENTICATION:
       return {

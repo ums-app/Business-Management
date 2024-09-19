@@ -73,7 +73,6 @@ function Product() {
     if (!product) {
         return (
             <LoadingTemplateContainer>
-                <CardLoadingTemplate />
                 <HeadingMenuTemplate />
                 <ShotLoadingTemplate />
             </LoadingTemplateContainer>

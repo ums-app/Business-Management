@@ -3,9 +3,9 @@
   overflow: auto;
   width: 210px;
   height: 100%;
-  padding: 10px;
-  padding-right: 20px;
-  padding-top: 40px;
+  /* padding: 10px;
+  padding-right: 20px; */
+  padding-top: 20px;
   top: 50px;
   right: 0;
   bottom: 0;
@@ -30,12 +30,13 @@
 .toggle_header_navbar {
   z-index: 2000;
   width: 100%;
-  height: 0;
+  height: 30px;
+
 }
 
 .toggle_header_navbar .toggle_header_icon {
   bottom: 20px;
-  right: 85px;
+  right: 50%;
   width: 35px;
   height: 35px;
   box-shadow: 0px 0px 3px 2px #a2a2a247;
@@ -51,7 +52,7 @@
 }
 
 .navbar_menu {
-  margin-top: 2rem;
+  margin-top: 5rem;
   top: 0;
   left: 0;
   width: 100%;
@@ -130,77 +131,55 @@
 }
 
 
-/* Actives */
-.active_nav_right .toggle_header_navbar .toggle_header_icon {
-  right: 35px;
-  width: 30px;
-  height: 30px;
-}
 
-.active_nav_right {
-  width: 100px;
-  transition: width 0.3s ease-in-out;
-}
-
-
-.active_nav_right .navbar_menu span {
-  display: none;
-}
-
-.active_nav_right a {
-  display: flex;
-  justify-content: center;
-}
 
 /* End of Actives */
 
-@media (max-width: 768px) {
-  .navbar {
-    width: 70px;
+@media (min-width: 768px) {
+
+  /* Actives */
+  .active_nav_right .toggle_header_navbar .toggle_header_icon {
+    right: 35px;
+    width: 30px;
+    height: 30px;
   }
 
-  .navbar_menu li a {
+  .active_nav_right {
+    width: 100px;
+    transition: width 0.3s ease-in-out;
+  }
+
+
+  .active_nav_right .navbar_menu span {
+    display: none;
+  }
+
+  .active_nav_right a {
     display: flex;
     justify-content: center;
   }
 
-  .navbar .toggle_header_navbar .toggle_header_icon {
-    right: 20px;
-    width: 30px;
-    height: 30px;
-  }
-
-  .navbar .navbar__item {
-    width: 50px;
-  }
-
-  .navbar {
-    width: 70px;
-    transition: width 0.3s ease-in-out;
-  }
-
-  .navbar .navbar_menu span {
-    display: none;
-  }
 
 
-  .active_nav_right .toggle_header_navbar .toggle_header_icon {
-    right: 20px;
-    width: 30px;
-    height: 30px;
-  }
 
-  .active_nav_right .navbar__item {
-    width: 160px;
+}
+
+@media (max-width: 768px) {
+
+  #navbar_container {
+    position: absolute;
+    z-index: 1000;
   }
 
   .active_nav_right {
-    width: 200px;
-    transition: width 0.3s ease-in-out;
+    transform: translateX(300px);
   }
 
-  .active_nav_right .navbar_menu span {
-    display: inline;
-  }
+  /* .navbar_translate{
+    transform: translateX(300px);
+  } */
+
+
+
 
 }
