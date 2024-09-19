@@ -10,12 +10,15 @@ import { toast } from 'react-toastify';
 import Button from '../../UI/Button/Button';
 import "./AddEmployee.css"
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
-import { auth, db } from '../../../constants/FirebaseConfig';
+import { auth, db, storage } from '../../../constants/FirebaseConfig';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { createUserWithEmailAndPassword, updateEmail } from 'firebase/auth';
 import Collections from '../../../constants/Collections';
-import { checkIfEmailIsAlreadyExist } from '../../../Utils/FirebaseTools';
+import { checkIfEmailIsAlreadyExist, getUserImage } from '../../../Utils/FirebaseTools';
+import Folders from '../../../constants/Folders';
+import { ref, uploadBytes } from 'firebase/storage';
+import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 
 
 function AddEmployee({ updateMode = false }) {
@@ -24,6 +27,9 @@ function AddEmployee({ updateMode = false }) {
     const employeesCollectionRef = collection(db, Collections.Employees);
     const usersCollectionRef = collection(db, Collections.Users);
     const [loading, setloading] = useState(false)
+    const [fileURL, setfileURL] = useState('');
+    const [fileValue, setFileValue] = useState()
+
 
     const [formData, setformData] = useState({
         name: '',
@@ -36,11 +42,8 @@ function AddEmployee({ updateMode = false }) {
         password: '',
         joinedDate: new Date()
     })
-
     const [employee, setEmployee] = useState()
-
     const [error, seterror] = useState()
-    const [profileImage, setprofileImage] = useState();
 
     useEffect(() => {
         console.log('useeffect');
@@ -50,6 +53,9 @@ function AddEmployee({ updateMode = false }) {
                     const data = await getDoc(doc(db, Collections.Employees, employeeId));
                     console.log('data is exist and set');
                     if (data.exists()) {
+                        const url = await getUserImage(data.data().email);
+                        console.log(url);
+                        setfileURL(url)
                         setformData({ ...data.data() })
                         setEmployee({ ...data.data() })
                     }
@@ -72,21 +78,22 @@ function AddEmployee({ updateMode = false }) {
         console.log('send method called');
         setloading(true)
         try {
-
             if (updateMode) {
                 const employeeDoc = doc(db, Collections.Employees, employeeId)
                 await updateDoc(employeeDoc, values)
+                uploadImage(employee.email)
                 toast.success(t('successfullyUpdated'))
+                nav('/employees/' + employeeId)
             } else {
-                console.log('checking if email is already exists');
-                if (checkIfEmailIsAlreadyExist(values.email)) {
-                    toast.error(t('email') + " " + t('alreadyExist'))
-                    return
+                const emailExists = await checkIfEmailIsAlreadyExist(values.email);
+                if (emailExists) {
+                    toast.error(t('email') + " " + t('alreadyExist'));
+                    return;
                 }
                 createUserWithEmailAndPassword(auth, values.email, values.password)
-
-                const employeeRes = await addDoc(employeesCollectionRef, { ...values, createdDate: new Date() })
-                const userDoc = await addDoc(usersCollectionRef, {
+                const employeeRes = await addDoc(employeesCollectionRef, { ...values, createdDate: new Date(), })
+                uploadImage(values.email)
+                await addDoc(usersCollectionRef, {
                     joinedDate: new Date(),
                     lastName: values.lastName,
                     name: values.name,
@@ -97,10 +104,10 @@ function AddEmployee({ updateMode = false }) {
                     roles: [],
                     userType: 'Employee'
                 })
-
+                nav('/employees')
                 toast.success(t('successfullyAdded'))
             }
-            nav(-1)
+
         } catch (err) {
             toast.error(err)
 
@@ -109,6 +116,17 @@ function AddEmployee({ updateMode = false }) {
             setSubmitting(false);
         }
         // navigate to the employees page
+    }
+
+    const uploadImage = async (email) => {
+        if (!fileValue) return
+
+        try {
+            const folderRef = ref(storage, Folders.UserImages(email));
+            await uploadBytes(folderRef, fileValue)
+        } catch (err) {
+            console.error(err);
+        }
     }
 
 
@@ -132,28 +150,30 @@ function AddEmployee({ updateMode = false }) {
                 <h1 className='title'>{updateMode ? t('update') : t('add')} {t('employee')}</h1>
                 <Form className="add_form display_flex flex_direction_column">
                     {/* Here you can select Profile Student img */}
-                    {/* <div className="add_img_profile">
-                            <img
-                                src={
-                                    profileImage?.isOk
-                                        ? profileImage.url
-                                        : avatar
-                                }
-                                className="input_profile_img"
-                                alt="user_image"
-                                crossOrigin="anonymous"
-                            />
-                            <span className="upload_icon display_flex align_items_center justify_content_center cursor_pointer">
-                                <i className={ICONS.camera}></i>
-                            </span>
-                            <input
-                                type={"file"}
-                                accept="image/*"
-                                id="input"
-                                name="profileImage"
-                            />
-                        </div>
-                        <ErrorMessage name="image" component="div" className="error_msg" /> */}
+                    <div className="add_img_profile">
+                        <img
+                            src={
+                                fileURL ? fileURL : avatar
+                            }
+                            className="input_profile_img"
+                            alt="user_image"
+                        />
+                        <span className="upload_icon display_flex align_items_center justify_content_center cursor_pointer">
+                            <i className={ICONS.camera}></i>
+                        </span>
+                        <input
+                            type={"file"}
+                            accept="image/*"
+                            id="input"
+                            name="profileImage"
+                            onChange={(e) => {
+                                const file = e.currentTarget.files[0];
+                                setFileValue(file);
+                                setfileURL(URL.createObjectURL(e.target.files[0]));
+                            }}
+                        />
+                    </div>
+                    <ErrorMessage name="image" component="div" className="error_msg" />
 
                     <div className="form_inputs margin_top_20  " >
                         <div className='display_flex flex_direction_column margin_5'>
@@ -224,6 +244,17 @@ function AddEmployee({ updateMode = false }) {
                             />
                             <ErrorMessage
                                 name="email"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                        <div className='display_flex flex_direction_column margin_5' style={{ direction: "rtl" }}>
+                            <label htmlFor="joinedDate">{t('joinedDate')}</label>
+                            <CustomDatePicker
+                                value={formData.joinedDate}
+                            />
+                            <ErrorMessage
+                                name="joinedDate"
                                 component="div"
                                 className="error_msg"
                             />

@@ -10,12 +10,12 @@ import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate
 import { toast } from 'react-toastify';
 import Collections from '../../../../constants/Collections';
 
-function EmployeeCustomers({ data }) {
+function EmployeeCustomers() {
     const nav = useNavigate()
     const { employeeId } = useParams();
     const [customers, setCustomers] = useState();
     const customersCollectionRef = collection(db, Collections.Customers);
-    console.log(data);
+
 
     useEffect(() => {
         getAllEmployeeCustomers();
@@ -69,6 +69,7 @@ function EmployeeCustomers({ data }) {
                             onClick={() =>
                                 nav('/customers/' + cus.id)
                             }
+                            key={cus.id}
                         >
                             <td>{index + 1}</td>
                             <td>{cus.name}</td>

@@ -18,6 +18,8 @@ import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import CardLoadingTemplate from '../../UI/LoadingTemplate/CardLoadingTemplate';
 import { toast } from 'react-toastify';
+import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
+import { getUserImage } from '../../../Utils/FirebaseTools';
 
 
 // components for tabs
@@ -41,6 +43,7 @@ function Employee() {
         components,
         "PersonalInformation"
     );
+    const [imageURL, setImageURL] = useState();
 
     const [notFound, setnotFound] = useState()
 
@@ -49,7 +52,9 @@ function Employee() {
             try {
                 const data = await getDoc(doc(db, 'Employees', employeeId));
                 if (data.exists()) {
-                    setemployee({ employee: data.data() })
+                    const url = await getUserImage(data.data().email)
+                    setImageURL(url)
+                    setemployee(data.data())
                 }
             } catch (err) {
                 console.log(err);
@@ -142,16 +147,12 @@ function Employee() {
                 </Menu>
 
                 {/* User Profile Image */}
-                <div className="user_profile_img display_flex align_items_center flex_direction_column">
-                    {/* <img
-                        src={employee?.imageUrl}
-                        alt="user img"
-                        crossOrigin="anonymous"
-                    /> */}
+                <div className=" display_flex align_items_center" >
                     <h1>
-                        {employee?.employee?.name}{" "}
-                        {employee?.employee?.lastName}
+                        {employee?.name}{" "}
+                        {employee?.lastName}
                     </h1>
+                    <DisplayLogo imgURL={imageURL} />
                 </div>
             </section>
 

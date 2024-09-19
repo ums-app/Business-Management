@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Modal from '../UI/modal/Modal'
 import { t } from 'i18next'
 import Button from '../UI/Button/Button'
 import { toast } from 'react-toastify'
-import AddEmployee from './AddEmployee/AddEmployee'
 import { db } from '../../constants/FirebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +9,7 @@ import LoadingTemplateContainer from "../UI/LoadingTemplate/LoadingTemplateConta
 import HeadingMenuTemplate from "../UI/LoadingTemplate/HeadingMenuTemplate"
 import ShotLoadingTemplate from "../UI/LoadingTemplate/ShotLoadingTemplate"
 import ButtonLoadingTemplate from "../UI/LoadingTemplate/ButtonLoadingTemplate"
+import { getUserImage } from '../../Utils/FirebaseTools'
 
 
 
@@ -19,6 +18,8 @@ function Employees() {
 
     const [employees, setEmployees] = useState();
     const employeesCollectionRef = collection(db, 'Employees');
+    const [imageUrls, setImageUrls] = useState();
+
 
     useEffect(() => {
 
@@ -34,7 +35,51 @@ function Employees() {
     }, []);
 
 
-    if (!employees) {
+    useEffect(() => {
+        const fetchImages = async () => {
+            const newImageUrls = {};
+            await Promise.all(
+                employees.map(async (item) => {
+                    try {
+                        const url = await getUserImage(item.email);
+                        console.log(url);
+                        newImageUrls[item.email] = url; // Store image URL by email
+                    } catch (err) {
+                        newImageUrls[item.email] = 'default';
+                        console.log(`Error fetching image for ${item.email}:`, err);
+                    }
+                })
+            );
+            setImageUrls(newImageUrls); // Update state with all image URLs
+            console.log(newImageUrls);
+        };
+
+        if (employees) {
+            fetchImages();
+        }
+    }, [employees]);
+
+
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            const newImageUrls = {};
+            await Promise.all(
+                employees.map(async (item) => {
+                    const url = await getUserImage(item.email);
+                    newImageUrls[item.email] = url; // Store image URL by product ID
+                })
+            );
+            setImageUrls(newImageUrls); // Update state with all image URLs
+        };
+
+        if (employees) {
+            fetchImages();
+        }
+    }, [employees]);
+
+
+    if (!employees || !imageUrls) {
         return (
             <LoadingTemplateContainer>
                 <ButtonLoadingTemplate />
@@ -75,6 +120,7 @@ function Employees() {
                     <thead >
                         <tr>
                             <th>{t('number')}</th>
+                            <th>{t('image')}</th>
                             <th>{t('name')}</th>
                             <th>{t('lastName')}</th>
                             <th>{t('jobTitle')}</th>
@@ -91,6 +137,7 @@ function Employees() {
                                 key={emp.id}
                             >
                                 <td>{index + 1}</td>
+                                <td><img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' /></td>
                                 <td>{emp.name}</td>
                                 <td>{emp.lastName}</td>
                                 <td>{emp.jobTitle} </td>

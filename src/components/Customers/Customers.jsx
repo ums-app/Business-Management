@@ -10,6 +10,7 @@ import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import Collections from '../../constants/Collections'
+import { getUserImage } from '../../Utils/FirebaseTools'
 
 
 function Customers() {
@@ -19,12 +20,38 @@ function Customers() {
 
     const [customers, setCustomers] = useState();
     const [employees, setEmployees] = useState()
+    const [imageUrls, setImageUrls] = useState()
 
     useEffect(() => {
         getCustomers();
         getEmployees();
 
     }, []);
+
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            const newImageUrls = {};
+            await Promise.all(
+                customers.map(async (item) => {
+                    try {
+                        const url = await getUserImage(item.email);
+                        console.log(url);
+                        newImageUrls[item.email] = url; // Store image URL by email
+                    } catch (err) {
+                        newImageUrls[item.email] = 'default';
+                        console.log(`Error fetching image for ${item.email}:`, err);
+                    }
+                })
+            );
+            setImageUrls(newImageUrls); // Update state with all image URLs
+            console.log(newImageUrls);
+        };
+
+        if (customers) {
+            fetchImages();
+        }
+    }, [customers]);
 
 
 
@@ -47,7 +74,7 @@ function Customers() {
     };
 
 
-    if (!customers || !employees) {
+    if (!customers || !employees || !imageUrls) {
         return (
             <LoadingTemplateContainer>
                 <ButtonLoadingTemplate />
@@ -77,6 +104,7 @@ function Customers() {
                     <thead >
                         <tr>
                             <th>{t('number')}</th>
+                            <th>{t('image')}</th>
                             <th>{t('name')}</th>
                             <th>{t('lastName')}</th>
                             <th>{t('name')} {t('organization')}</th>
@@ -96,6 +124,7 @@ function Customers() {
                                 key={emp.id}
                             >
                                 <td>{index + 1}</td>
+                                <td><img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' /></td>
                                 <td>{emp.name}</td>
                                 <td>{emp.lastName}</td>
                                 <td>{emp.organizationName} </td>

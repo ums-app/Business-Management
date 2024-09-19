@@ -19,7 +19,8 @@ import NotFound from '../../../pages/NotFound/NotFound';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
 import Collections from '../../../constants/Collections';
-import { deleteUser } from 'firebase/auth';
+import { getUserImage } from '../../../Utils/FirebaseTools';
+import DisplayLogo from "../../UI/DisplayLogo/DisplayLogo"
 
 
 // components for tabs
@@ -38,6 +39,7 @@ function Customer() {
     const [, dispatch] = useStateValue()
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, Collections.Users);
+    const [imageURL, setimageURL] = useState();
 
     const [customer, setCustomer] = useState()
     const [displayComponent, setDisplayComponent] = usePersistentComponent(
@@ -52,6 +54,8 @@ function Customer() {
             try {
                 const data = await getDoc(doc(db, Collections.Customers, customerId));
                 if (data.exists()) {
+                    const url = await getUserImage(data.data().email)
+                    setimageURL(url)
                     setCustomer(data.data())
                 }
             } catch (err) {
@@ -149,17 +153,17 @@ function Customer() {
                 </Menu>
 
                 {/* User Profile Image */}
-                <div className="user_profile_img display_flex align_items_center flex_direction_column">
-                    {/* <img
-                        src={employee?.imageUrl}
-                        alt="user img"
-                        crossOrigin="anonymous"
-                    /> */}
+                <div className=" display_flex align_items_center" >
                     <h1>
                         {customer?.name}{" "}
                         {customer?.lastName}
                     </h1>
+                    <DisplayLogo imgURL={imageURL} />
                 </div>
+
+
+
+
             </section>
 
 

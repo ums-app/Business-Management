@@ -292,7 +292,7 @@ const fa = {
         accountSettings: "تنظیمات حساب کاربری",
         systemSettings: "تنطیمات سیستم",
         section: "بخش",
-        createdDate: "تاریخ ثبت",
+        createdDate: " تاریخ درج سیستم",
         extra: "اضافی",
         incompleteMessage: "هنوز تکمیل نشده است!",
         dayOfWeek: "روز های هفته",

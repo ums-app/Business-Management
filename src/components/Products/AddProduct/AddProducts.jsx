@@ -62,6 +62,7 @@ function AddProduct({ updateMode = false }) {
             if (updateMode) {
                 const productDoc = doc(db, Collections.Products, productId)
                 await updateDoc(productDoc, values)
+                uploadProductImage(productId)
                 toast.success(t('successfullyUpdated'))
             } else {
                 const productRes = await addDoc(productCollectionRef, values)

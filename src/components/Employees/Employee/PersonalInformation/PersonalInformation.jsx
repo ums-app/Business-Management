@@ -7,6 +7,7 @@ import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { gregorianToJalali } from 'shamsi-date-converter';
 
 function PersonalInformation() {
     const { employeeId } = useParams();
@@ -59,6 +60,14 @@ function PersonalInformation() {
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('email')} </span>
                 <span>{employee.email}</span>
+            </div>
+            <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                <span>{t('createdDate')} </span>
+                <span>{employee?.createdDate && gregorianToJalali(employee?.createdDate?.toDate()).join('/')}</span>
+            </div>
+            <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                <span>{t('joinedDate')} </span>
+                <span>{employee?.joinedDate && gregorianToJalali(employee?.joinedDate?.toDate()).join('/')}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('salary')} </span>

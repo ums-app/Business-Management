@@ -7,6 +7,7 @@ import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { gregorianToJalali } from 'shamsi-date-converter';
 
 function PersonalInformation() {
     const { customerId } = useParams();
@@ -74,8 +75,16 @@ function PersonalInformation() {
                 <span>{customer.email}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                <span>{t('createdDate')} </span>
+                <span>{customer?.createdDate && gregorianToJalali(customer?.createdDate?.toDate()).join('/')}</span>
+            </div>
+            <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                <span>{t('joinedDate')} </span>
+                <span>{customer?.joinedDate && gregorianToJalali(customer?.joinedDate?.toDate()).join('/')}</span>
+            </div>
+            <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('visitor')}</span>
-                <span>{visitor?.name} {visitor?.lastName}</span>
+                <span>{visitor ? `${visitor?.name} ${visitor?.lastName}` : t('null')}</span>
             </div>
         </div>
     )

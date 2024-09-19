@@ -303,6 +303,14 @@ button:active,
   font-size: 18px;
 }
 
+/* user profile image */
+
+.user_profile_img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
 .user_profile_img {
   object-fit: cover;
   object-position: top;
@@ -780,7 +788,10 @@ th .btn i {
 .toolTip_style {
   padding: 7px 10px !important;
   font-size: 13px !important;
+  z-index: 1000;
 }
+
+
 
 .user_profile_tooltip div {
   display: flex;

@@ -5,8 +5,9 @@ import { useStateValue } from "../../context/StateProvider";
 import ICONS from "../../constants/Icons";
 import { t } from "i18next";
 import { actionTypes } from "../../context/reducer";
+import { Tooltip } from "react-tooltip";
 
-const CustomeLinks = ({ to, children, ...props }) => {
+const CustomeLinks = ({ to, id, children, ...props }) => {
   const resolvedPath = useResolvedPath(to);
   let isActive = useMatch({ path: resolvedPath.pathname, end: false });
 
@@ -16,7 +17,7 @@ const CustomeLinks = ({ to, children, ...props }) => {
   }
 
   return (
-    <li className={"link" + (isActive ? " active " : "")}>
+    <li className={"link" + (isActive ? " active " : "")} id={id}>
       <Link to={to} {...props}>
         {children}
       </Link>
@@ -61,59 +62,141 @@ const Navbar = () => {
 
       <div className="navbar_menu position_absolute">
         <ul className="navbar_content">
-          <CustomeLinks to="/" title={t("home")}>
+          <CustomeLinks to="/" title={t("home")} id={'home_link'} >
             <i className={ICONS.door}></i>
             <span>{t("home")}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#home_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("home")}
+          </Tooltip>
 
-          <CustomeLinks to="/dashboard" title={t("dashboard")}>
+          <CustomeLinks to="/dashboard" title={t("dashboard")} id={'dashboard_link'}>
             <i className={ICONS.dashboard}></i>
             <span>{t("dashboard")}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#dashboard_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("dashboard")}
+          </Tooltip>
 
-          <CustomeLinks to="/sales" title={t("sales")}>
+          <CustomeLinks to="/sales" title={t("sales")} id={'sales_link'}>
             <i className={ICONS.card3}></i>
             <span>{t("sales")}</span>
           </CustomeLinks>
 
-          <CustomeLinks to="/buying-products" title={t('purchases')}>
+          <Tooltip
+            anchorSelect="#sales_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("sales")}
+          </Tooltip>
+
+
+          <CustomeLinks to="/buying-products" title={t('purchases')} id={'purchases_link'}>
             <i className={ICONS.hangBag}></i>
             <span>{t('purchases')}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#purchases_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("purchases")}
+          </Tooltip>
 
-          <CustomeLinks to="/consumptions" title={t("consumptions")}>
+
+          <CustomeLinks to="/consumptions" title={t("consumptions")} id={'consumptions_link'}>
             <i className={ICONS.consumptions}></i>
             <span>{t('consumptions')}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#consumptions_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("consumptions")}
+          </Tooltip>
 
-          <CustomeLinks to="/depot" title={t("depot")}>
+          <CustomeLinks to="/depot" title={t("depot")} id={'depot_link'}>
             <i className={ICONS.building}></i>
             <span>{t("depot")}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#depot_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("depot")}
+          </Tooltip>
 
-          <CustomeLinks to="/reports" title={t("reports")}>
+          <CustomeLinks to="/reports" title={t("reports")} id={'reports_link'}>
             <i className={ICONS.reports}></i>
             <span>{t('reports')}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#reports_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("reports")}
+          </Tooltip>
 
-          <CustomeLinks to="/products" title={t("products")}>
+          <CustomeLinks to="/products" title={t("products")} id={'products_link'}>
             <i className={ICONS.stack}></i>
             <span>{t("products")}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#products_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("products")}
+          </Tooltip>
 
-          <CustomeLinks to="/employees" title={t("employees")}>
+
+          <CustomeLinks to="/employees" title={t("employees")} id={'employees_link'}>
             <i className={ICONS.peopleFill}></i>
             <span>{t("employees")}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#employees_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("employees")}
+          </Tooltip>
 
-          <CustomeLinks to="/customers" title={t("customers")}>
+          <CustomeLinks to="/customers" title={t("customers")} id={'customers_link'}>
             <i className={ICONS.personVideo}></i>
             <span>{t("customers")}</span>
           </CustomeLinks>
-          <CustomeLinks to="/settings" title={t("settings")}>
+          <Tooltip
+            anchorSelect="#customers_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("customers")}
+          </Tooltip>
+
+          <CustomeLinks to="/settings" title={t("settings")} id={'settings_link'}>
             <i className={ICONS.gear}></i>
             <span>{t("settings")}</span>
           </CustomeLinks>
+          <Tooltip
+            anchorSelect="#settings_link"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("settings")}
+          </Tooltip>
 
           {/* <CustomeLinks
             className="position_relative"

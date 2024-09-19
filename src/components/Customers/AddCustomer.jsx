@@ -6,20 +6,27 @@ import { t } from 'i18next'
 import * as yup from "yup";
 import { toast } from 'react-toastify'
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
-import { auth, db } from '../../constants/FirebaseConfig'
+import { auth, db, storage } from '../../constants/FirebaseConfig'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import Collections from '../../constants/Collections'
-import { checkIfEmailIsAlreadyExist } from '../../Utils/FirebaseTools'
+import { checkIfEmailIsAlreadyExist, getUserImage } from '../../Utils/FirebaseTools'
 import "./Customers.css"
 import CustomDatePicker from '../UI/DatePicker/CustomDatePicker'
+import { ref, uploadBytes } from 'firebase/storage'
+import Folders from '../../constants/Folders'
+import ICONS from '../../constants/Icons'
+import avatar from "../../assets/img/profile_avatar.png"
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
     const [employees, setEmployees] = useState([]);
     const { customerId } = useParams();
     const usersCollectionRef = collection(db, Collections.Users);
+    const [fileURL, setfileURL] = useState('');
+    const [fileValue, setFileValue] = useState()
+
 
     const [formData, setformData] = useState({
         name: '',
@@ -45,6 +52,9 @@ function AddCustomer({ updateMode = false }) {
                 try {
                     const data = await getDoc(doc(db, Collections.Customers, customerId));
                     if (data.exists()) {
+                        const url = await getUserImage(data.data().email);
+                        console.log(url);
+                        setfileURL(url)
                         setformData({ ...data.data() })
                         setCustomer({ ...data.data() })
                     }
@@ -52,6 +62,7 @@ function AddCustomer({ updateMode = false }) {
                     console.log(err);
                 }
             }
+
             getData();
         }
 
@@ -80,20 +91,25 @@ function AddCustomer({ updateMode = false }) {
             if (updateMode) {
                 const customerDoc = doc(db, Collections.Customers, customerId)
                 await updateDoc(customerDoc, values);
+                uploadImage(customer.email)
                 toast.success(t('successfullyUpdated'))
+                nav('/customers/' + customerId)
             } else {
-                if (checkIfEmailIsAlreadyExist(values.email)) {
-                    toast.error(t('email') + " " + t('alreadyExist'))
-                    return
+
+                const emailExists = await checkIfEmailIsAlreadyExist(values.email);
+                if (emailExists) {
+                    toast.error(t('email') + " " + t('alreadyExist'));
+                    return;
                 }
 
                 createUserWithEmailAndPassword(auth, values.email, values.password)
-                const employeeRes = await addDoc(cusomtersCollectionRef, values)
+                const customerRes = await addDoc(cusomtersCollectionRef, { ...values, createdDate: new Date(), })
+                uploadImage(values.email)
                 await addDoc(usersCollectionRef, {
                     joinedDate: new Date(),
                     lastName: values.lastName,
                     name: values.name,
-                    originalEntityId: employeeRes.id,
+                    originalEntityId: customerRes.id,
                     password: values.password,
                     phoneNumber: values.phoneNumber,
                     email: values.email,
@@ -102,8 +118,9 @@ function AddCustomer({ updateMode = false }) {
                 })
 
                 toast.success(t('successfullyAdded'))
+                nav('/customers')
             }
-            nav(-1)
+
         } catch (err) {
             toast.error(err)
 
@@ -113,6 +130,20 @@ function AddCustomer({ updateMode = false }) {
         }
         // navigate to the employees page
     }
+
+
+    const uploadImage = async (email) => {
+        if (!fileValue) return
+
+        try {
+            const folderRef = ref(storage, Folders.UserImages(email));
+            await uploadBytes(folderRef, fileValue)
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    console.log(formData);
 
     if (updateMode && formData.name.length == 0) {
         return <LoadingTemplateContainer>
@@ -138,6 +169,30 @@ function AddCustomer({ updateMode = false }) {
                     className="add_form display_flex flex_direction_column"
                     style={{ gap: "3px" }}
                 >
+                    <div className="add_img_profile">
+                        <img
+                            src={
+                                fileURL ? fileURL : avatar
+                            }
+                            className="input_profile_img"
+                            alt="user_image"
+                        />
+                        <span className="upload_icon display_flex align_items_center justify_content_center cursor_pointer">
+                            <i className={ICONS.camera}></i>
+                        </span>
+                        <input
+                            type={"file"}
+                            accept="image/*"
+                            id="input"
+                            name="profileImage"
+                            onChange={(e) => {
+                                const file = e.currentTarget.files[0];
+                                setFileValue(file);
+                                setfileURL(URL.createObjectURL(e.target.files[0]));
+                            }}
+                        />
+                    </div>
+                    <ErrorMessage name="image" component="div" className="error_msg" />
                     <div
                         className="full_width"
                     >
@@ -202,7 +257,6 @@ function AddCustomer({ updateMode = false }) {
                             <label htmlFor="joinedDate">{t('joinedDate')}</label>
                             <CustomDatePicker
                                 value={formData.joinedDate}
-
                             />
                             <ErrorMessage
                                 name="joinedDate"
