@@ -8,6 +8,7 @@ import "./LangBox.css";
 import ICONS from "../../constants/Icons";
 import { useStateValue } from "../../context/StateProvider";
 import { actionTypes } from "../../context/reducer";
+import { useOnClickOutside } from "usehooks-ts";
 
 function LangBox() {
     const [showLangBox, setShowLangBox] = useState(false);
@@ -23,6 +24,10 @@ function LangBox() {
         console.log(document.documentElement.dir)
         console.log(locale)
     }, [locale]);
+
+    useOnClickOutside(langBoxRef, () => {
+        setShowLangBox(false)
+    })
 
     return (
         <div className={'lang'} ref={langBoxRef}>

@@ -62,7 +62,7 @@ const Navbar = () => {
 
       <div className="navbar_menu position_absolute">
         <ul className="navbar_content">
-          <CustomeLinks to="/" title={t("home")} id={'home_link'} >
+          <CustomeLinks to="/" id={'home_link'} >
             <i className={ICONS.door}></i>
             <span>{t("home")}</span>
           </CustomeLinks>
@@ -74,7 +74,7 @@ const Navbar = () => {
             {t("home")}
           </Tooltip>
 
-          <CustomeLinks to="/dashboard" title={t("dashboard")} id={'dashboard_link'}>
+          <CustomeLinks to="/dashboard" id={'dashboard_link'}>
             <i className={ICONS.dashboard}></i>
             <span>{t("dashboard")}</span>
           </CustomeLinks>
@@ -86,7 +86,7 @@ const Navbar = () => {
             {t("dashboard")}
           </Tooltip>
 
-          <CustomeLinks to="/sales" title={t("sales")} id={'sales_link'}>
+          <CustomeLinks to="/sales" id={'sales_link'}>
             <i className={ICONS.card3}></i>
             <span>{t("sales")}</span>
           </CustomeLinks>
@@ -100,7 +100,7 @@ const Navbar = () => {
           </Tooltip>
 
 
-          <CustomeLinks to="/buying-products" title={t('purchases')} id={'purchases_link'}>
+          <CustomeLinks to="/buying-products" id={'purchases_link'}>
             <i className={ICONS.hangBag}></i>
             <span>{t('purchases')}</span>
           </CustomeLinks>
@@ -113,7 +113,7 @@ const Navbar = () => {
           </Tooltip>
 
 
-          <CustomeLinks to="/consumptions" title={t("consumptions")} id={'consumptions_link'}>
+          <CustomeLinks to="/consumptions" id={'consumptions_link'}>
             <i className={ICONS.consumptions}></i>
             <span>{t('consumptions')}</span>
           </CustomeLinks>
@@ -125,7 +125,7 @@ const Navbar = () => {
             {t("consumptions")}
           </Tooltip>
 
-          <CustomeLinks to="/depot" title={t("depot")} id={'depot_link'}>
+          <CustomeLinks to="/depot" id={'depot_link'}>
             <i className={ICONS.building}></i>
             <span>{t("depot")}</span>
           </CustomeLinks>
@@ -137,7 +137,7 @@ const Navbar = () => {
             {t("depot")}
           </Tooltip>
 
-          <CustomeLinks to="/reports" title={t("reports")} id={'reports_link'}>
+          <CustomeLinks to="/reports" id={'reports_link'}>
             <i className={ICONS.reports}></i>
             <span>{t('reports')}</span>
           </CustomeLinks>
@@ -149,7 +149,7 @@ const Navbar = () => {
             {t("reports")}
           </Tooltip>
 
-          <CustomeLinks to="/products" title={t("products")} id={'products_link'}>
+          <CustomeLinks to="/products" id={'products_link'}>
             <i className={ICONS.stack}></i>
             <span>{t("products")}</span>
           </CustomeLinks>
@@ -162,7 +162,7 @@ const Navbar = () => {
           </Tooltip>
 
 
-          <CustomeLinks to="/employees" title={t("employees")} id={'employees_link'}>
+          <CustomeLinks to="/employees" id={'employees_link'}>
             <i className={ICONS.peopleFill}></i>
             <span>{t("employees")}</span>
           </CustomeLinks>
@@ -174,7 +174,7 @@ const Navbar = () => {
             {t("employees")}
           </Tooltip>
 
-          <CustomeLinks to="/customers" title={t("customers")} id={'customers_link'}>
+          <CustomeLinks to="/customers" id={'customers_link'}>
             <i className={ICONS.personVideo}></i>
             <span>{t("customers")}</span>
           </CustomeLinks>
@@ -186,7 +186,7 @@ const Navbar = () => {
             {t("customers")}
           </Tooltip>
 
-          <CustomeLinks to="/settings" title={t("settings")} id={'settings_link'}>
+          <CustomeLinks to="/settings" id={'settings_link'}>
             <i className={ICONS.gear}></i>
             <span>{t("settings")}</span>
           </CustomeLinks>
@@ -208,12 +208,20 @@ const Navbar = () => {
           </CustomeLinks> */}
 
 
-          <li className="link" onClick={logoutModal} title={t("logout")}>
+          <li className="link" onClick={logoutModal} id={"logout"}>
             <a>
               <i className={ICONS.logout2}></i>
               <span>{t("logout")}</span>
             </a>
           </li>
+
+          <Tooltip
+            anchorSelect="#logout"
+            place="left"
+            className="toolTip_style"
+          >
+            {t("logout")}
+          </Tooltip>
         </ul>
       </div>
 

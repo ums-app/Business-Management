@@ -1,7 +1,7 @@
 import React from "react";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
 import "./BreadDrumbs.css";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ICONS from "../../../constants/Icons";
 import Button from "../Button/Button";
 import { t } from "i18next";

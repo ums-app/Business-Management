@@ -43,15 +43,9 @@ function Layout() {
 
   }, [auth])
 
-
-  console.log(auth);
-
   if (!currentUser) {
     return <Circle />
   }
-
-
-  console.log(currentUser);
 
 
   return (
@@ -69,7 +63,7 @@ function Layout() {
               <Wrapper>
                 {currentUser && <Header isDark={isDark} darkModeHandler={darkModeHandler} />}
                 <BreadCrumbs />
-                <section className="margin_top_20">
+                <section className="margin_top_20 padding_bottom_10">
                   <Outlet />
                 </section>
                 {smallLoading && <Circle />}

@@ -31,6 +31,7 @@ const en = {
         email: "Email",
         open: "Open",
         next: "Next",
+        prev: 'Previous',
         back: "Back",
         finish: "Finish",
         confirmAndSend: "Confirm and send",
@@ -304,7 +305,13 @@ const en = {
         inventory: "Inventory",
         manufacturer: "Manufacturer",
         image: "Image",
-        analysis: "Data Analysis"
+        analysis: "Data Analysis",
+        of: 'Of',
+        factor: 'Factor',
+        size: "Size",
+        people: 'People',
+        numberOfElementPerPage: "Number of Element Per Page",
+        enterValueForSearching: 'Enter the value for searching'
     },
 };
 

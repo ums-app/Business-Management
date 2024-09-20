@@ -29,6 +29,7 @@ const fa = {
         joinedDate: "تاریخ شمولیت",
         open: "باز کردن",
         next: "بعدی",
+        prev: 'قبلی',
         back: "بازگشت",
         finish: "تمام",
         confirmAndSend: "تایید و ارسال",
@@ -309,7 +310,13 @@ const fa = {
         inventory: "موجودی",
         manufacturer: "سازنده",
         image: 'عکس',
-        analysis: "تحلیل اطلاعات"
+        analysis: "تحلیل اطلاعات",
+        of: 'از',
+        factor: 'فاکتور',
+        size: 'تعداد',
+        people: 'افراد',
+        numberOfElementPerPage: "تعداد ردیف ها در هر صفحه",
+        enterValueForSearching: 'نام مورد نظر را وارد کنید'
 
     },
 };
