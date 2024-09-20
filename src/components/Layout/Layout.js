@@ -29,6 +29,7 @@ function Layout() {
   };
 
   useEffect(() => {
+
     onAuthStateChanged(auth, (currentUser) => {
       console.log(currentUser);
       if (currentUser) {
@@ -43,9 +44,9 @@ function Layout() {
 
   }, [auth])
 
-  if (!currentUser) {
-    return <Circle />
-  }
+  // if (!currentUser) {
+  //   return <Circle />
+  // }
 
 
   return (
