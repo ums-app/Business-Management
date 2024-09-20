@@ -9,15 +9,15 @@ import { doc, getDoc } from 'firebase/firestore';
 import Collections from '../../../../constants/Collections';
 import { t } from 'i18next';
 import "../../Products.css"
+import { gregorianToJalali } from 'shamsi-date-converter';
 
 function ProductInformation({ data }) {
     const { productId } = useParams();
     const [productImage, setproductImage] = useState();
     const [product, setproduct] = useState()
     useEffect(() => {
-
         getProductImage(productId)
-    })
+    }, [productId])
 
     const getProduct = async () => {
         try {
@@ -63,17 +63,36 @@ function ProductInformation({ data }) {
                 /> : <ShotLoadingTemplate style={{ height: '100%' }} />
                 }
             </div>
-            <div className='display_flex flex_flow_wrap justify_content_center'
-                style={{ alignContent: ' flex-start' }}
-            >
-                {Object.keys(data).map(key => {
-                    return <div
-                        style={{ height: '80px', width: '200px' }}
-                        className='info_card border_1px_solid margin_10 padding_10 border_radius_8 display_flex flex_direction_column align_items_center'>
-                        <span className='bold margin_bottom_10'>{t(key)}</span>
-                        <span>{data[key]}</span>
-                    </div>
-                })}
+
+            <div className='personal_info display_flex flex_flow_wrap justify_content_center '>
+                <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span>{t('code')} </span>
+                    <span>{data?.code}</span>
+                </div>
+                <div className='info_card  display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span>{t('name')} </span>
+                    <span>{data?.name}</span>
+                </div>
+                <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span>{t('englishName')} </span>
+                    <span>{data?.englishName}</span>
+                </div>
+                <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span>{t('manufacturer')} </span>
+                    <span>{data?.manufacturer}</span>
+                </div>
+                <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span>{t('price')} </span>
+                    <span>{data?.price}</span>
+                </div>
+                <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span>{t('inventory')} </span>
+                    <span>{data?.inventory}</span>
+                </div>
+                <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span>{t('createdDate')} </span>
+                    <span>{data?.createdDate && gregorianToJalali(data?.createdDate?.toDate()).join('/')}</span>
+                </div>
             </div>
         </div>
     )
