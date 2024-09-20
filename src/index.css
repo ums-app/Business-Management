@@ -784,6 +784,11 @@ th .btn i {
 
 /* End of Card Information */
 
+
+.overflow_hidden {
+  overflow: hidden;
+}
+
 /* ToolTip Style */
 .toolTip_style {
   padding: 7px 10px !important;

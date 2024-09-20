@@ -236,7 +236,7 @@ function Customers() {
 
             <h1 className='margin_10 title'>{t('customers')}</h1>
             <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
-                <div>
+                <div className='search_bar'>
                     <input type="text" placeholder={t('search')} onChange={e => setsearchValue(e.target.value)} id='searchBox' />
                     <Tooltip
                         anchorSelect="#searchBox"
@@ -249,8 +249,8 @@ function Customers() {
 
                 </div>
 
-                <div className='display_flex '>
-                    <div className='display_flex align_items_center'>
+                <div className='pagination display_flex '>
+                    <div className='display_flex align_items_center '>
                         <label htmlFor="pageSize">{t('size')}</label>
                         <select
                             name="pageSize"
@@ -284,7 +284,7 @@ function Customers() {
             </div>
             <div className='table_container '>
                 {loading ? <ShotLoadingTemplate /> :
-                    <table className="full_width custom_table table_row_hover">
+                    <table className="full_width custom_table table_row_hover overflow_hidden">
                         <thead >
                             <tr>
                                 <th>{t('number')}</th>
