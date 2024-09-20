@@ -318,7 +318,7 @@ function AddCustomer({ updateMode = false }) {
                             >
                                 <option value={null}>{t('visitor')}</option>
                                 {employees?.map(item => {
-                                    return <option value={item.id}>{item.name} {item.lastName}</option>
+                                    return <option value={item.id} key={item.id}>{item.name} {item.lastName}</option>
                                 })}
                                 <option value={null}>{t('none')}</option>
 
