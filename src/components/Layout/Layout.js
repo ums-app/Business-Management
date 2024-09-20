@@ -48,6 +48,8 @@ function Layout() {
   //   return <Circle />
   // }
 
+  console.log(currentUser);
+
 
   return (
     <Suspense fallback={<Circle />}>
@@ -63,7 +65,7 @@ function Layout() {
             <ErrorBoundary>
               <Wrapper>
                 {currentUser && <Header isDark={isDark} darkModeHandler={darkModeHandler} />}
-                <BreadCrumbs />
+                {currentUser && <BreadCrumbs />}
                 <section className="margin_top_20 padding_bottom_10">
                   <Outlet />
                 </section>
