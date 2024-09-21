@@ -223,7 +223,7 @@ function AddSaleFactor({ updateMode }) {
                 <div className='display_flex align_items_center'>
                     <span className='bold'>{t('createdDate')}:</span>
                     <span className=''>
-                        {<CustomDatePicker value={customerFactor.createdDate} onChange={e => {
+                        {<CustomDatePicker value={customerFactor.createdDate instanceof Timestamp ? customerFactor.createdDate.toDate() : new Date(customerFactor.createdDate)} onChange={e => {
                             const date = jalaliToGregorian(e.year, e.month.number, e.day)
                             const gDate = new Date();
                             gDate.setFullYear(date[0])
