@@ -6,6 +6,8 @@ import AddCustomer from "../components/Customers/AddCustomer";
 import Customer from "../components/Customers/Customer/Customer";
 import Product from "../components/Products/Product/Product";
 import AddProduct from "../components/Products/AddProduct/AddProducts";
+import AddPurchaseProducts from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts";
+import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -16,7 +18,7 @@ const Customers = React.lazy(() => import("../components/Customers/Customers"));
 const Products = React.lazy(() => import("../components/Products/Products"));
 const Reports = React.lazy(() => import("../components/Reports/Reports"));
 const Consumptions = React.lazy(() => import("../components/Consumptions/Consumptions"));
-const BuyingProducts = React.lazy(() => import("../components/BuyingProducts/BuyingProducts"));
+const PurchaseProducts = React.lazy(() => import("../components/PurchaseProducts/PurchaseProducts"));
 const Sales = React.lazy(() => import("../components/Sales/Sales"));
 const Dashboard = React.lazy(() => import("../components/Dashboard/Dashboard"));
 const Home = React.lazy(() => import("../components/Home/Home"));
@@ -48,13 +50,30 @@ const browserRouter = createBrowserRouter([
         element: <Sales />,
       },
       {
-        path: "/buying-products",
-        element: <BuyingProducts />,
+        path: "/sales/add",
+        element: <AddSaleFactor />,
       },
       {
-        path: "/buying-products",
-        element: <BuyingProducts />,
+        path: "/sales/:saleFactorId/update",
+        element: <AddSaleFactor updateMode={true} />,
       },
+
+
+
+      {
+        path: "/purchase-products",
+        element: <PurchaseProducts />,
+      },
+      {
+        path: "/purchase-products/add",
+        element: <AddPurchaseProducts />,
+      },
+      {
+        path: "/purchase-products/:purchaseProductId/update",
+        element: <AddPurchaseProducts updateMode={true} />,
+      },
+
+
       {
         path: "/consumptions",
         element: <Consumptions />,

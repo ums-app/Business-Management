@@ -13,21 +13,20 @@ import { getProductImage, getUserImage } from '../../Utils/FirebaseTools'
 import Collections from '../../constants/Collections';
 
 
-
-function Sales() {
+function PurchaseProducts() {
     const nav = useNavigate();
 
-    const [sales, setSales] = useState();
-    const salesCollectionRef = collection(db, Collections.Sales);
+    const [purchases, setPurchases] = useState();
+    const purchasesCollectionRef = collection(db, Collections.Purchases);
     const [imageUrls, setImageUrls] = useState();
 
 
     useEffect(() => {
 
         const fetchData = async () => {
-            const querySnapshot = await getDocs(salesCollectionRef);
+            const querySnapshot = await getDocs(purchasesCollectionRef);
             const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-            setSales(items);
+            setPurchases(items);
 
             console.log(items);
         };
@@ -40,7 +39,7 @@ function Sales() {
         const fetchImages = async () => {
             const newImageUrls = {};
             await Promise.all(
-                sales.map(async (item) => {
+                purchases.map(async (item) => {
                     try {
                         const url = await getProductImage(item?.productId);
                         console.log(url);
@@ -55,10 +54,10 @@ function Sales() {
             console.log(newImageUrls);
         };
 
-        if (sales) {
+        if (purchases) {
             fetchImages();
         }
-    }, [sales]);
+    }, [purchases]);
 
 
 
@@ -66,7 +65,7 @@ function Sales() {
         const fetchImages = async () => {
             const newImageUrls = {};
             await Promise.all(
-                sales.map(async (item) => {
+                purchases.map(async (item) => {
                     const url = await getUserImage(item.email);
                     newImageUrls[item.email] = url; // Store image URL by product ID
                 })
@@ -74,13 +73,13 @@ function Sales() {
             setImageUrls(newImageUrls); // Update state with all image URLs
         };
 
-        if (sales) {
+        if (purchases) {
             fetchImages();
         }
-    }, [sales]);
+    }, [purchases]);
 
 
-    if (!sales || !imageUrls) {
+    if (!purchases || !imageUrls) {
         return (
             <LoadingTemplateContainer>
                 <ButtonLoadingTemplate />
@@ -99,11 +98,11 @@ function Sales() {
     return (
         <div>
             <Button
-                text={t('add') + " " + t('factor') + " " + t('sale')}
+                text={t('add') + " " + t('purchase')}
                 onClick={() => nav("add")}
             />
 
-            <h1 className='margin_10 title'>{t('sales')}</h1>
+            <h1 className='margin_10 title'>{t('purchases')}</h1>
 
             <div className='table_container '>
                 <table className="full_width custom_table table_row_hover">
@@ -120,10 +119,10 @@ function Sales() {
                         </tr>
                     </thead>
                     <tbody>
-                        {sales?.map((emp, index) => {
+                        {purchases?.map((emp, index) => {
                             return <tr
                                 className=" cursor_pointer hover"
-                                onClick={() => nav('/sales/' + emp.id)}
+                                onClick={() => nav('/purchase-products/' + emp.id)}
                                 key={emp.id}
                             >
                                 <td>{index + 1}</td>
@@ -147,4 +146,7 @@ function Sales() {
     )
 }
 
-export default Sales
+
+
+export default PurchaseProducts
+

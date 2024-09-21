@@ -298,6 +298,7 @@ const en = {
         visitor: 'Visitor',
         none: 'None',
         purchases: 'Purchases',
+        purchases: "Purchase",
         alreadyExist: "already exists",
         englishName: "Name in English",
         code: "Code",

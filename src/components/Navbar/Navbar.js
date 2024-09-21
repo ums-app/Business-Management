@@ -100,7 +100,7 @@ const Navbar = () => {
           </Tooltip>
 
 
-          <CustomeLinks to="/buying-products" id={'purchases_link'}>
+          <CustomeLinks to="/purchase-products" id={'purchases_link'}>
             <i className={ICONS.hangBag}></i>
             <span>{t('purchases')}</span>
           </CustomeLinks>

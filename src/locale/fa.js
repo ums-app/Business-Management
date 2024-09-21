@@ -303,6 +303,7 @@ const fa = {
         visitor: "ویزیتور",
         none: 'هیچکدام',
         purchases: "خرید ها",
+        purchase: 'خرید',
         alreadyExist: "از قبل موجود است",
         englishName: 'نام به انگلیسی',
         code: "کد",
