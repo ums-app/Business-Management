@@ -312,7 +312,12 @@ const en = {
         size: "Size",
         people: 'People',
         numberOfElementPerPage: "Number of Element Per Page",
-        enterValueForSearching: 'Enter the value for searching'
+        enterValueForSearching: 'Enter the value for searching',
+        selectTheDesiredCustomer: 'Select the desired customer',
+        chooseTheProduct: 'Choose The Product',
+        totalAll: 'Total All',
+        paidAmount: 'Paid amount',
+        remainedAmount: 'Remained amount'
     },
 };
 

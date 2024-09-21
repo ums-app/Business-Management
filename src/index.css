@@ -724,10 +724,17 @@ th .btn i {
   border: none !important;
 }
 
+
+.short_date .rmdp-input {
+  width: 110px !important;
+  min-width: 40px;
+}
+
 .rmdp-input {
   width: 100% !important;
   height: 32px !important;
 }
+
 
 .input,
 .rmdp-input {

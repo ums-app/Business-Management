@@ -6,7 +6,7 @@
   z-index: 1000;
   overflow-y: scroll;
   max-height: 720px;
-  width: max-content;
+  width: 85%;
   min-width: 40%;
   max-height: 85%;
   margin: 0 20%;
@@ -40,7 +40,7 @@
 
 @media (max-width: 768px) {
   .modal {
-    width: 240px;
+    width: 90%;
   }
 
   .modal_children {

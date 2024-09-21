@@ -317,7 +317,18 @@ const fa = {
         size: 'تعداد',
         people: 'افراد',
         numberOfElementPerPage: "تعداد ردیف ها در هر صفحه",
-        enterValueForSearching: 'نام مورد نظر را وارد کنید'
+        enterValueForSearching: 'نام مورد نظر را وارد کنید',
+        selectTheDesiredCustomer: 'مشتری مورد نظر را انتخاب کنید',
+        totalPrice: 'قیمت کل',
+        pricePer: 'قیمت فی',
+        chooseTheProduct: 'جنس را انتخاب کنید',
+        totalAll: 'جمع کل',
+        paidAmount: 'مبلغ پرداخت شده',
+        remainedAmount: 'مبلغ باقیمانده',
+        totalElements: 'تعداد کل',
+        costs: 'مبلغ کل'
+
+
 
     },
 };

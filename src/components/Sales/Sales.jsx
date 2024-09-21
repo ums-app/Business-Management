@@ -11,6 +11,10 @@ import ShotLoadingTemplate from "../UI/LoadingTemplate/ShotLoadingTemplate"
 import ButtonLoadingTemplate from "../UI/LoadingTemplate/ButtonLoadingTemplate"
 import { getProductImage, getUserImage } from '../../Utils/FirebaseTools'
 import Collections from '../../constants/Collections';
+import Modal from '../UI/modal/Modal';
+import SelectCustomer from './AddSaleFactor/SelectCustomer/SelectCustomer';
+import { gregorianToJalali } from 'shamsi-date-converter';
+
 
 
 
@@ -20,6 +24,7 @@ function Sales() {
     const [sales, setSales] = useState();
     const salesCollectionRef = collection(db, Collections.Sales);
     const [imageUrls, setImageUrls] = useState();
+    const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false)
 
 
     useEffect(() => {
@@ -100,8 +105,13 @@ function Sales() {
         <div>
             <Button
                 text={t('add') + " " + t('factor') + " " + t('sale')}
-                onClick={() => nav("add")}
+                // onClick={() => nav("/customers")}
+                onClick={() => setShowSelectCustomerModal(true)}
             />
+
+            <Modal show={showSelectCustomerModal} modalClose={() => setShowSelectCustomerModal(false)}>
+                <SelectCustomer />
+            </Modal>
 
             <h1 className='margin_10 title'>{t('sales')}</h1>
 
@@ -110,30 +120,32 @@ function Sales() {
                     <thead >
                         <tr>
                             <th>{t('number')}</th>
+                            <th>{t('name')}</th>
+                            <th>{t('lastName')}</th>
                             <th>{t('createdDate')}</th>
-                            <th>{t('total')}</th>
-                            <th>{t('amount')}</th>
-                            <th>{t('totalElement')}</th>
-                            <th>{t('costs')}</th>
-                            <th>{t('transfer costs')}</th>
-                            <th>{t('tax costs')}</th>
+                            <th>{t('totalElements')}</th>
+                            <th>{t('totalAll')}</th>
+                            <th>{t('paidAmount')}</th>
+                            <th>{t('remainedAmount')}</th>
+                            <th>{t('status')}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {sales?.map((emp, index) => {
+                        {sales?.map((factor, index) => {
                             return <tr
                                 className=" cursor_pointer hover"
-                                onClick={() => nav('/sales/' + emp.id)}
-                                key={emp.id}
+                                onClick={() => nav('/sales/' + factor.id)}
+                                key={factor.id}
                             >
                                 <td>{index + 1}</td>
-                                <td><img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' /></td>
-                                <td>{emp.name}</td>
-                                <td>{emp.lastName}</td>
-                                <td>{emp.jobTitle} </td>
-                                <td>{emp.phoneNumber}</td>
-                                <td>{emp.salary}</td>
-                                <td>{emp.salesPercent}%</td>
+                                <td>{factor?.customer?.name}</td>
+                                <td>{factor?.customer?.lastName}</td>
+                                <td>{gregorianToJalali(factor?.createdDate).join('/')} </td>
+                                <td>{factor?.products?.length}</td>
+                                <td>{factor?.paidAmount}</td>
+                                <td>{factor?.remainedAmount}</td>
+                                <td>{t('status')}</td>
+
                             </tr>
                         })
                         }

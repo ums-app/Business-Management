@@ -1,0 +1,9 @@
+.ltr .info_value {
+    margin-right: 20px;
+    padding: 0 4px;
+}
+
+.rtl .info_value {
+    margin-left: 20px;
+    padding: 0 4px;
+}

@@ -59,10 +59,22 @@
 }
 
 .loginBtn {
-
   border-radius: 30px;
   background-color: rgb(247, 68, 226);
 }
+
+.plusBtn {
+  border-radius: 4px;
+  background-color: rgb(49, 246, 82);
+  padding: 0px 10px !important;
+}
+
+.crossBtn {
+  border-radius: 4px;
+  background-color: rgb(246, 49, 52);
+  padding: 0px 10px !important;
+}
+
 
 .danger:before {
   background: #ee1818;

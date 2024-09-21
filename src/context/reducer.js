@@ -77,7 +77,8 @@ export const actionTypes = {
   HIDE_RESTRICT_WARNING: "HIDE_RESTRICT_WARNING",
   SHOW_RESTRICT_WARNING: "SHOW_RESTRICT_WARNING",
   SET_SMALL_LOADING: "SET_SMALL_LOADING",
-  COLLAPSE_NAVBAR: 'COLLAPSE_NAVBAR'
+  COLLAPSE_NAVBAR: 'COLLAPSE_NAVBAR',
+  ADD_CUSTOMER_TO_SALE_FACTOR: 'ADD_CUSTOMER_TO_SALE_FACTOR'
 };
 
 const reducer = (state, action) => {
@@ -88,6 +89,11 @@ const reducer = (state, action) => {
         ...state,
         navbarCollapse: !state.navbarCollapse,
       };
+    case actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR:
+      return {
+        ...state,
+        customerForSaleFactor: action.payload
+      }
 
     case actionTypes.SET_AUTHENTICATION:
       return {
