@@ -27,12 +27,12 @@
 }
 
 /* toggle_header_navbar */
-.toggle_header_navbar {
+/* .toggle_header_navbar {
   z-index: 2000;
   width: 100%;
   height: 30px;
 
-}
+} */
 
 .toggle_header_navbar .toggle_header_icon {
   bottom: 20px;

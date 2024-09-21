@@ -1,20 +1,34 @@
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../constants/FirebaseConfig";
 import i18n from "../locale/locale";
 
-function getAuthInfoFromLocalStorage() {
-  if (localStorage.length > 0) {
-    return {
-      name: localStorage.getItem("name"),
-      lastname: localStorage.getItem("lastname"),
-      email: localStorage.getItem("email"),
-      userId: localStorage.getItem("userId"),
-      originalEntityId: localStorage.getItem("originalEntityId"),
-      imageURL: localStorage.getItem("imageURL"),
-      userType: localStorage.getItem("userType"),
-      roles: localStorage.getItem("roles")?.split(","),
-    };
-  }
-}
+// export function getAuthInfoFromLocalStorage(dispatch) {
+//   onAuthStateChanged(auth, (user) => {
+//     if (user) {
+//       const localStorageAuthObj = {
+//         isAuthenticated: true,
+//         name: localStorage.getItem("name"),
+//         lastname: localStorage.getItem("lastname"),
+//         email: localStorage.getItem("email"),
+//         userId: localStorage.getItem("userId"),
+//         originalEntityId: localStorage.getItem("originalEntityId"),
+//         imageURL: localStorage.getItem("imageURL"),
+//         userType: localStorage.getItem("userType"),
+//         roles: localStorage.getItem("roles")?.split(","),
+//       };
+
+//       // Only dispatch if authentication object changes
+//       dispatch({
+//         type: "SET_AUTHENTICATION",
+//         payload: localStorageAuthObj,
+//       });
+//     } else {
+//       // Redirect to login if no user is found
+//       window.location.href = '/login';
+//     }
+//   });
+// }
+
 
 function getLocale() {
   document.body.classList.add("rtl");
@@ -34,17 +48,15 @@ function getLocale() {
 
 export const initialState = {
   term: null,
-  authentication: getAuthInfoFromLocalStorage()
-    ? getAuthInfoFromLocalStorage()
-    : {
-      isAuthenticated: false,
-      name: null,
-      lastName: null,
-      email: null,
-      userId: null,
-      imageURL: null,
-      roles: [],
-    },
+  authentication: {
+    isAuthenticated: false,
+    name: null,
+    lastName: null,
+    email: null,
+    userId: null,
+    imageURL: null,
+    roles: [],
+  },
   locale: getLocale(),
   askingModal: { show: false, message: "", btnAction: null, id: null },
   confirmModal: { show: false, message: "", iconType: "" },

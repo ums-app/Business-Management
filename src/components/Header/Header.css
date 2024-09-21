@@ -109,7 +109,7 @@
 
 /* toggle_header_navbar */
 .header_container .toggle_header_navbar {
-  z-index: 1000;
+  z-index: 500;
   width: max-content;
   height: 30px;
 
