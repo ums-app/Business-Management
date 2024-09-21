@@ -171,8 +171,12 @@
     z-index: 1000;
   }
 
-  .active_nav_right {
+  .rtl .active_nav_right {
     transform: translateX(300px);
+  }
+
+  .ltr .active_nav_right {
+    transform: translateX(-300px);
   }
 
   /* .navbar_translate{
