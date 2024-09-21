@@ -12,8 +12,8 @@ import { onAuthStateChanged } from "firebase/auth";
 
 function Layout() {
   const navigate = useNavigate()
-  const [{ smallLoading, navbarCollapse }, dispatch] = useStateValue();
-  const [currentUser, setCurrentUser] = useState()
+  const [{ authentication, smallLoading, navbarCollapse }, dispatch] = useStateValue();
+
   // switch between light or dark mode
   const [isDark, setIsDark] = useState(
     localStorage.getItem("isDark") == null
@@ -29,15 +29,9 @@ function Layout() {
   };
 
   useEffect(() => {
-
-    onAuthStateChanged(auth, (currentUser) => {
-      console.log(currentUser);
-      if (currentUser) {
-        // setUser(currentUser);  // User is logged in
-        setCurrentUser(currentUser)
-        navigate('/')
-      } else {
-        //setUser(null);  // User is logged out
+    onAuthStateChanged(auth, (currentUsero) => {
+      // console.log(currentUser);
+      if (!currentUsero) {
         navigate('/login')
       }
     });
@@ -48,7 +42,7 @@ function Layout() {
   //   return <Circle />
   // }
 
-  console.log(currentUser);
+  console.log(authentication);
 
 
   return (
@@ -57,15 +51,15 @@ function Layout() {
         <span className="background_colors"></span>
         <main className={`main`}>
           <div id="viewport">
-            {currentUser &&
+            {authentication.isAuthenticated &&
               <div id="navbar_container" className={navbarCollapse ? 'active_nav_right' : 'navbar_translate'}>
                 <Navbar />
               </div>
             }
             <ErrorBoundary>
               <Wrapper>
-                {currentUser && <Header isDark={isDark} darkModeHandler={darkModeHandler} />}
-                {currentUser && <BreadCrumbs />}
+                {authentication.isAuthenticated && <Header isDark={isDark} darkModeHandler={darkModeHandler} />}
+                {authentication.isAuthenticated && <BreadCrumbs />}
                 <section className="margin_top_20 padding_bottom_10">
                   <Outlet />
                 </section>

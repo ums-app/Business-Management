@@ -109,7 +109,7 @@
 
 /* toggle_header_navbar */
 .header_container .toggle_header_navbar {
-  z-index: 2000;
+  z-index: 1000;
   width: max-content;
   height: 30px;
 
@@ -118,5 +118,9 @@
 @media (min-width: 768px) {
   .header_container .toggle_header_navbar {
     display: none !important;
+  }
+
+  .header {
+    justify-content: flex-end;
   }
 }

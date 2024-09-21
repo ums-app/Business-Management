@@ -4,21 +4,21 @@ import "./Header.css";
 import { useStateValue } from "../../context/StateProvider";
 import ICONS from "../../constants/Icons";
 import { t } from "i18next";
-import APIEndpoints from "../../constants/APIEndpoints";
 import AvatarLoadingTemplate from "../UI/LoadingTemplate/AvatarLoadingTemplate";
 import LangBox from "../LangBox/LangBox";
 import { actionTypes } from "../../context/reducer";
-import colors from "react-multi-date-picker/plugins/colors";
 const Header = ({ isDark, darkModeHandler }) => {
 
   const [{ authentication, navbarCollapse }, dispatch] = useStateValue();
   const [avatarLoading, setAvatarLoading] = useState(true)
+
 
   const navbarHandler = () => {
     dispatch({
       type: actionTypes.COLLAPSE_NAVBAR,
     })
   }
+
 
   return (
     <section className="header_container ">
@@ -50,20 +50,15 @@ const Header = ({ isDark, darkModeHandler }) => {
             )}
           </div>
 
-          {authentication?.isAuthenticated && (
+          {authentication.isAuthenticated && (
             <NavLink to="profile" title={t("profile")}>
               <div className="user_profile user_select_none display_flex">
                 <div className="user_profile_img_container display_flex position_relative border_radius_50">
                   {avatarLoading && <AvatarLoadingTemplate />}
                   {<img
-                    src={
-                      authentication.imageUrl
-                        ? APIEndpoints.redirecter + authentication.imageUrl
-                        : "/public/img/favicon.png"
-                    }
+                    src={authentication.imageURL}
                     className="user_profile_img position_absolute"
                     alt="user_image"
-                    crossOrigin="anonymous"
                     onLoad={() => setAvatarLoading(false)}
                   />}
                 </div>

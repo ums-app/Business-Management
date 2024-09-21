@@ -6,10 +6,15 @@ import { t } from 'i18next';
 import * as yup from "yup";
 import ICONS from '../../constants/Icons';
 import "./Login.css"
-import { auth } from '../../constants/FirebaseConfig';
+import { auth, db } from '../../constants/FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import Button from '../UI/Button/Button';
 import bebevit from "../../assets/img/bebvit.jpg"
+import { useLocalStorage } from 'usehooks-ts';
+import { getUserImage } from '../../Utils/FirebaseTools';
+import Collections from '../../constants/Collections';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { actionTypes } from '../../context/reducer';
 
 function Login() {
     const [, dispatch] = useStateValue();
@@ -17,15 +22,62 @@ function Login() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false); // State for displaying password
     const navigate = useNavigate();
+    const userCollectionRef = collection(db, Collections.Users)
 
 
     const login = async (values, { setSubmitting }) => {
         setLoading(true);
         signInWithEmailAndPassword(auth, values.email, values.password)
-            // createUserWithEmailAndPassword(auth, values.email, values.password)
             .then(res => {
-                console.log(res);
-                navigate("/");
+                dispatch({
+                    type: actionTypes.SET_SMALL_LOADING,
+                    payload: true
+                })
+                const getData = async () => {
+                    try {
+                        const q = query(userCollectionRef, where("email", "==", values.email));
+                        const data = await getDocs(q);
+                        const imageURL = await getUserImage(values.email);
+                        const items = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                        if (!data.empty) {
+                            const user = items[0];
+                            console.log(user);
+                            console.log('localstorage data');
+                            localStorage.setItem('imageURL', imageURL);
+                            localStorage.setItem('name', user.name);
+                            localStorage.setItem('lastname', user.lastName);
+                            localStorage.setItem('email', user.email);
+                            localStorage.setItem('originalEntityId', user.originalEntityId);
+                            localStorage.setItem('userType', user.userType);
+                            localStorage.setItem('userId', user.id);
+                            localStorage.setItem('roles', user?.roles?.join(','));
+                            console.log('dispatching data');
+                            dispatch({
+                                type: actionTypes.SET_AUTHENTICATION,
+                                payload: {
+                                    imageURL: imageURL,
+                                    name: user.name,
+                                    lastname: user.lastName,
+                                    email: user.email,
+                                    originalEntityId: user.originalEntityId,
+                                    userType: user.userType,
+                                    userId: user.id,
+                                    roles: user?.roles?.join(','),
+                                }
+                            })
+                            console.log('nav to home');
+                            dispatch({
+                                type: actionTypes.SET_SMALL_LOADING,
+                                payload: false
+                            })
+                            navigate("/");
+                        }
+
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+                getData()
             })
             .catch(err => {
                 setError(err.message);
@@ -35,10 +87,6 @@ function Login() {
                 setSubmitting(false);
             })
     }
-
-
-
-
 
     return (
         <Formik

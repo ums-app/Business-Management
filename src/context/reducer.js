@@ -4,14 +4,13 @@ import i18n from "../locale/locale";
 function getAuthInfoFromLocalStorage() {
   if (localStorage.length > 0) {
     return {
-      isAuthenticated: localStorage.getItem("token") ? true : false,
       name: localStorage.getItem("name"),
       lastname: localStorage.getItem("lastname"),
       email: localStorage.getItem("email"),
-      token: localStorage.getItem("token"),
       userId: localStorage.getItem("userId"),
       originalEntityId: localStorage.getItem("originalEntityId"),
-      imageUrl: localStorage.getItem("imageUrl"),
+      imageURL: localStorage.getItem("imageURL"),
+      userType: localStorage.getItem("userType"),
       roles: localStorage.getItem("roles")?.split(","),
     };
   }
@@ -42,9 +41,8 @@ export const initialState = {
       name: null,
       lastName: null,
       email: null,
-      token: null,
       userId: null,
-      profileImage: null,
+      imageURL: null,
       roles: [],
     },
   locale: getLocale(),
@@ -96,13 +94,6 @@ const reducer = (state, action) => {
         ...state,
         authentication: {
           isAuthenticated: false,
-          name: null,
-          lastName: null,
-          email: null,
-          token: null,
-          userId: null,
-          profileImage: null,
-          roles: [],
         },
       };
 
