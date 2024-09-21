@@ -14,13 +14,16 @@ import Collections from '../../constants/Collections';
 import Modal from '../UI/modal/Modal';
 import SelectCustomer from './AddSaleFactor/SelectCustomer/SelectCustomer';
 import { gregorianToJalali } from 'shamsi-date-converter';
+import ICONS from '../../constants/Icons';
+import { actionTypes } from '../../context/reducer';
+import { useStateValue } from '../../context/StateProvider';
 
 
 
 
 function Sales() {
     const nav = useNavigate();
-
+    const [, dispatch] = useStateValue()
     const [sales, setSales] = useState();
     const salesCollectionRef = collection(db, Collections.Sales);
     const [imageUrls, setImageUrls] = useState();
@@ -95,11 +98,38 @@ function Sales() {
         );
     }
 
-
-
-    const sendDataToAPI = () => {
-        toast.success("data added")
+    const getTotalProdcuts = (products) => {
+        let total = 0;
+        products.forEach(item => {
+            total += Number(item.total);
+        })
+        return total;
     }
+
+    const getTotalPriceOfProdcuts = (products) => {
+        let total = 0;
+        products.forEach(item => {
+            total += Number(item.totalPrice);
+        })
+        return total;
+    }
+
+    const getTotalPaidAmount = (payments) => {
+        let total = 0;
+        payments.forEach(item => {
+            total += Number(item.amount);
+        })
+        return total;
+    }
+
+    const getStatus = (total, paid) => {
+        if (total - paid > 0) {
+            return <span className='status_r'><i className={ICONS.cross}></i> {t('UNCOMPLETED')}</span >
+        }
+        return <span className='status_g'><i className={ICONS.thick}></i>{t('COMPLETED')}</span>
+    }
+
+
 
     return (
         <div>
@@ -124,7 +154,7 @@ function Sales() {
                             <th>{t('lastName')}</th>
                             <th>{t('createdDate')}</th>
                             <th>{t('totalElements')}</th>
-                            <th>{t('totalAll')}</th>
+                            <th>{t('totalPrice')}</th>
                             <th>{t('paidAmount')}</th>
                             <th>{t('remainedAmount')}</th>
                             <th>{t('status')}</th>
@@ -132,20 +162,31 @@ function Sales() {
                     </thead>
                     <tbody>
                         {sales?.map((factor, index) => {
+                            console.log(factor.createdDate.date);
                             return <tr
                                 className=" cursor_pointer hover"
-                                onClick={() => nav('/sales/' + factor.id)}
+                                onClick={() => {
+                                    dispatch({
+                                        type: actionTypes.SET_FACTOR,
+                                        payload: factor
+                                    })
+                                    dispatch({
+                                        type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
+                                        payload: factor.customer
+                                    })
+                                    nav('/sales/' + factor.id)
+                                }}
                                 key={factor.id}
                             >
                                 <td>{index + 1}</td>
                                 <td>{factor?.customer?.name}</td>
                                 <td>{factor?.customer?.lastName}</td>
-                                <td>{gregorianToJalali(factor?.createdDate).join('/')} </td>
-                                <td>{factor?.products?.length}</td>
-                                <td>{factor?.paidAmount}</td>
-                                <td>{factor?.remainedAmount}</td>
-                                <td>{t('status')}</td>
-
+                                <td>{factor.createdDate && gregorianToJalali(new Date(factor?.createdDate.toDate())).join('/')} </td>
+                                <td>{getTotalProdcuts(factor?.productsInFactor)}</td>
+                                <td>{getTotalPriceOfProdcuts(factor?.productsInFactor)}</td>
+                                <td>{getTotalPaidAmount(factor?.payments)}</td>
+                                <td>{getTotalPriceOfProdcuts(factor?.productsInFactor) - getTotalPaidAmount(factor?.payments)}</td>
+                                <td>{getStatus(getTotalPriceOfProdcuts(factor?.productsInFactor), getTotalPaidAmount(factor?.payments))}</td>
                             </tr>
                         })
                         }

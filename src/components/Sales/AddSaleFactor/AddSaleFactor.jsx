@@ -8,13 +8,13 @@ import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
-import { getDownloadURL, ref } from 'firebase/storage';
-import Folders from '../../../constants/Folders';
-import { collection, getDocs } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db, storage } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
 import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
+import { actionTypes } from '../../../context/reducer';
+import { toast } from 'react-toastify';
 
 
 export const productForSale = {
@@ -27,21 +27,23 @@ export const productForSale = {
 };
 
 function AddSaleFactor({ updateMode }) {
+    const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
-    const [{ customerForSaleFactor }, dispatch] = useStateValue();
     const [customerImage, setcustomerImage] = useState();
     const productCollectionRef = collection(db, Collections.Products)
+    const salesCollectionRef = collection(db, Collections.Sales);
     const [showAddNewPayment, setShowAddNewPayment] = useState(false);
     const [payment, setPayment] = useState({
         amount: 0,
         date: new Date(),
-        by: 'mail'
+        by: authentication.email
     })
 
     const [customerFactor, setcustomerFactor] = useState({
         productsInFactor: [{ ...productForSale }],
         customer: customerForSaleFactor,
-        payments: []
+        payments: [],
+        createdDate: new Date()
     })
 
 
@@ -55,6 +57,9 @@ function AddSaleFactor({ updateMode }) {
         getImage();
         getProducts();
         addNewProdcut()
+        if (updateMode) {
+            setcustomerFactor(factor)
+        }
     }, [])
 
 
@@ -74,9 +79,6 @@ function AddSaleFactor({ updateMode }) {
         })
     }
 
-    if (!customerForSaleFactor) {
-        nav(-1)
-    }
 
     const handleSelectProduct = (e, index) => {
         const value = e.target.value
@@ -138,17 +140,6 @@ function AddSaleFactor({ updateMode }) {
     }
 
 
-    const addPaidAmount = () => {
-        const paidAmount = {
-            amount: 0,
-            date: new Date()
-        }
-        setcustomerFactor({
-            ...customerFactor,
-            payments: [...customerFactor.payments, paidAmount]
-        })
-    }
-
     const savePaidAmount = () => {
         if (payment.amount > 0 && payment.date) {
             setcustomerFactor({
@@ -172,6 +163,43 @@ function AddSaleFactor({ updateMode }) {
 
     }
 
+    const snedCustomerFactorToAPI = async () => {
+        dispatch({
+            type: actionTypes.SET_SMALL_LOADING,
+            payload: true
+        })
+        try {
+            if (updateMode) {
+                const factorDoc = doc(db, Collections.Sales, factor.id)
+                await updateDoc(factorDoc, customerFactor);
+                toast.success(t('successfullyUpdated'))
+                nav('/sales')
+            } else {
+
+                const customerRes = await addDoc(salesCollectionRef, { ...customerFactor })
+                toast.success(t('successfullyAdded'));
+                nav('/sales')
+            }
+        } catch (err) {
+            toast.error(err)
+
+
+        } finally {
+            dispatch({
+                type: actionTypes.SET_SMALL_LOADING,
+                payload: false
+            })
+        }
+
+
+
+    }
+
+    if (!customerForSaleFactor) {
+        nav(-1)
+    }
+
+
     console.log(customerFactor);
 
     return (
@@ -194,7 +222,19 @@ function AddSaleFactor({ updateMode }) {
 
                 <div className='display_flex align_items_center'>
                     <span className='bold'>{t('createdDate')}:</span>
-                    <span className=''>{<CustomDatePicker />}</span>
+                    <span className=''>
+                        {<CustomDatePicker value={customerFactor.createdDate} onChange={e => {
+                            const date = jalaliToGregorian(e.year, e.month.number, e.day)
+                            const gDate = new Date();
+                            gDate.setFullYear(date[0])
+                            gDate.setMonth(date[1])
+                            gDate.setDate(date[2]);
+                            setcustomerFactor({
+                                ...customerFactor,
+                                createdDate: gDate
+                            })
+                        }} />}
+                    </span>
                 </div>
             </div>
 
@@ -222,7 +262,7 @@ function AddSaleFactor({ updateMode }) {
                                         </option>
                                         {products.map(pr => {
                                             return (
-                                                <option value={pr.id} key={pr.id} style={{ width: 'max-content' }}>
+                                                <option value={pr.id} key={pr.id} selected={prInFactor.prodcutId == pr.id} style={{ width: 'max-content' }}>
                                                     {pr.name}
                                                 </option>
                                             )
@@ -272,11 +312,22 @@ function AddSaleFactor({ updateMode }) {
             <div className='full_width margin_top_20 padding_top_10 display_flex justify_content_end flex_direction_column align_items_start input'>
                 <h1 className='text_align_center margin_top_10 full_width'>{t('payments')}</h1>
                 <div className='margin_top_10 margin_bottom_10'>
-                    <span className='info_value'>{t('totalAll')}</span>
+                    <span className=''>{t('totalAll')}: </span>
                     <span className='info_value'>{totalAll()}</span>
                 </div>
                 <div>
                     {customerFactor.payments.map((payment, index) => {
+                        console.log(payment.date);
+                        let date = payment.date;
+                        // Check if date is a timestamp (number), and convert it to a Date object if so
+                        if (date instanceof Timestamp) {
+                            date = date.toDate();
+                        } else if (typeof date === 'string') {
+                            // Convert the string date to a Date object (assuming it's a valid string date format)
+                            date = new Date(date);
+                        }
+                        // Now, pass the date to gregorianToJalali after ensuring it's a Date object
+                        const jalaliDate = gregorianToJalali(date.getFullYear(), date.getMonth() + 1, date.getDate()).join('/');
 
                         return (
                             <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
@@ -284,7 +335,7 @@ function AddSaleFactor({ updateMode }) {
                                 <span className=''>{t('paidAmount')}: </span>
                                 <span className='info_value'>{payment.amount} </span>
                                 <span className=''>{t('date')}: </span>
-                                <span className='info_value short_date'>{gregorianToJalali(payment.date).join('/')} </span>
+                                <span className='info_value short_date'>{jalaliDate} </span>
                                 <span>
                                     <Button
                                         text={t('delete')}
@@ -299,11 +350,11 @@ function AddSaleFactor({ updateMode }) {
                     })}
                     {showAddNewPayment &&
                         <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
-                            <span className='info_value'>{t('paidAmount')}</span>
+                            <span className='info_value'>{t('paidAmount')}: </span>
                             <span className='info_value'>
                                 <input type="number" onChange={e => setPayment({ ...payment, amount: e.target.value })} />
                             </span>
-                            <span className='info_value'>{t('date')}</span>
+                            <span className='info_value'>{t('date')}: </span>
                             <span className='info_value short_date'>
                                 <CustomDatePicker onChange={e => {
                                     const date = jalaliToGregorian(e.year, e.month.number, e.day)
@@ -349,9 +400,18 @@ function AddSaleFactor({ updateMode }) {
 
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
-                    <span className='info_value'>{t('remainedAmount')}</span>
+                    <span className=''>{t('remainedAmount')}: </span>
                     <span className='info_value'>{remainedAmount()}</span>
                 </div>
+
+            </div>
+            <div className='margin_top_20 margin_bottom_10 display_flex justify_content_center'>
+                <Button
+                    text={t('save')}
+                    type={'plusBtn'}
+                    id={'save_customer_factor'}
+                    onClick={snedCustomerFactorToAPI}
+                />
             </div>
         </div>
     )

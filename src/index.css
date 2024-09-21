@@ -704,6 +704,24 @@ th .btn i {
   margin: 0;
 }
 
+.status_r {
+  padding: 0 6px;
+  color: #000;
+  border-radius: 8px;
+  width: max-content;
+  display: flex;
+  background-color: red;
+}
+
+.status_g {
+  padding: 0 6px;
+  color: #000;
+  border-radius: 8px;
+  width: max-content;
+  display: flex;
+  background-color: greenyellow;
+}
+
 /* End of Schedules */
 
 /* Input Field */

@@ -57,6 +57,10 @@ const browserRouter = createBrowserRouter([
         path: "/sales/:saleFactorId/update",
         element: <AddSaleFactor updateMode={true} />,
       },
+      {
+        path: "/sales/:saleFactorId",
+        element: <AddSaleFactor updateMode={true} />,
+      },
 
 
 
