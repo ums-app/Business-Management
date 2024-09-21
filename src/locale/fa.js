@@ -299,7 +299,7 @@ const fa = {
         dayOfWeek: "روز های هفته",
         table: "جدول",
         note: "نوت",
-        bebevit: 'بیبی ویت',
+        bebevit: 'ببی ویت',
         visitor: "ویزیتور",
         none: 'هیچکدام',
         purchases: "خرید ها",
