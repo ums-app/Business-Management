@@ -384,12 +384,15 @@ function AddSaleFactor({ updateMode }) {
                             </span>
                         </div>
                     }
-                    <Button
-                        icon={ICONS.plus}
-                        type={'plusBtn'}
-                        id={'add_new_payment'}
-                        onClick={() => setShowAddNewPayment(true)}
-                    />
+                    {
+                        remainedAmount() > 0 &&
+                        <Button
+                            icon={ICONS.plus}
+                            type={'plusBtn'}
+                            id={'add_new_payment'}
+                            onClick={() => setShowAddNewPayment(true)}
+                        />
+                    }
                     <Tooltip
                         anchorSelect="#add_new_payment"
                         place="left"
