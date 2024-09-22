@@ -65,7 +65,7 @@ function AddProduct({ updateMode = false }) {
                 uploadProductImage(productId)
                 toast.success(t('successfullyUpdated'))
             } else {
-                const productRes = await addDoc(productCollectionRef, values)
+                const productRes = await addDoc(productCollectionRef, { ...values, createdDate: new Date() })
                 uploadProductImage(productRes.id)
                 toast.success(t('successfullyAdded'))
             }
