@@ -326,7 +326,8 @@ const fa = {
         paidAmount: 'مبلغ پرداخت شده',
         remainedAmount: 'مبلغ باقیمانده',
         totalElements: 'تعداد کل',
-        costs: 'مبلغ کل'
+        costs: 'مبلغ کل',
+        monetary: 'پولی',
 
 
 

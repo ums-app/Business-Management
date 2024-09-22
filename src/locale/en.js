@@ -317,7 +317,8 @@ const en = {
         chooseTheProduct: 'Choose The Product',
         totalAll: 'Total All',
         paidAmount: 'Paid amount',
-        remainedAmount: 'Remained amount'
+        remainedAmount: 'Remained amount',
+        monetary: 'Monetary'
     },
 };
 

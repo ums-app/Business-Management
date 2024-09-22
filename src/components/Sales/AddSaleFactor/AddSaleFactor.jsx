@@ -23,6 +23,10 @@ export const productForSale = {
     englishName: "",
     total: "",
     pricePer: "",
+    discount: {
+        value: 0,
+        type: 'percent'
+    },
     totalPrice: "",
 };
 
@@ -89,6 +93,10 @@ function AddSaleFactor({ updateMode }) {
             name: selectedProduct.name,
             englishName: selectedProduct.englishName,
             total: 1,
+            discount: {
+                value: 0,
+                type: 'percent'
+            },
             pricePer: selectedProduct.price,
             totalPrice: selectedProduct.price,
         }
@@ -101,7 +109,7 @@ function AddSaleFactor({ updateMode }) {
         const pr = customerFactor.productsInFactor[index];
 
         pr.total = e.target.value;
-        pr.totalPrice = Number(pr.total) * Number(pr.pricePer);
+        pr.totalPrice = caculateTotalPriceOfProduct(pr);
 
         customerFactor.productsInFactor[index] = pr;
 
@@ -109,9 +117,61 @@ function AddSaleFactor({ updateMode }) {
             ...customerFactor,
             productsInFactor: [...customerFactor.productsInFactor]
         })
+    }
+
+    const handleChangeProductPrice = (e, index) => {
+        const pr = customerFactor.productsInFactor[index];
+
+        pr.pricePer = e.target.value;
+        pr.totalPrice = caculateTotalPriceOfProduct(pr);
+
+        customerFactor.productsInFactor[index] = pr;
+        setcustomerFactor({
+            ...customerFactor,
+            productsInFactor: [...customerFactor.productsInFactor]
+        })
+
+    }
+    const handleChangeProductDiscount = (e, index) => {
+        const pr = customerFactor.productsInFactor[index];
+
+        console.log(e.target.value);
+        pr.discount.value = Number(e.target.value);
+        pr.totalPrice = caculateTotalPriceOfProduct(pr);
+        customerFactor.productsInFactor[index] = pr;
+        setcustomerFactor({
+            ...customerFactor,
+            productsInFactor: [...customerFactor.productsInFactor]
+        })
+    }
+
+    const handleChangeProductDiscountType = (e, index) => {
+        const pr = customerFactor.productsInFactor[index];
+        pr.discount.type = e.target.value;
+        pr.totalPrice = caculateTotalPriceOfProduct(pr);
+
+        customerFactor.productsInFactor[index] = pr;
+        setcustomerFactor({
+            ...customerFactor,
+            productsInFactor: [...customerFactor.productsInFactor]
+        })
+        console.log(pr);
+    }
+
+    const getPriceAfterDiscount = () => {
 
     }
 
+    const caculateTotalPriceOfProduct = (product) => {
+        let discount = product.discount.value;
+        if (product.discount.type == 'percent') {
+            discount = (discount * product.pricePer) / 100;
+        }
+        console.log(product.discount);
+        console.log(discount);
+
+        return product.total * (product.pricePer - discount);
+    }
     const handleDeleteProduct = (index) => {
         const temp = [...customerFactor.productsInFactor];
         temp.splice(index, 1);
@@ -210,7 +270,6 @@ function AddSaleFactor({ updateMode }) {
             />
             <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
 
-
             <div className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
                 <DisplayLogo imgURL={customerImage} />
                 <div className='display_flex'>
@@ -218,6 +277,8 @@ function AddSaleFactor({ updateMode }) {
                     <span className='info_value'> {customerForSaleFactor?.name}</span>
                     <span className='bold'>{t('lastName')}:</span>
                     <span className='info_value'> {customerForSaleFactor?.lastName}</span>
+                    <span className='bold'>{t('phoneNumber')}:</span>
+                    <span className='info_value'> {customerForSaleFactor?.phoneNumber}</span>
                 </div>
 
                 <div className='display_flex align_items_center'>
@@ -246,6 +307,8 @@ function AddSaleFactor({ updateMode }) {
                         <th>{t('englishName')}</th>
                         <th>{t('total')}</th>
                         <th>{t('pricePer')}</th>
+                        <th>{t('discount')}</th>
+
                         <th>{t('totalPrice')}</th>
                         <th>{t('actions')}</th>
                     </tr>
@@ -271,7 +334,24 @@ function AddSaleFactor({ updateMode }) {
                                 </td>
                                 <td>{prInFactor.englishName}</td>
                                 <td><input type="number" value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
-                                <td>{prInFactor.pricePer}</td>
+                                <td><input type="number" value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
+                                <td>
+                                    <div className='display_flex align_items_center'>
+                                        <input
+                                            type="number"
+                                            value={prInFactor.discount.value}
+                                            style={{ width: '70%' }}
+                                            onChange={(e) => handleChangeProductDiscount(e, index)} />
+                                        <select
+                                            name="discount_type"
+                                            style={{ width: '30%' }}
+                                            defaultValue={prInFactor.discount.type}
+                                            onChange={(e) => handleChangeProductDiscountType(e, index)}>
+                                            <option value="percent">{t('percent')}</option>
+                                            <option value="monetary">{t('monetary')}</option>
+                                        </select>
+                                    </div>
+                                </td>
                                 <td>{prInFactor.totalPrice}</td>
                                 <td>
                                     <Button
