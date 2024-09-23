@@ -408,7 +408,7 @@ function AddSaleFactor({ updateMode }) {
                                             </option>
                                             {products.map(pr => {
                                                 return (
-                                                    <option value={pr.id} key={pr.id} selected={prInFactor.prodcutId == pr.id} style={{ width: 'max-content' }}>
+                                                    <option value={pr.id} key={pr.id} selected={prInFactor.productId == pr.id} style={{ width: 'max-content' }}>
                                                         {pr.name}
                                                     </option>
                                                 )
