@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { t } from 'i18next'
 import Button from '../UI/Button/Button'
 import { toast } from 'react-toastify'
@@ -17,6 +17,9 @@ import { gregorianToJalali } from 'shamsi-date-converter';
 import ICONS from '../../constants/Icons';
 import { actionTypes } from '../../context/reducer';
 import { useStateValue } from '../../context/StateProvider';
+import ReactToPrint from 'react-to-print';
+import print from "../../constants/PrintCssStyles"
+import FactorForPrint from './FactorForPrint/FactorForPrint';
 
 
 
@@ -28,6 +31,8 @@ function Sales() {
     const salesCollectionRef = collection(db, Collections.Sales);
     const [imageUrls, setImageUrls] = useState();
     const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false)
+
+    let factorRef = useRef();
 
 
     useEffect(() => {

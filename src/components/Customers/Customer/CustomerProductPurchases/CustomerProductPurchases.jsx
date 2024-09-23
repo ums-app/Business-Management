@@ -16,7 +16,7 @@ function CustomerProductPurchases() {
     const [sales, setSales] = useState();
     const salesCollectionRef = collection(db, Collections.Sales);
     const [imageUrls, setImageUrls] = useState();
-    const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false)
+    const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false);
 
 
     useEffect(() => {
@@ -32,7 +32,6 @@ function CustomerProductPurchases() {
             }
 
         };
-
         fetchData();
     }, []);
 

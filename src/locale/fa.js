@@ -328,6 +328,10 @@ const fa = {
         totalElements: 'تعداد کل',
         costs: 'مبلغ کل',
         monetary: 'پولی',
+        totalRemainedAmount: 'مبلغ باقیمانده کل',
+        readyForPrint: 'آماده سازی برای چاپ',
+        invoiceOfDear: "صورتحساب محترم",
+        notImplementedYet: "این قابلیت هنوز پیاده سازی نشده است"
 
 
 

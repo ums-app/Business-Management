@@ -316,9 +316,14 @@ const en = {
         selectTheDesiredCustomer: 'Select the desired customer',
         chooseTheProduct: 'Choose The Product',
         totalAll: 'Total All',
+        pricePer: "Price Per",
+        totalElements: " Total Elements",
         paidAmount: 'Paid amount',
         remainedAmount: 'Remained amount',
-        monetary: 'Monetary'
+        monetary: 'Monetary',
+        invoiceOfDear: 'Invoice Of Dear',
+        createdDate: "Date of registration",
+        readyForPrint: "Ready for printing"
     },
 };
 

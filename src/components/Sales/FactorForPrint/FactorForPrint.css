@@ -1,0 +1,18 @@
+.factor_header {
+    height: 180px;
+    background-position: center;
+    background-size: 100% 180px;
+    background-repeat: no-repeat;
+}
+
+
+.factor_customer_information {
+    margin: 20px 0;
+    border: 1px solid var(--main-color);
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.factor_page .custom_table tr {
+    height: 30px;
+}

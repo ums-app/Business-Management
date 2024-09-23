@@ -1,5 +1,5 @@
 import { t } from 'i18next';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../UI/Button/Button';
 import { useStateValue } from '../../../context/StateProvider';
@@ -8,17 +8,21 @@ import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
-import { Timestamp, addDoc, collection, doc, getDocs, updateDoc } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, doc, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db, storage } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
 import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
 import { actionTypes } from '../../../context/reducer';
 import { toast } from 'react-toastify';
-
+import ReactToPrint from 'react-to-print';
+import FactorForPrint from '../FactorForPrint/FactorForPrint';
+import print from '../../../constants/PrintCssStyles';
+import Modal from '../../UI/modal/Modal';
+import Menu from "../../UI/Menu/Menu"
 
 export const productForSale = {
-    prodcutId: '',
+    productId: '',
     name: "",
     englishName: "",
     total: "",
@@ -33,9 +37,12 @@ export const productForSale = {
 function AddSaleFactor({ updateMode }) {
     const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
+    const [showPrintModal, setshowPrintModal] = useState(false);
     const [customerImage, setcustomerImage] = useState();
+    const [incompletedFactors, setincompletedFactors] = useState();
     const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
+
     const [showAddNewPayment, setShowAddNewPayment] = useState(false);
     const [payment, setPayment] = useState({
         amount: 0,
@@ -66,6 +73,23 @@ function AddSaleFactor({ updateMode }) {
         }
     }, [])
 
+    const getIncompletedFactors = () => {
+        const fetchData = async () => {
+            const q = query(salesCollectionRef, where("customer.id", "==", customerForSaleFactor.id));
+            try {
+                const querySnapshot = await getDocs(q);
+                const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                // try to set all the amount in a container;
+
+
+            } catch (error) {
+                console.error("Error getting documents: ", error);
+            }
+
+        };
+
+    }
+
 
     const getProducts = async () => {
         const querySnapshot = await getDocs(productCollectionRef);
@@ -89,7 +113,7 @@ function AddSaleFactor({ updateMode }) {
         const selectedProduct = products.find(item => item.id == value)
         console.log(selectedProduct);
         customerFactor.productsInFactor[index] = {
-            prodcutId: selectedProduct.id,
+            productId: selectedProduct.id,
             name: selectedProduct.name,
             englishName: selectedProduct.englishName,
             total: 1,
@@ -182,26 +206,38 @@ function AddSaleFactor({ updateMode }) {
     }
     const totalAll = () => {
         let totalAll = 0;
-        customerFactor.productsInFactor.forEach(item => {
+        customerFactor?.productsInFactor?.forEach(item => {
             totalAll += Number(item.totalPrice)
         })
         return totalAll;
     }
     const remainedAmount = () => {
         const total = totalAll();
-        console.log('total : ', total);
+        // console.log('total : ', total);
         let paidAmount = 0;
-        customerFactor.payments.forEach(item => {
+        customerFactor?.payments?.forEach(item => {
             if (item.amount > 0)
                 paidAmount += Number(item.amount)
         })
-        console.log('paid : ', paidAmount);
+        // console.log('paid : ', paidAmount);
         return total - paidAmount;
     }
 
 
     const savePaidAmount = () => {
         if (payment.amount > 0 && payment.date) {
+
+            const remained = remainedAmount();
+
+
+            // if the added amount is greater than the remained value
+            if (payment.amount > remained) {
+                const extraAmount = payment.amount - remained;
+
+
+            }
+
+
             setcustomerFactor({
                 ...customerFactor,
                 payments: [...customerFactor.payments, { ...payment }]
@@ -228,6 +264,8 @@ function AddSaleFactor({ updateMode }) {
             type: actionTypes.SET_SMALL_LOADING,
             payload: true
         })
+
+
         try {
             if (updateMode) {
                 const factorDoc = doc(db, Collections.Sales, factor.id)
@@ -255,22 +293,67 @@ function AddSaleFactor({ updateMode }) {
 
     }
 
+
+    async function updateMultipleDocuments(docUpdates) {
+        const batch = writeBatch(db); // Create a batch
+
+        // Loop through each document update
+        docUpdates.forEach(update => {
+            const docRef = doc(db, Collections.Sales, update.id); // Get the document reference
+            batch.update(docRef, update.data); // Add the update operation to the batch
+        });
+
+        // Commit the batch
+        try {
+            await batch.commit();
+            console.log("Batch update successfully committed!");
+        } catch (error) {
+            console.error("Error committing batch update: ", error);
+        }
+    }
+
+
     if (!customerForSaleFactor) {
         nav(-1)
     }
 
-
-    console.log(customerFactor);
-
     return (
         <div className='full_width'>
-            <Button
-                text={t('back')}
-                onClick={() => nav(-1)}
-            />
+            <div className='display_flex justify_content_space_between'>
+
+                {/* settings Menu */}
+                <Menu >
+                    <Button
+                        icon={ICONS.printer}
+                        text={t('readyForPrint')}
+                        onClick={() => setshowPrintModal(true)}
+                    />
+                    <Button
+                        icon={ICONS.trash}
+                        text={t("delete")}
+                        onClick={() =>
+                            toast.error('notImplementedYet')
+                        }
+                    />
+                </Menu>
+
+                <Button
+                    text={t('back')}
+                    onClick={() => nav(-1)}
+                />
+            </div>
+
+
+            <Modal show={showPrintModal} modalClose={() => setshowPrintModal(false)}>
+                <FactorForPrint customerFactor={customerFactor} />
+            </Modal>
+
+
+
             <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
 
-            <div className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
+            <div
+                className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
                 <DisplayLogo imgURL={customerImage} />
                 <div className='display_flex'>
                     <span className='bold'>{t('name')}:</span>
@@ -284,7 +367,7 @@ function AddSaleFactor({ updateMode }) {
                 <div className='display_flex align_items_center'>
                     <span className='bold'>{t('createdDate')}:</span>
                     <span className=''>
-                        {<CustomDatePicker value={customerFactor.createdDate instanceof Timestamp ? customerFactor.createdDate.toDate() : new Date(customerFactor.createdDate)} onChange={e => {
+                        {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
                             const date = jalaliToGregorian(e.year, e.month.number, e.day)
                             const gDate = new Date();
                             gDate.setFullYear(date[0])
@@ -299,95 +382,96 @@ function AddSaleFactor({ updateMode }) {
                 </div>
             </div>
 
-            <table className='custom_table full_width margin_bottom_10'>
-                <thead>
-                    <tr>
-                        <th>{t('number')}</th>
-                        <th>{t('name')} {t('product')}</th>
-                        <th>{t('englishName')}</th>
-                        <th>{t('total')}</th>
-                        <th>{t('pricePer')}</th>
-                        <th>{t('discount')}</th>
-
-                        <th>{t('totalPrice')}</th>
-                        <th>{t('actions')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {customerFactor?.productsInFactor.map((prInFactor, index) => {
-                        return (
-                            <tr>
-                                <td>{index + 1}</td>
-                                <td>
-                                    <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)}>
-                                        <option value={null}>
-                                            {t("chooseTheProduct")}
-                                        </option>
-                                        {products.map(pr => {
-                                            return (
-                                                <option value={pr.id} key={pr.id} selected={prInFactor.prodcutId == pr.id} style={{ width: 'max-content' }}>
-                                                    {pr.name}
-                                                </option>
-                                            )
-                                        })}
-                                    </select>
-                                </td>
-                                <td>{prInFactor.englishName}</td>
-                                <td><input type="number" value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
-                                <td><input type="number" value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
-                                <td>
-                                    <div className='display_flex align_items_center'>
-                                        <input
-                                            type="number"
-                                            value={prInFactor.discount.value}
-                                            style={{ width: '70%' }}
-                                            onChange={(e) => handleChangeProductDiscount(e, index)} />
-                                        <select
-                                            name="discount_type"
-                                            style={{ width: '30%' }}
-                                            defaultValue={prInFactor.discount.type}
-                                            onChange={(e) => handleChangeProductDiscountType(e, index)}>
-                                            <option value="percent">{t('percent')}</option>
-                                            <option value="monetary">{t('monetary')}</option>
+            <div className='full_width ' style={{ overflowX: 'scroll' }}>
+                <table className='custom_table full_width margin_bottom_10 '>
+                    <thead>
+                        <tr>
+                            <th>{t('number')}</th>
+                            <th>{t('name')} {t('product')}</th>
+                            <th>{t('englishName')}</th>
+                            <th>{t('total')}</th>
+                            <th>{t('pricePer')}</th>
+                            <th>{t('discount')}</th>
+                            <th>{t('totalPrice')}</th>
+                            <th>{t('actions')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {customerFactor?.productsInFactor?.map((prInFactor, index) => {
+                            return (
+                                <tr>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                        <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)}>
+                                            <option value={null}>
+                                                {t("chooseTheProduct")}
+                                            </option>
+                                            {products.map(pr => {
+                                                return (
+                                                    <option value={pr.id} key={pr.id} selected={prInFactor.prodcutId == pr.id} style={{ width: 'max-content' }}>
+                                                        {pr.name}
+                                                    </option>
+                                                )
+                                            })}
                                         </select>
-                                    </div>
-                                </td>
-                                <td>{prInFactor.totalPrice}</td>
-                                <td>
-                                    <Button
-                                        icon={ICONS.trash}
-                                        onClick={() => handleDeleteProduct(index)}
-                                        type={'crossBtn'}
-                                        id={'delete_row'}
-                                    />
-                                    <Tooltip
-                                        anchorSelect="#delete_row"
-                                        place="right"
-                                        className="toolTip_style"
-                                    >
-                                        {t("delete")}
-                                    </Tooltip>
-                                </td>
-                            </tr>
-                        )
-                    })}
+                                    </td>
+                                    <td>{prInFactor.englishName}</td>
+                                    <td><input type="number" value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
+                                    <td><input type="number" value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
+                                    <td>
+                                        <div className='display_flex align_items_center'>
+                                            <input
+                                                type="number"
+                                                value={prInFactor.discount.value}
+                                                style={{ width: '70%' }}
+                                                onChange={(e) => handleChangeProductDiscount(e, index)} />
+                                            <select
+                                                name="discount_type"
+                                                style={{ width: '30%' }}
+                                                defaultValue={prInFactor.discount.type}
+                                                onChange={(e) => handleChangeProductDiscountType(e, index)}>
+                                                <option value="percent">{t('percent')}</option>
+                                                <option value="monetary">{t('monetary')}</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>{prInFactor.totalPrice}</td>
+                                    <td>
+                                        <Button
+                                            icon={ICONS.trash}
+                                            onClick={() => handleDeleteProduct(index)}
+                                            type={'crossBtn'}
+                                            id={'delete_row'}
+                                        />
+                                        <Tooltip
+                                            anchorSelect="#delete_row"
+                                            place="right"
+                                            className="toolTip_style"
+                                        >
+                                            {t("delete")}
+                                        </Tooltip>
+                                    </td>
+                                </tr>
+                            )
+                        })}
 
-                    <Button
-                        icon={ICONS.plus}
-                        onClick={addNewProdcut}
-                        type={'plusBtn'}
-                        id={'add_new_row'}
-                    />
-                    <Tooltip
-                        anchorSelect="#add_new_row"
-                        place="left"
-                        className="toolTip_style"
-                    >
-                        {t("add")}
-                    </Tooltip>
+                        <Button
+                            icon={ICONS.plus}
+                            onClick={addNewProdcut}
+                            type={'plusBtn'}
+                            id={'add_new_row'}
+                        />
+                        <Tooltip
+                            anchorSelect="#add_new_row"
+                            place="left"
+                            className="toolTip_style"
+                        >
+                            {t("add")}
+                        </Tooltip>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
 
             <div className='full_width margin_top_20 padding_top_10 display_flex justify_content_end flex_direction_column align_items_start input'>
                 <h1 className='text_align_center margin_top_10 full_width'>{t('payments')}</h1>
@@ -396,7 +480,7 @@ function AddSaleFactor({ updateMode }) {
                     <span className='info_value'>{totalAll()}</span>
                 </div>
                 <div>
-                    {customerFactor.payments.map((payment, index) => {
+                    {customerFactor?.payments?.map((payment, index) => {
                         console.log(payment.date);
                         let date = payment.date;
                         // Check if date is a timestamp (number), and convert it to a Date object if so
@@ -484,6 +568,10 @@ function AddSaleFactor({ updateMode }) {
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
                     <span className=''>{t('remainedAmount')}: </span>
+                    <span className='info_value'>{remainedAmount()}</span>
+                </div>
+                <div className='margin_top_10 margin_bottom_10'>
+                    <span className=''>{t('totalRemainedAmount')}: </span>
                     <span className='info_value'>{remainedAmount()}</span>
                 </div>
 
