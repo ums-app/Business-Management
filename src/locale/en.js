@@ -323,7 +323,10 @@ const en = {
         monetary: 'Monetary',
         invoiceOfDear: 'Invoice Of Dear',
         createdDate: "Date of registration",
-        readyForPrint: "Ready for printing"
+        readyForPrint: "Ready for printing",
+        thisFactor: 'this factor',
+        totalPrevRemainedAmount: 'Previous Remained Amount',
+        invoice: "Invoice"
     },
 };
 

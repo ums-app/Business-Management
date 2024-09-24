@@ -3,7 +3,7 @@ import { t } from 'i18next'
 import Button from '../UI/Button/Button'
 import { toast } from 'react-toastify'
 import { db } from '../../constants/FirebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom'
 import LoadingTemplateContainer from "../UI/LoadingTemplate/LoadingTemplateContainer"
 import HeadingMenuTemplate from "../UI/LoadingTemplate/HeadingMenuTemplate"
@@ -32,47 +32,31 @@ function Sales() {
     const [imageUrls, setImageUrls] = useState();
     const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false)
 
-    let factorRef = useRef();
-
 
     useEffect(() => {
 
         const fetchData = async () => {
-            const querySnapshot = await getDocs(salesCollectionRef);
-            const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-            setSales(items);
 
-            console.log(items);
-        };
+            const q = query(
+                salesCollectionRef,
+                orderBy("createdDate", "desc")  // Ascending order by createdDate
+            );
+
+            try {
+                const querySnapshot = await getDocs(q);
+                const items = querySnapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    id: doc.id
+                }));
+                setSales(items);
+                console.log(items);
+            } catch (err) {
+                console.log(err);
+            }
+        }
 
         fetchData();
     }, []);
-
-
-    useEffect(() => {
-        const fetchImages = async () => {
-            const newImageUrls = {};
-            await Promise.all(
-                sales.map(async (item) => {
-                    try {
-                        const url = await getProductImage(item?.productId);
-                        console.log(url);
-                        newImageUrls[item.email] = url; // Store image URL by email
-                    } catch (err) {
-                        newImageUrls[item.email] = 'default';
-                        console.log(`Error fetching image for ${item.productId}:`, err);
-                    }
-                })
-            );
-            setImageUrls(newImageUrls); // Update state with all image URLs
-            console.log(newImageUrls);
-        };
-
-        if (sales) {
-            fetchImages();
-        }
-    }, [sales]);
-
 
 
     useEffect(() => {
@@ -162,7 +146,7 @@ function Sales() {
                             <th>{t('totalPrice')}</th>
                             <th>{t('paidAmount')}</th>
                             <th>{t('remainedAmount')}</th>
-                            <th>{t('status')}</th>
+                            {/* <th>{t('status')}</th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -191,7 +175,7 @@ function Sales() {
                                 <td>{getTotalPriceOfProdcuts(factor?.productsInFactor)}</td>
                                 <td>{getTotalPaidAmount(factor?.payments)}</td>
                                 <td>{getTotalPriceOfProdcuts(factor?.productsInFactor) - getTotalPaidAmount(factor?.payments)}</td>
-                                <td>{getStatus(getTotalPriceOfProdcuts(factor?.productsInFactor), getTotalPaidAmount(factor?.payments))}</td>
+                                {/* <td>{getStatus(getTotalPriceOfProdcuts(factor?.productsInFactor), getTotalPaidAmount(factor?.payments))}</td> */}
                             </tr>
                         })
                         }

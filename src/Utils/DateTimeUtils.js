@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { t } from "i18next"
 import * as shamsi from 'shamsi-date-converter';
 
@@ -81,6 +82,36 @@ export function persianDateToGregorian(date) {
 }
 
 shamsi.jalaliToGregorian()
+
+
+
+export const formatFirebaseDates = (date) => {
+  // Check if date is a Firestore Timestamp, and convert it to a JavaScript Date
+  if (date instanceof Timestamp) {
+    date = date.toDate();
+  } else if (typeof date === 'number') {
+    // If it's a timestamp (number), convert to Date
+    date = new Date(date);
+  } else if (typeof date === 'string') {
+    // Check if the string can be parsed into a valid date
+    const parsedDate = Date.parse(date);
+    if (!isNaN(parsedDate)) {
+      date = new Date(parsedDate);
+    } else {
+      date = null; // Handle invalid date strings
+    }
+  }
+
+  // Check if 'date' is a valid Date object, otherwise handle it as an invalid date
+  const isValidDate = date instanceof Date && !isNaN(date.getTime());
+
+  // Only pass a valid date to gregorianToJalali, otherwise display an error or fallback
+  const jalaliDate = isValidDate
+    ? shamsi.gregorianToJalali(date.getFullYear(), date.getMonth() + 1, date.getDate()).join('/')
+    : 'Invalid Date';
+
+  return jalaliDate
+}
 
 
 

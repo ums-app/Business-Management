@@ -1,5 +1,5 @@
 import { t } from 'i18next';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../UI/Button/Button';
 import { useStateValue } from '../../../context/StateProvider';
@@ -8,18 +8,18 @@ import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
-import { Timestamp, addDoc, collection, doc, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db, storage } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
 import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
 import { actionTypes } from '../../../context/reducer';
 import { toast } from 'react-toastify';
-import ReactToPrint from 'react-to-print';
 import FactorForPrint from '../FactorForPrint/FactorForPrint';
-import print from '../../../constants/PrintCssStyles';
 import Modal from '../../UI/modal/Modal';
 import Menu from "../../UI/Menu/Menu"
+import { factorStatus } from '../../../constants/FactorStatus';
+import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 
 export const productForSale = {
     productId: '',
@@ -34,27 +34,44 @@ export const productForSale = {
     totalPrice: "",
 };
 
+
+const userPaymentObj = {
+    amount: 0,
+    createdDate: new Date(),
+    by: '',
+    saleId: '',
+    customerId: '',
+}
+
 function AddSaleFactor({ updateMode }) {
     const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
     const [customerImage, setcustomerImage] = useState();
-    const [incompletedFactors, setincompletedFactors] = useState();
+    const [customerFactors, setCustomeractors] = useState([]);
+    const [customerPayments, setCustomerPayments] = useState([]);
     const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
+    const paymentCollectionRef = collection(db, Collections.Payments);
+    const [allCustomerPayments, setAllCustomerPayments] = useState([]);
 
-    const [showAddNewPayment, setShowAddNewPayment] = useState(false);
-    const [payment, setPayment] = useState({
+
+    // this is for tracking all user payments
+    const [userPayment, setUserPayment] = useState({
         amount: 0,
-        date: new Date(),
-        by: authentication.email
+        createdDate: new Date(),
+        by: authentication.email,
+        saleId: factor?.id,
+        customerId: customerForSaleFactor?.id,
+        date: new Date()
     })
 
+    const [showAddNewPayment, setShowAddNewPayment] = useState(false);
     const [customerFactor, setcustomerFactor] = useState({
         productsInFactor: [{ ...productForSale }],
         customer: customerForSaleFactor,
         payments: [],
-        createdDate: new Date()
+        createdDate: new Date(),
     })
 
 
@@ -65,6 +82,9 @@ function AddSaleFactor({ updateMode }) {
             const url = await getUserImage(customerForSaleFactor.email);
             setcustomerImage(url)
         }
+
+        getCustomerFactors();
+        getAllCustomerPayments()
         getImage();
         getProducts();
         addNewProdcut()
@@ -73,22 +93,63 @@ function AddSaleFactor({ updateMode }) {
         }
     }, [])
 
-    const getIncompletedFactors = () => {
-        const fetchData = async () => {
-            const q = query(salesCollectionRef, where("customer.id", "==", customerForSaleFactor.id));
-            try {
-                const querySnapshot = await getDocs(q);
-                const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-                // try to set all the amount in a container;
+    const getCustomerFactors = async () => {
+        console.log('get all incomplete fac func: ', 'customerId: ', customerForSaleFactor.id, 'status: ', factorStatus.INCOMPLETE);
+
+        const q = query(
+            salesCollectionRef,
+            where("customer.id", "==", customerForSaleFactor.id),
+        );
+
+        try {
+            const querySnapshot = await getDocs(q);
+            console.log('querysnapshot is empty: ', querySnapshot.empty);
+            // First map to an array, then filter and sort
+            let items = querySnapshot.docs
+                .map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
+                .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()); // Sort by date
+
+            console.log(factor);
+            if (updateMode) {
+                items = items.filter(doc => doc.id !== factor?.id);
+            }
+            // Try to set all the amount in a container
+            setCustomeractors(items);
+
+        } catch (error) {
+            console.error("Error getting documents: ", error);
+        }
+    };
 
 
-            } catch (error) {
-                console.error("Error getting documents: ", error);
+    const getAllCustomerPayments = async () => {
+        const q = query(
+            paymentCollectionRef,
+            where("customerId", "==", customerForSaleFactor.id),
+        );
+
+        try {
+            const querySnapshot = await getDocs(q);
+            console.log('querysnapshot is empty: ', querySnapshot.empty);
+            // First map to an array, then filter and sort
+            let items = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
+
+            // Try to set all the amount in a container
+            setAllCustomerPayments(items);
+
+            // if this is update mode then extract the payment of this factor into sperate list
+            if (updateMode) {
+                const paymentOfThisFactor = items.filter(item => item.saleId == factor?.id);
+                if (paymentOfThisFactor.length > 0)
+                    setUserPayment(paymentOfThisFactor[0]);
             }
 
-        };
+        } catch (error) {
+            console.error("Error getting documents: ", error);
+        }
+    };
 
-    }
+
 
 
     const getProducts = async () => {
@@ -129,6 +190,7 @@ function AddSaleFactor({ updateMode }) {
             productsInFactor: [...customerFactor.productsInFactor]
         })
     }
+
     const handleChangeTotalProducts = (e, index) => {
         const pr = customerFactor.productsInFactor[index];
 
@@ -156,6 +218,7 @@ function AddSaleFactor({ updateMode }) {
         })
 
     }
+
     const handleChangeProductDiscount = (e, index) => {
         const pr = customerFactor.productsInFactor[index];
 
@@ -182,10 +245,6 @@ function AddSaleFactor({ updateMode }) {
         console.log(pr);
     }
 
-    const getPriceAfterDiscount = () => {
-
-    }
-
     const caculateTotalPriceOfProduct = (product) => {
         let discount = product.discount.value;
         if (product.discount.type == 'percent') {
@@ -196,6 +255,7 @@ function AddSaleFactor({ updateMode }) {
 
         return product.total * (product.pricePer - discount);
     }
+
     const handleDeleteProduct = (index) => {
         const temp = [...customerFactor.productsInFactor];
         temp.splice(index, 1);
@@ -204,6 +264,7 @@ function AddSaleFactor({ updateMode }) {
             productsInFactor: temp
         })
     }
+
     const totalAll = () => {
         let totalAll = 0;
         customerFactor?.productsInFactor?.forEach(item => {
@@ -211,50 +272,70 @@ function AddSaleFactor({ updateMode }) {
         })
         return totalAll;
     }
+
+    // this func is going to calculate the remained value of this factor
     const remainedAmount = () => {
         const total = totalAll();
-        // console.log('total : ', total);
-        let paidAmount = 0;
-        customerFactor?.payments?.forEach(item => {
-            if (item.amount > 0)
-                paidAmount += Number(item.amount)
+        return total - Number(userPayment.amount + '');
+    }
+
+    // this func is going to calculate the remained value of previous factors
+    const totalAmountOfAllFactors = useCallback(() => {
+        // check if incomplete factors are fetched
+        if (!customerFactors) {
+            getCustomerFactors();
+        }
+        let totalRemainedOfAllFactor = 0;
+        customerFactors?.forEach(fac => {
+            console.log((fac));
+            totalRemainedOfAllFactor += getTotalPriceOfFactor(fac);
         })
-        // console.log('paid : ', paidAmount);
-        return total - paidAmount;
+        return totalRemainedOfAllFactor;
+    }, [customerFactors])
+
+
+    // this func is going to calculate the remained value of previous factors
+    const totalAmountOfAllCustomerPayments = useCallback(() => {
+        // check if incomplete factors are fetched
+        if (!allCustomerPayments) {
+            getAllCustomerPayments();
+        }
+        let totalAmountOfAllPayments = 0;
+        allCustomerPayments?.forEach(py => {
+            totalAmountOfAllPayments += Number(py.amount);
+        })
+
+        console.log('totalpaymentamount:', totalAmountOfAllPayments);
+        return totalAmountOfAllPayments;
+    }, [allCustomerPayments])
+
+
+
+
+    const getTotalPriceOfFactor = (fac) => {
+        let totalPriceOfFac = 0
+        fac.productsInFactor?.forEach(item => {
+            console.log("totalprice of fac: " + fac.id, totalPriceOfFac);
+            totalPriceOfFac += Number(item.totalPrice)
+        })
+
+        console.log('factor:' + fac.id, totalPriceOfFac);
+        return totalPriceOfFac;
     }
 
 
-    const savePaidAmount = () => {
-        if (payment.amount > 0 && payment.date) {
+    const deleteUserPayment = (index) => {
 
-            const remained = remainedAmount();
+        // if this is update mode then remove the payment from server
 
-
-            // if the added amount is greater than the remained value
-            if (payment.amount > remained) {
-                const extraAmount = payment.amount - remained;
-
-
-            }
-
-
-            setcustomerFactor({
-                ...customerFactor,
-                payments: [...customerFactor.payments, { ...payment }]
-            })
-            setShowAddNewPayment(false)
+        if (updateMode) {
+            // deleteDoc
         }
 
-    }
-
-
-
-    const deletePaidAmount = (index) => {
-        const temp = [...customerFactor.payments];
-        temp.splice(index, 1);
-        setcustomerFactor({
-            ...customerFactor,
-            payments: temp
+        // 
+        setUserPayment({
+            ...userPayment,
+            amount: 0
         })
 
     }
@@ -265,7 +346,6 @@ function AddSaleFactor({ updateMode }) {
             payload: true
         })
 
-
         try {
             if (updateMode) {
                 const factorDoc = doc(db, Collections.Sales, factor.id)
@@ -273,49 +353,49 @@ function AddSaleFactor({ updateMode }) {
                 toast.success(t('successfullyUpdated'))
                 nav('/sales')
             } else {
+                const factorDoc = await addDoc(salesCollectionRef, customerFactor);
 
-                const customerRes = await addDoc(salesCollectionRef, { ...customerFactor })
+                if (userPayment.amount > 0) {
+                    console.log('sending payment doc: ', userPayment.amount);
+                    addDoc(paymentCollectionRef, { ...userPayment, saleId: factorDoc.id });
+                }
                 toast.success(t('successfullyAdded'));
                 nav('/sales')
             }
         } catch (err) {
             toast.error(err)
-
-
         } finally {
             dispatch({
                 type: actionTypes.SET_SMALL_LOADING,
                 payload: false
             })
         }
-
-
-
     }
 
 
-    async function updateMultipleDocuments(docUpdates) {
-        const batch = writeBatch(db); // Create a batch
+    // async function updateMultipleDocuments(docUpdates) {
+    //     const batch = writeBatch(db); // Create a batch
 
-        // Loop through each document update
-        docUpdates.forEach(update => {
-            const docRef = doc(db, Collections.Sales, update.id); // Get the document reference
-            batch.update(docRef, update.data); // Add the update operation to the batch
-        });
+    //     // Loop through each document update
+    //     incompletedFactors.forEach(update => {
+    //         const docRef = doc(db, Collections.Sales, update.id); // Get the document reference
+    //         batch.update(docRef, update); // Add the update operation to the batch
+    //     });
 
-        // Commit the batch
-        try {
-            await batch.commit();
-            console.log("Batch update successfully committed!");
-        } catch (error) {
-            console.error("Error committing batch update: ", error);
+    //     // Commit the batch
+    //     try {
+    //         await batch.commit();
+    //         console.log("Batch update successfully committed!");
+    //     } catch (error) {
+    //         console.error("Error committing batch update: ", error);
+    //     }
+    // }
+
+    useEffect(() => {
+        if (!customerForSaleFactor) {
+            nav(-1)
         }
-    }
-
-
-    if (!customerForSaleFactor) {
-        nav(-1)
-    }
+    }, [])
 
     return (
         <div className='full_width'>
@@ -343,12 +423,16 @@ function AddSaleFactor({ updateMode }) {
                 />
             </div>
 
-
             <Modal show={showPrintModal} modalClose={() => setshowPrintModal(false)}>
-                <FactorForPrint customerFactor={customerFactor} />
+                <FactorForPrint
+                    customerFactor={customerFactor}
+                    totalAmountOfAllCustomerPayments={() => totalAmountOfAllCustomerPayments()}
+                    totalAmountOfAllFactors={() => totalAmountOfAllFactors()}
+                    remainedAmount={() => remainedAmount()}
+                    totalOfCurrent={() => totalAll()}
+                    userPayment={userPayment}
+                />
             </Modal>
-
-
 
             <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
 
@@ -399,10 +483,10 @@ function AddSaleFactor({ updateMode }) {
                     <tbody>
                         {customerFactor?.productsInFactor?.map((prInFactor, index) => {
                             return (
-                                <tr>
+                                <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>
-                                        <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)}>
+                                        <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)} defaultValue={prInFactor.productId}>
                                             <option value={null}>
                                                 {t("chooseTheProduct")}
                                             </option>
@@ -416,18 +500,18 @@ function AddSaleFactor({ updateMode }) {
                                         </select>
                                     </td>
                                     <td>{prInFactor.englishName}</td>
-                                    <td><input type="number" value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
-                                    <td><input type="number" value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
+                                    <td><input type="number" style={{ width: '100px' }} value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
+                                    <td><input type="number" style={{ width: '100px' }} value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
                                     <td>
                                         <div className='display_flex align_items_center'>
                                             <input
                                                 type="number"
                                                 value={prInFactor.discount.value}
-                                                style={{ width: '70%' }}
+                                                style={{ width: '120px' }}
                                                 onChange={(e) => handleChangeProductDiscount(e, index)} />
                                             <select
                                                 name="discount_type"
-                                                style={{ width: '30%' }}
+                                                style={{ width: '100px' }}
                                                 defaultValue={prInFactor.discount.type}
                                                 onChange={(e) => handleChangeProductDiscountType(e, index)}>
                                                 <option value="percent">{t('percent')}</option>
@@ -480,43 +564,29 @@ function AddSaleFactor({ updateMode }) {
                     <span className='info_value'>{totalAll()}</span>
                 </div>
                 <div>
-                    {customerFactor?.payments?.map((payment, index) => {
-                        console.log(payment.date);
-                        let date = payment.date;
-                        // Check if date is a timestamp (number), and convert it to a Date object if so
-                        if (date instanceof Timestamp) {
-                            date = date.toDate();
-                        } else if (typeof date === 'string') {
-                            // Convert the string date to a Date object (assuming it's a valid string date format)
-                            date = new Date(date);
-                        }
-                        // Now, pass the date to gregorianToJalali after ensuring it's a Date object
-                        const jalaliDate = gregorianToJalali(date.getFullYear(), date.getMonth() + 1, date.getDate()).join('/');
+                    {!showAddNewPayment && userPayment.amount > 0 && (
+                        <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
+                            <span className='info_value'>1: </span>
+                            <span className=''>{t('paidAmount')}: </span>
+                            <span className='info_value'>{userPayment.amount} </span>
+                            <span className=''>{t('date')}: </span>
+                            <span className='info_value short_date'>{formatFirebaseDates(userPayment.date)} </span>
+                            <span>
+                                <Button
+                                    text={t('delete')}
+                                    type={'plusBtn'}
+                                    id={'delete_payment'}
+                                    onClick={deleteUserPayment}
+                                />
+                            </span>
+                        </div>)
+                    }
 
-                        return (
-                            <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
-                                <span className='info_value'>{index + 1}: </span>
-                                <span className=''>{t('paidAmount')}: </span>
-                                <span className='info_value'>{payment.amount} </span>
-                                <span className=''>{t('date')}: </span>
-                                <span className='info_value short_date'>{jalaliDate} </span>
-                                <span>
-                                    <Button
-                                        text={t('delete')}
-                                        type={'plusBtn'}
-                                        id={'delete_payment'}
-                                        onClick={() => deletePaidAmount(index)}
-                                    />
-                                </span>
-                            </div>
-
-                        )
-                    })}
                     {showAddNewPayment &&
                         <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
                             <span className='info_value'>{t('paidAmount')}: </span>
                             <span className='info_value'>
-                                <input type="number" onChange={e => setPayment({ ...payment, amount: e.target.value })} />
+                                <input type="number" onChange={e => setUserPayment({ ...userPayment, amount: Number(e.target.value + "") })} />
                             </span>
                             <span className='info_value'>{t('date')}: </span>
                             <span className='info_value short_date'>
@@ -526,8 +596,8 @@ function AddSaleFactor({ updateMode }) {
                                     gDate.setFullYear(date[0])
                                     gDate.setMonth(date[1])
                                     gDate.setDate(date[2]);
-                                    setPayment({
-                                        ...payment,
+                                    setUserPayment({
+                                        ...userPayment,
                                         date: gDate
                                     })
                                 }} />
@@ -537,21 +607,28 @@ function AddSaleFactor({ updateMode }) {
                                     text={t('save')}
                                     type={'plusBtn'}
                                     id={'add_new_payment'}
-                                    onClick={() => savePaidAmount()}
+                                    onClick={() => setShowAddNewPayment(false)}
                                 />
                                 <Button
                                     text={t('cancel')}
                                     type={'crossBtn'}
                                     id={'cancel_new_payment'}
-                                    onClick={() => setShowAddNewPayment(false)}
+                                    onClick={() => {
+                                        setUserPayment({
+                                            ...userPayment,
+                                            amount: 0
+                                        })
+                                        setShowAddNewPayment(false)
+                                    }}
                                 />
                             </span>
                         </div>
                     }
                     {
-                        remainedAmount() > 0 &&
+                        userPayment.amount == 0 &&
                         <Button
                             icon={ICONS.plus}
+                            text={t('payment')}
                             type={'plusBtn'}
                             id={'add_new_payment'}
                             onClick={() => setShowAddNewPayment(true)}
@@ -567,12 +644,16 @@ function AddSaleFactor({ updateMode }) {
 
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('remainedAmount')}: </span>
+                    <span className=''>{t('remainedAmount')} {t('of')} {t('thisFactor')}: </span>
                     <span className='info_value'>{remainedAmount()}</span>
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
+                    <span className=''>{t('totalPrevRemainedAmount')}: </span>
+                    <span className='info_value'>{(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments())}</span>
+                </div>
+                <div className='margin_top_10 margin_bottom_10'>
                     <span className=''>{t('totalRemainedAmount')}: </span>
-                    <span className='info_value'>{remainedAmount()}</span>
+                    <span className='info_value'>{(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()) + remainedAmount()}</span>
                 </div>
 
             </div>

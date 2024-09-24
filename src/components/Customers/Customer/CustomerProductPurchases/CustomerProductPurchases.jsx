@@ -8,6 +8,8 @@ import { actionTypes } from '../../../../context/reducer';
 import ICONS from '../../../../constants/Icons';
 import { gregorianToJalali } from 'shamsi-date-converter';
 import { useStateValue } from '../../../../context/StateProvider';
+import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
+import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
 
 function CustomerProductPurchases() {
     const { customerId } = useParams();
@@ -71,6 +73,13 @@ function CustomerProductPurchases() {
     }
 
 
+    if (!sales) {
+        return <LoadingTemplateContainer>
+            <ShotLoadingTemplate />
+        </LoadingTemplateContainer>
+    }
+
+
     return (
         <div>
             <div className='full_width input'></div>
@@ -85,8 +94,6 @@ function CustomerProductPurchases() {
                             <th>{t('totalElements')}</th>
                             <th>{t('totalPrice')}</th>
                             <th>{t('paidAmount')}</th>
-                            <th>{t('remainedAmount')}</th>
-                            <th>{t('status')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,8 +121,7 @@ function CustomerProductPurchases() {
                                 <td>{getTotalProdcuts(factor?.productsInFactor)}</td>
                                 <td>{getTotalPriceOfProdcuts(factor?.productsInFactor)}</td>
                                 <td>{getTotalPaidAmount(factor?.payments)}</td>
-                                <td>{getTotalPriceOfProdcuts(factor?.productsInFactor) - getTotalPaidAmount(factor?.payments)}</td>
-                                <td>{getStatus(getTotalPriceOfProdcuts(factor?.productsInFactor), getTotalPaidAmount(factor?.payments))}</td>
+
                             </tr>
                         })
                         }

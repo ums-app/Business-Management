@@ -331,7 +331,12 @@ const fa = {
         totalRemainedAmount: 'مبلغ باقیمانده کل',
         readyForPrint: 'آماده سازی برای چاپ',
         invoiceOfDear: "صورتحساب محترم",
-        notImplementedYet: "این قابلیت هنوز پیاده سازی نشده است"
+        notImplementedYet: "این قابلیت هنوز پیاده سازی نشده است",
+        thisFactor: 'فاکتور فعلی',
+        successfullyAdded: 'با موفقیت اضافه شد',
+        successfullyUpdated: "با موفقیت بروزرسانی شد",
+        totalPrevRemainedAmount: 'باقیمانده قبلی',
+        invoice: 'صورتحساب',
 
 
 

@@ -16,3 +16,25 @@
 .factor_page .custom_table tr {
     height: 30px;
 }
+
+.factor_body {
+    margin: 0 40px;
+}
+
+.factor_results {
+    font-size: 14px;
+}
+
+.products_table table thead tr {
+    background-color: deepskyblue;
+}
+
+.factor_results table thead tr {
+    background-color: coral;
+}
+
+
+.factor_footer {
+    background-color: deepskyblue;
+    padding: 5px 10px;
+}

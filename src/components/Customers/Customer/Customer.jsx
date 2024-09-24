@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import Collections from '../../../constants/Collections';
 import { getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from "../../UI/DisplayLogo/DisplayLogo"
+import CustomerPayments from './CsutomerPayments/CustomerPayments';
 
 
 // components for tabs
@@ -30,7 +31,7 @@ const components = {
         component: PersonalInformation,
     },
     CustomerProductPurchases: { componentName: "CustomerProductPurchases", component: CustomerProductPurchases },
-
+    CustomerPayments: { componentName: "CustomerPayments", component: CustomerPayments },
 };
 
 
@@ -191,6 +192,17 @@ function Customer() {
                     onClick={() => setDisplayComponent(components?.CustomerProductPurchases)}
                 >
                     {t('purchases')}
+                </li>
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.CustomerPayments?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent(components?.CustomerPayments)}
+                >
+                    {t('payments')}
                 </li>
             </TabMenu>
 

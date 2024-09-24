@@ -5,6 +5,7 @@ export default {
     Sales: 'Sales',
     Products: 'Products',
     Purchases: "Purchases",
+    Payments: 'Payments'
 
 
 }

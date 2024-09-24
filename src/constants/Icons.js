@@ -129,7 +129,9 @@ const ICONS = {
   bookmark: 'bi bi-bookmark',
   bookmarkFill: 'bi bi-bookmark-fill',
   reply: 'bi bi-reply-fill',
-  pen: "bi bi-building"
+  pen: "bi bi-building",
+  whatsapp: 'bi bi-whatsapp',
+  telegram: 'bi bi-telegram',
 };
 
 export default ICONS;
