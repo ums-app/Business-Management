@@ -17,8 +17,6 @@ function CustomerProductPurchases() {
     const [, dispatch] = useStateValue()
     const [sales, setSales] = useState();
     const salesCollectionRef = collection(db, Collections.Sales);
-    const [imageUrls, setImageUrls] = useState();
-    const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false);
 
 
     useEffect(() => {
@@ -63,13 +61,6 @@ function CustomerProductPurchases() {
             total += Number(item.amount);
         })
         return total;
-    }
-
-    const getStatus = (total, paid) => {
-        if (total - paid > 0) {
-            return <span className='status_r'><i className={ICONS.cross}></i> {t('UNCOMPLETED')}</span >
-        }
-        return <span className='status_g'><i className={ICONS.thick}></i>{t('COMPLETED')}</span>
     }
 
 

@@ -337,6 +337,10 @@ const fa = {
         successfullyUpdated: "با موفقیت بروزرسانی شد",
         totalPrevRemainedAmount: 'باقیمانده قبلی',
         invoice: 'صورتحساب',
+        totalAmountOfAllPurchases: "مجموعه بردگی ها",
+        totalAmountOfAllPayments: 'مجموعه پرداخت ها',
+        customersManagement: 'مدیریت مشتریان',
+        shortListedCustomers: 'شارت لیست مشریان'
 
 
 

@@ -5,9 +5,11 @@ import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 
 
+
+const productCollectionRef = collection(db, Collections.Products)
+const salesCollectionRef = collection(db, Collections.Sales);
+const paymentCollectionRef = collection(db, Collections.Payments);
 const usersCollectionRef = collection(db, Collections.Users);
-
-
 
 export const checkIfEmailIsAlreadyExist = async (email) => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -39,3 +41,107 @@ export const getUserImage = async (email) => {
         return downloadURL;
     }
 };
+
+//  =========================== product service =================================
+
+export const getProducts = async () => {
+    const querySnapshot = await getDocs(productCollectionRef);
+    const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    return items
+}
+
+
+
+
+
+// ============================ cutomer service ==================================
+
+// this func is going to calculate the remained value of previous factors
+export const totalAmountOfAllCustomerPayments = (allCustomerPayments) => {
+    // check if incomplete factors are fetched
+    if (!allCustomerPayments) {
+        getAllCustomerPayments();
+    }
+    let totalAmountOfAllPayments = 0;
+    allCustomerPayments?.forEach(py => {
+        totalAmountOfAllPayments += Number(py.amount);
+    })
+
+    console.log('totalpaymentamount:', totalAmountOfAllPayments);
+    return totalAmountOfAllPayments;
+}
+
+// this func is going to calculate the remained value of previous factors
+export const totalAmountOfAllFactors = (customerFactors) => {
+    // check if incomplete factors are fetched
+    if (!customerFactors) {
+        getCustomerFactors();
+    }
+    let totalRemainedOfAllFactor = 0;
+    customerFactors?.forEach(fac => {
+        console.log((fac));
+        totalRemainedOfAllFactor += getTotalPriceOfFactor(fac);
+    })
+    return totalRemainedOfAllFactor;
+}
+
+export const getAllCustomerPayments = async (customerId) => {
+    const q = query(
+        paymentCollectionRef,
+        where("customerId", "==", customerId),
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+        console.log('querysnapshot is empty: ', querySnapshot.empty);
+        // First map to an array, then filter and sort
+        let items = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
+        console.log(items);
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+};
+
+
+export const getCustomerFactors = async (customerId) => {
+
+    const q = query(
+        salesCollectionRef,
+        where("customer.id", "==", customerId),
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+        console.log('querysnapshot is empty: ', querySnapshot.empty);
+        // First map to an array, then filter and sort
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
+            .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()); // Sort by date
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+}
+
+export const getTotalPriceOfFactor = (fac) => {
+    let totalPriceOfFac = 0
+    fac.productsInFactor?.forEach(item => {
+        console.log("totalprice of fac: " + fac.id, totalPriceOfFac);
+        totalPriceOfFac += Number(item.totalPrice)
+    })
+
+    console.log('factor:' + fac.id, totalPriceOfFac);
+    return totalPriceOfFac;
+}
+
+
+
+
+

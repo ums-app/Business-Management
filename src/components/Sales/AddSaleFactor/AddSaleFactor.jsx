@@ -276,7 +276,8 @@ function AddSaleFactor({ updateMode }) {
     // this func is going to calculate the remained value of this factor
     const remainedAmount = () => {
         const total = totalAll();
-        return total - Number(userPayment.amount + '');
+        return total - Number(userPayment.amount + '')
+        // return remained < 0 ? 0 : remained;
     }
 
     // this func is going to calculate the remained value of previous factors
@@ -645,7 +646,7 @@ function AddSaleFactor({ updateMode }) {
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
                     <span className=''>{t('remainedAmount')} {t('of')} {t('thisFactor')}: </span>
-                    <span className='info_value'>{remainedAmount()}</span>
+                    <span className='info_value'>{remainedAmount() < 0 ? 0 : remainedAmount()}</span>
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
                     <span className=''>{t('totalPrevRemainedAmount')}: </span>
