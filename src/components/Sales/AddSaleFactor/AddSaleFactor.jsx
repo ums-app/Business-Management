@@ -8,7 +8,7 @@ import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db, storage } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
@@ -72,6 +72,7 @@ function AddSaleFactor({ updateMode }) {
         customer: customerForSaleFactor,
         payments: [],
         createdDate: new Date(),
+        indexNumber: 0
     })
 
 
@@ -82,7 +83,20 @@ function AddSaleFactor({ updateMode }) {
             const url = await getUserImage(customerForSaleFactor.email);
             setcustomerImage(url)
         }
+        const getTotalNumberOfFactors = async () => {
+            const snapshot = await getCountFromServer(salesCollectionRef);
+            const totalDocs = snapshot.data().count;
+            setcustomerFactor({
+                ...customerFactor,
+                indexNumber: Number(totalDocs) + 1001
+            })
+        }
 
+        console.log(factor);
+
+        if (!updateMode) {
+            getTotalNumberOfFactors();
+        }
         getCustomerFactors();
         getAllCustomerPayments()
         getImage();
@@ -148,9 +162,6 @@ function AddSaleFactor({ updateMode }) {
             console.error("Error getting documents: ", error);
         }
     };
-
-
-
 
     const getProducts = async () => {
         const querySnapshot = await getDocs(productCollectionRef);
@@ -448,10 +459,17 @@ function AddSaleFactor({ updateMode }) {
                     <span className='bold'>{t('phoneNumber')}:</span>
                     <span className='info_value'> {customerForSaleFactor?.phoneNumber}</span>
                 </div>
+                <div className='display_flex align_items_center'>
+                    <span className='bold'>{t('indexNumber')}:</span>
+                    <span className=''>
+                        {customerFactor.indexNumber}
+                    </span>
+                </div>
 
                 <div className='display_flex align_items_center'>
+
                     <span className='bold'>{t('createdDate')}:</span>
-                    <span className=''>
+                    <span className=' short_date'>
                         {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
                             const date = jalaliToGregorian(e.year, e.month.number, e.day)
                             const gDate = new Date();

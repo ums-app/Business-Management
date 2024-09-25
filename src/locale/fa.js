@@ -346,7 +346,8 @@ const fa = {
         lastPayment: "آخرین پرداخت",
         currentAmount: "رسید فعلی",
         lastPurchaseFactor: "آخرین بردگی",
-        customerListTitleForShortList: 'لیست مشتریان ولایات و ولسوالی ها شرکت شیرخشک ببی ویت'
+        customerListTitleForShortList: 'لیست مشتریان ولایات و ولسوالی ها شرکت شیرخشک ببی ویت',
+        indexNumber: 'شماره مسلسل'
 
 
 

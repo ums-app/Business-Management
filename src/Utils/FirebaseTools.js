@@ -1,4 +1,4 @@
-import { collection, getDoc, getDocs, orderBy, query, where } from "firebase/firestore"
+import { collection, getCountFromServer, getDoc, getDocs, orderBy, query, where } from "firebase/firestore"
 import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
@@ -209,6 +209,17 @@ export const getTotalPriceOfFactor = (fac) => {
 }
 
 
+
+
+
+//  ======================== factors =================================
+
+
+const getTotalNumberOfFactors = async () => {
+    const snapshot = await getCountFromServer(salesCollectionRef);
+    const totalDocs = snapshot.data().count;
+    return totalDocs;
+}
 
 
 
