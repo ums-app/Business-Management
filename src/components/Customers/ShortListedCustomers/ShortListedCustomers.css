@@ -1,0 +1,10 @@
+.customers_list .custom_table tbody tr td {
+    border: 1px solid #797878;
+}
+
+
+.customers_list .custom_table thead tr th {
+    background-color: #00000012 !important;
+    height: 40px;
+    border-color: 1px solid var(--text-color);
+}

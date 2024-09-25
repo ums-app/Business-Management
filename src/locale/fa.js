@@ -340,7 +340,14 @@ const fa = {
         totalAmountOfAllPurchases: "مجموعه بردگی ها",
         totalAmountOfAllPayments: 'مجموعه پرداخت ها',
         customersManagement: 'مدیریت مشتریان',
-        shortListedCustomers: 'شارت لیست مشریان'
+        shortListedCustomers: 'شارت لیست مشریان',
+        nameAndLastName: 'نام و تخلص',
+        lastPurchase: 'آخرین خرید',
+        lastPayment: "آخرین پرداخت",
+        currentAmount: "رسید فعلی",
+        lastPurchaseFactor: "آخرین بردگی",
+        customerListTitleForShortList: 'لیست مشتریان ولایات و ولسوالی ها شرکت شیرخشک ببی ویت'
+
 
 
 

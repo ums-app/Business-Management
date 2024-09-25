@@ -111,15 +111,6 @@ function Sales() {
         return total;
     }
 
-    const getStatus = (total, paid) => {
-        if (total - paid > 0) {
-            return <span className='status_r'><i className={ICONS.cross}></i> {t('UNCOMPLETED')}</span >
-        }
-        return <span className='status_g'><i className={ICONS.thick}></i>{t('COMPLETED')}</span>
-    }
-
-
-
     return (
         <div>
             <Button

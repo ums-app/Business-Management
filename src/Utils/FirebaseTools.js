@@ -7,6 +7,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 
 
 const productCollectionRef = collection(db, Collections.Products)
+const customersCollectionsRef = collection(db, Collections.Customers);
 const salesCollectionRef = collection(db, Collections.Sales);
 const paymentCollectionRef = collection(db, Collections.Payments);
 const usersCollectionRef = collection(db, Collections.Users);
@@ -56,6 +57,34 @@ export const getProducts = async () => {
 
 // ============================ cutomer service ==================================
 
+
+
+
+// const getProducts = async () => {
+//     const querySnapshot = await getDocs(productCollectionRef);
+//     const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+//     setProducts(items);
+//     console.log(items);
+// }
+export const getCustomers = async () => {
+
+    try {
+        const querySnapshot = await getDocs(customersCollectionsRef);
+        console.log('querysnapshot is empty: ', querySnapshot.empty);
+
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id }))
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+};
+
+
+
 // this func is going to calculate the remained value of previous factors
 export const totalAmountOfAllCustomerPayments = (allCustomerPayments) => {
     // check if incomplete factors are fetched
@@ -85,6 +114,25 @@ export const totalAmountOfAllFactors = (customerFactors) => {
     return totalRemainedOfAllFactor;
 }
 
+
+export const getAllPayments = async () => {
+
+    try {
+        const querySnapshot = await getDocs(paymentCollectionRef);
+
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id }))
+
+        return items;
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+};
+
+
+
+
 export const getAllCustomerPayments = async (customerId) => {
     const q = query(
         paymentCollectionRef,
@@ -108,6 +156,22 @@ export const getAllCustomerPayments = async (customerId) => {
         return []
     }
 };
+
+
+export const getFactors = async () => {
+
+    try {
+        const querySnapshot = await getDocs(salesCollectionRef);
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+}
 
 
 export const getCustomerFactors = async (customerId) => {
