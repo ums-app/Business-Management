@@ -75,10 +75,10 @@ function ShortListedCustomers() {
                     lastName: customer.lastName,
                     customerLocation: customer.location,
                     customerPhoneNumber: customer.phoneNumber,
-                    lastPurchaseDate: formatFirebaseDates(facs[0].createdDate),
+                    lastPurchaseDate: formatFirebaseDates(facs[0]?.createdDate),
                     lastPurchaseAmount: totalAmountOfAllFactors([facs[0]]),
-                    lastPaymentDate: formatFirebaseDates(pays[0].createdDate),
-                    lastPaymentAmount: pays[0].amount,
+                    lastPaymentDate: formatFirebaseDates(pays[0]?.createdDate),
+                    lastPaymentAmount: pays[0]?.amount,
                     remainedAmount: remained
                 })
             }
@@ -154,7 +154,7 @@ function ShortListedCustomers() {
                     <tbody>
                         {shortListOfCustomers.map((item, index) => {
                             return (
-                                <tr style={{ height: '30px' }}>
+                                <tr style={{ height: '30px' }} key={index}>
                                     <td>{index + 1}</td>
                                     <td>{item.name}</td>
                                     <td>{item.lastName}</td>

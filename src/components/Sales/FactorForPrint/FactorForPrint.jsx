@@ -80,15 +80,15 @@ function FactorForPrint({
                             <span className='info_value'>{customerFactor?.customer?.name} {customerFactor?.customer?.lastName}</span>
                         </div>
 
-                        <div className='display_flex align_items_center'>
-                            <span className='bold'>{t('indexNumber')}:</span>
-                            <span className=''>
-                                {customerFactor.indexNumber}
-                            </span>
-                        </div>
                         <div>
                             <span>{t('date')}: </span>
                             <span className='info_values'>{formatFirebaseDates(customerFactor?.createdDate)}</span>
+                        </div>
+                        <div className='display_flex align_items_center'>
+                            <span className='bold'>{t('indexNumber')}:</span>
+                            <span className='info_value'>
+                                {customerFactor.indexNumber}
+                            </span>
                         </div>
                     </div>
                     <div className='full_width products_table input'>
