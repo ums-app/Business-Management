@@ -77,8 +77,8 @@ function ShortListedCustomers() {
                     customerPhoneNumber: customer.phoneNumber,
                     lastPurchaseDate: formatFirebaseDates(facs[0]?.createdDate),
                     lastPurchaseAmount: totalAmountOfAllFactors([facs[0]]),
-                    lastPaymentDate: formatFirebaseDates(pays[0]?.createdDate),
-                    lastPaymentAmount: pays[0]?.amount,
+                    lastPaymentDate: pays[0]?.createdDate && formatFirebaseDates(pays[0]?.createdDate),
+                    lastPaymentAmount: pays[0]?.amount && pays[0]?.amount,
                     remainedAmount: remained
                 })
             }
@@ -162,8 +162,8 @@ function ShortListedCustomers() {
                                     <td>{item.lastPurchaseAmount}</td>
                                     <td>{item.lastPurchaseDate}</td>
                                     <td>{item.customerPhoneNumber}</td>
-                                    <td>{item.lastPaymentAmount}</td>
-                                    <td>{item.lastPaymentDate}</td>
+                                    <td>{item?.lastPaymentAmount}</td>
+                                    <td>{item?.lastPaymentDate}</td>
                                     <td>{item.remainedAmount}</td>
                                     <td></td>
                                 </tr>
