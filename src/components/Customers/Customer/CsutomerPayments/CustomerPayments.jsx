@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { useStateValue } from '../../../../context/StateProvider';
 import { t } from 'i18next';
@@ -15,6 +15,7 @@ import Button from '../../../UI/Button/Button';
 import Modal from '../../../UI/modal/Modal';
 import { jalaliToGregorian } from 'shamsi-date-converter';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
+import { toast } from 'react-toastify';
 
 function CustomerPayments() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -48,9 +49,31 @@ function CustomerPayments() {
     }, []);
 
     const sendNewPaymentToAPI = async () => {
+        dispatch({
+            type: actionTypes.SET_SMALL_LOADING,
+            payload: true
+        })
 
+        try {
+            if (userPayment.amount <= 0) {
+                toast.error('amountShouldNotBeZeroOrNegative')
+                return
+            }
+            console.log('sending payment doc: ', userPayment.amount);
+            addDoc(paymentsCollectionRef, userPayment);
+            setPayments([userPayment, ...payments])
+            toast.success(t('successfullyAdded'));
+            setShowPaymentModal(false)
+
+        } catch (err) {
+            toast.error(err)
+        } finally {
+            dispatch({
+                type: actionTypes.SET_SMALL_LOADING,
+                payload: false
+            })
+        }
     }
-
 
     console.log(payments);
 
@@ -95,31 +118,45 @@ function CustomerPayments() {
             />
 
             <Modal show={showPaymentModal} modalClose={() => setShowPaymentModal(false)}>
-                <div className='display_flex flex_direction_column align_items_center'>
+                <div className='display_flex flex_direction_column align_items_center  margin_bottom_10 margin_top_20'>
                     <p className='title margin_top_20 margin_bottom_10'>{t('add')} {t('payment')}</p>
-                    <div className='margin_top_20 margin_bottom_10  padding_10'>
-                        <span className='info_value'>{t('paidAmount')}</span>
-                        <span className='info_value'>
-                            <input type="number" onChange={e => setUserPayment({ ...userPayment, amount: Number(e.target.value + "") })} />
-                        </span>
-                    </div>
-                    <div className='margin_top_10 margin_bottom_10  padding_10'>
-                        <span className='info_value'>{t('date')}: </span>
-                        <span className='info_value short_date'>
-                            <CustomDatePicker onChange={e => {
-                                const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                const gDate = new Date();
-                                gDate.setFullYear(date[0])
-                                gDate.setMonth(date[1])
-                                gDate.setDate(date[2]);
-                                setUserPayment({
-                                    ...userPayment,
-                                    date: gDate
-                                })
-                            }} />
-                        </span>
-                    </div>
-                    <div>
+                    <table className='margin_top_20'>
+                        <tbody>
+                            <tr>
+                                <td>{t('number')}</td>
+                                <td>
+                                    {payments.length + 1}:
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{t('paidAmount')}:</td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        className='full_width'
+                                        onChange={e => setUserPayment({ ...userPayment, amount: Number(e.target.value + "") })}
+                                    />
+                                </td>
+                            </tr>
+                            <tr className='margin_top_20'>
+                                <td>{t('date')}:</td>
+                                <td>
+                                    <CustomDatePicker onChange={e => {
+                                        const date = jalaliToGregorian(e.year, e.month.number, e.day)
+                                        const gDate = new Date();
+                                        gDate.setFullYear(date[0])
+                                        gDate.setMonth(date[1])
+                                        gDate.setDate(date[2]);
+                                        setUserPayment({
+                                            ...userPayment,
+                                            date: gDate
+                                        })
+                                    }} />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div className='margin_top_20'>
                         <Button
                             text={t('save')}
                             type={'plusBtn'}

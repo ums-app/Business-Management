@@ -1,4 +1,4 @@
-import { collection, getDoc, getDocs, query, where } from "firebase/firestore"
+import { collection, getDoc, getDocs, orderBy, query, where } from "firebase/firestore"
 import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
@@ -89,13 +89,16 @@ export const getAllCustomerPayments = async (customerId) => {
     const q = query(
         paymentCollectionRef,
         where("customerId", "==", customerId),
+        // orderBy("createdDate", "desc")
     );
 
     try {
         const querySnapshot = await getDocs(q);
         console.log('querysnapshot is empty: ', querySnapshot.empty);
         // First map to an array, then filter and sort
-        let items = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id }))
+            .sort((a, b) => b.createdDate - a.createdDate);// Map to data with id
         console.log(items);
 
         return items;
