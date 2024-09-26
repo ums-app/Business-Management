@@ -459,12 +459,6 @@ function AddSaleFactor({ updateMode }) {
                     <span className='bold'>{t('phoneNumber')}:</span>
                     <span className='info_value'> {customerForSaleFactor?.phoneNumber}</span>
                 </div>
-                <div className='display_flex align_items_center'>
-                    <span className='bold'>{t('indexNumber')}:</span>
-                    <span className=''>
-                        {customerFactor.indexNumber}
-                    </span>
-                </div>
 
                 <div className='display_flex align_items_center'>
 
@@ -481,6 +475,13 @@ function AddSaleFactor({ updateMode }) {
                                 createdDate: gDate
                             })
                         }} />}
+                    </span>
+                </div>
+
+                <div className='display_flex align_items_center'>
+                    <span className='bold'>{t('indexNumber')}:</span>
+                    <span className=''>
+                        {customerFactor.indexNumber}
                     </span>
                 </div>
             </div>

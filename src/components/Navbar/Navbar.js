@@ -60,6 +60,7 @@ const Navbar = () => {
   return (
     <div className={`navbar ${navbarCollapse && " active_nav_right "} display_flex flex_direction_column justify_content_space_between`}>
 
+      {/* for admin user */}
       <div className="navbar_menu position_absolute">
         <ul className="navbar_content">
           <CustomeLinks to="/" id={'home_link'} >
@@ -224,6 +225,98 @@ const Navbar = () => {
           </Tooltip>
         </ul>
       </div>
+
+
+      {/* for customer */}
+      {authentication.userType == 'customer' &&
+        <div className="navbar_menu position_absolute">
+          <ul className="navbar_content">
+            <CustomeLinks to="/" id={'home_link'} >
+              <i className={ICONS.door}></i>
+              <span>{t("home")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#home_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("home")}
+            </Tooltip>
+
+            <CustomeLinks to="/purchase-products" id={'purchases_link'}>
+              <i className={ICONS.hangBag}></i>
+              <span>{t('purchases')}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#purchases_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("purchases")}
+            </Tooltip>
+
+
+            <CustomeLinks to="/products" id={'products_link'}>
+              <i className={ICONS.stack}></i>
+              <span>{t("products")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#products_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("products")}
+            </Tooltip>
+
+
+
+            <CustomeLinks to="/customers" id={'customers_link'}>
+              <i className={ICONS.personVideo}></i>
+              <span>{t("customers")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#customers_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("customers")}
+            </Tooltip>
+
+            <CustomeLinks to="/settings" id={'settings_link'}>
+              <i className={ICONS.gear}></i>
+              <span>{t("settings")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#settings_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("settings")}
+            </Tooltip>
+
+
+
+
+            <li className="link" onClick={logoutModal} id={"logout"}>
+              <a>
+                <i className={ICONS.logout2}></i>
+                <span>{t("logout")}</span>
+              </a>
+            </li>
+
+            <Tooltip
+              anchorSelect="#logout"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("logout")}
+            </Tooltip>
+          </ul>
+        </div>
+
+      }
+
+
 
 
       <div className="toggle_header_navbar position_relative display_flex justify_content_center ">

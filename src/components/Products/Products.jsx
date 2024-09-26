@@ -87,7 +87,7 @@ function Products() {
                         price={prd.price}
                         inventory={prd.inventory}
                         englishName={prd.englishName}
-
+                        key={prd.id}
                     />
                 })}
             </div>
