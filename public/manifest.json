@@ -3,17 +3,17 @@
   "name": "BebeVit App",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "bebevit_icon.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "hebra.png",
+      "src": "bebevit_icon.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "hebra.png",
+      "src": ".bebevit_icon.png",
       "type": "image/png",
       "sizes": "512x512"
     }

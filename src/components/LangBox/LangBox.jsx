@@ -29,6 +29,7 @@ function LangBox() {
         setShowLangBox(false)
     })
 
+    console.log(locale);
     return (
         <div className={'lang'} ref={langBoxRef}>
             <div className='lanBox' onClick={showBoxHandler}>

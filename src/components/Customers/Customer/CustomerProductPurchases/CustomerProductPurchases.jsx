@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, endBefore, getCountFromServer, getDocs, limit, limitToLast, orderBy, query, startAfter, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import Collections from '../../../../constants/Collections';
 import { db } from '../../../../constants/FirebaseConfig';
@@ -10,6 +10,9 @@ import { gregorianToJalali } from 'shamsi-date-converter';
 import { useStateValue } from '../../../../context/StateProvider';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { pageSizes } from '../../../../constants/Others';
+import { Tooltip } from 'react-tooltip';
+import Pagination from '../../../UI/Pagination/Pagination';
 
 function CustomerProductPurchases() {
     const { customerId } = useParams();
@@ -18,21 +21,20 @@ function CustomerProductPurchases() {
     const [sales, setSales] = useState();
     const salesCollectionRef = collection(db, Collections.Sales);
 
+    const [pageSize, setPageSize] = useState(pageSizes[0])
+    const [totalPages, setTotalPages] = useState()
+    const [totalDocuments, setTotalDocuments] = useState(0); // Total number of documents
+    const [currentPage, setCurrentPage] = useState(1); // Track the current page
+    const [lastVisible, setLastVisible] = useState(null);
+    const [firstVisible, setFirstVisible] = useState(null);
+    const [isPrevPageAvailable, setIsPrevPageAvailable] = useState(false); // To disable/enable previous page button
+    const [loading, setloading] = useState(false);
+
 
     useEffect(() => {
 
-        const fetchData = async () => {
-            const q = query(salesCollectionRef, where("customer.id", "==", customerId));
-            try {
-                const querySnapshot = await getDocs(q);
-                const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-                setSales(items);
-            } catch (error) {
-                console.error("Error getting documents: ", error);
-            }
+        getTotalDocumentCount(pageSizes[0]);
 
-        };
-        fetchData();
     }, []);
 
 
@@ -63,6 +65,127 @@ function CustomerProductPurchases() {
         return total;
     }
 
+    // Get the total number of documents in the collection
+    const getTotalDocumentCount = async (pageSize) => {
+        const snapshot = await getCountFromServer(salesCollectionRef);
+        const totalDocs = snapshot.data().count;
+        setTotalDocuments(totalDocs);
+
+        console.log('totaldoc: ', totalDocs);
+
+        // Calculate the total number of pages
+        const totalPageCount = Math.ceil(totalDocs / pageSize);
+        setTotalPages(totalPageCount);
+        getFirstPage(pageSize);
+    };
+
+
+    // Function to get the first page
+    const getFirstPage = async (pageSize) => {
+        setloading(true)
+
+        const firstPageQuery = query(
+            salesCollectionRef,
+            where('customer.id', '==', customerId),
+            orderBy('createdDate'),
+            limit(pageSize));
+        const querySnapshot = await getDocs(firstPageQuery);
+
+        console.log('que ', querySnapshot.empty);
+
+        const customerData = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+
+        setSales(customerData);
+
+        // Set pagination boundaries
+        setFirstVisible(querySnapshot.docs[0]);
+        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        setIsPrevPageAvailable(false); // No previous page on the first load
+        setCurrentPage(1)
+        setloading(false)
+    };
+
+
+    // Function to get the next page
+    const getNextPage = async () => {
+        if (!lastVisible) return; // No more pages
+        setloading(true)
+
+        const nextPageQuery = query(
+            salesCollectionRef,
+            where('customer.id', '==', customerId),
+            orderBy('createdDate'),
+            startAfter(lastVisible),
+            limit(pageSize)
+        );
+        const querySnapshot = await getDocs(nextPageQuery);
+
+        if (!querySnapshot.empty) {
+            const customerData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setSales(customerData);
+
+            // Set pagination boundaries
+            setFirstVisible(querySnapshot.docs[0]);
+            setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+            setIsPrevPageAvailable(true); // Previous page becomes available once you move forward
+            setCurrentPage((prev) => prev + 1)
+        }
+        setloading(false)
+    };
+
+
+    // Function to get the previous page
+    const getPreviousPage = async () => {
+        if (!firstVisible) return; // No previous pages
+        setloading(true)
+        const prevPageQuery = query(
+            salesCollectionRef,
+            where('customer.id', '==', customerId),
+            orderBy('createdDate'),
+            endBefore(firstVisible),
+            limitToLast(pageSize)
+        );
+        const querySnapshot = await getDocs(prevPageQuery);
+
+        if (!querySnapshot.empty) {
+            const customerData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setSales(customerData);
+
+            // Set pagination boundaries
+            setFirstVisible(querySnapshot.docs[0]);
+            setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+
+            // Disable previous page button if we're on the first page again
+            setIsPrevPageAvailable(querySnapshot.docs.length === pageSize);
+            setCurrentPage((prev) => prev - 1)
+        }
+        setloading(false)
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     if (!sales) {
         return <LoadingTemplateContainer>
@@ -70,11 +193,49 @@ function CustomerProductPurchases() {
         </LoadingTemplateContainer>
     }
 
+    console.log(totalPages);
+
 
     return (
         <div>
             <div className='full_width input'></div>
+
+
             <div className='table_container '>
+                <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
+                    <div className='pagination display_flex '>
+                        <div className='display_flex align_items_center '>
+                            <label htmlFor="pageSize">{t('size')}</label>
+                            <select
+                                name="pageSize"
+                                id="pageSize"
+                                className='input margin_left_10 margin_right_10'
+                                onChange={e => {
+                                    setPageSize(e.target.value)
+                                    getTotalDocumentCount(e.target.value)
+                                }}
+                            >
+                                {pageSizes.map(num => {
+                                    return <option value={num} key={num}>{num}</option>
+                                })}
+                            </select>
+                            <Tooltip
+                                anchorSelect="#pageSize"
+                                place="top"
+                                className="toolTip_style"
+                            >
+                                {t("numberOfElementPerPage")}
+                            </Tooltip>
+                        </div>
+                        <Pagination
+                            total={totalPages}
+                            currentPage={currentPage}
+                            nextPage={getNextPage}
+                            prevPage={getPreviousPage}
+                            isPrevPageAvailable={isPrevPageAvailable}
+                        />
+                    </div>
+                </div>
                 <table className="full_width custom_table table_row_hover">
                     <thead >
                         <tr>

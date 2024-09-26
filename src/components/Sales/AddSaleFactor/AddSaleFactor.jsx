@@ -292,34 +292,37 @@ function AddSaleFactor({ updateMode }) {
     }
 
     // this func is going to calculate the remained value of previous factors
-    const totalAmountOfAllFactors = useCallback(() => {
+    const totalAmountOfAllFactors = () => {
         // check if incomplete factors are fetched
         if (!customerFactors) {
             getCustomerFactors();
         }
         let totalRemainedOfAllFactor = 0;
-        customerFactors?.forEach(fac => {
-            console.log((fac));
-            totalRemainedOfAllFactor += getTotalPriceOfFactor(fac);
-        })
+        customerFactors?.filter(item => item.createdDate < customerFactor.createdDate)
+            .forEach(fac => {
+                console.log((fac));
+                totalRemainedOfAllFactor += getTotalPriceOfFactor(fac);
+            })
         return totalRemainedOfAllFactor;
-    }, [customerFactors])
+    }
 
 
     // this func is going to calculate the remained value of previous factors
-    const totalAmountOfAllCustomerPayments = useCallback(() => {
+    const totalAmountOfAllCustomerPayments = () => {
         // check if incomplete factors are fetched
         if (!allCustomerPayments) {
             getAllCustomerPayments();
         }
         let totalAmountOfAllPayments = 0;
-        allCustomerPayments?.forEach(py => {
-            totalAmountOfAllPayments += Number(py.amount);
-        })
+        allCustomerPayments
+            .filter(item => item.createdDate < customerFactor.createdDate)
+            .forEach(py => {
+                totalAmountOfAllPayments += Number(py.amount);
+            })
 
         console.log('totalpaymentamount:', totalAmountOfAllPayments);
         return totalAmountOfAllPayments;
-    }, [allCustomerPayments])
+    }
 
 
 
