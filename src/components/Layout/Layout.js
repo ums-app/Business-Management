@@ -38,7 +38,7 @@ function Layout() {
           originalEntityId: localStorage.getItem("originalEntityId"),
           imageURL: localStorage.getItem("imageURL"),
           userType: localStorage.getItem("userType"),
-          roles: localStorage.getItem("roles")?.split(","),
+          roles: localStorage.getItem("roles") ? localStorage.getItem("roles")?.split(",") : [],
         };
 
         // Dispatch only if the authentication state changes

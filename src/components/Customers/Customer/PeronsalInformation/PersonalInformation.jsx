@@ -78,7 +78,7 @@ function PersonalInformation() {
                 <span>{t('email')} </span>
                 <span>{customer.email}</span>
             </div>
-            {authentication.roles.includes('SUPER_ADMIN') &&
+            {authentication?.roles?.includes('SUPER_ADMIN') &&
                 <div div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                     <span onClick={() => setshowPassword(!showPassword)}>
                         <i className={showPassword ? ICONS.eyeSlashFill : ICONS.eyeFill}></i>
