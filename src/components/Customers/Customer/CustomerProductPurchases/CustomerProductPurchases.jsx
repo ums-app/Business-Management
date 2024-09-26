@@ -28,7 +28,7 @@ function CustomerProductPurchases() {
     const [lastVisible, setLastVisible] = useState(null);
     const [firstVisible, setFirstVisible] = useState(null);
     const [isPrevPageAvailable, setIsPrevPageAvailable] = useState(false); // To disable/enable previous page button
-    const [loading, setloading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
@@ -65,61 +65,90 @@ function CustomerProductPurchases() {
         return total;
     }
 
-    // Get the total number of documents in the collection
+    // Function to get the total document count based on the customer ID
     const getTotalDocumentCount = async (pageSize) => {
-        const snapshot = await getCountFromServer(salesCollectionRef);
-        const totalDocs = snapshot.data().count;
-        setTotalDocuments(totalDocs);
+        setLoading(true);
 
-        console.log('totaldoc: ', totalDocs);
+        try {
+            // Apply the 'where' condition to count only the relevant documents
+            const countQuery = query(
+                salesCollectionRef,
+                where('customer.id', '==', customerId)
+            );
 
-        // Calculate the total number of pages
-        const totalPageCount = Math.ceil(totalDocs / pageSize);
-        console.log('total-page: ', totalPageCount);
-        setTotalPages(totalPageCount);
-        console.log('get first page: ', totalPages);
-        getFirstPage(pageSize);
+            // Get the count of matching documents
+            const snapshot = await getCountFromServer(countQuery);
+            const totalDocs = snapshot.data().count;
+            setTotalDocuments(totalDocs);
+
+            console.log('Total documents for customer: ', totalDocs);
+
+            // Calculate the total number of pages based on the pageSize
+            const totalPageCount = Math.ceil(totalDocs / pageSize);
+            setTotalPages(totalPageCount);
+
+            console.log('Total page count: ', totalPageCount);
+
+            // Fetch the first page of results
+            await getFirstPage(pageSize);
+        } catch (error) {
+            console.error('Error fetching total document count: ', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-
-    // Function to get the first page
+    // Function to get the first page of documents
     const getFirstPage = async (pageSize) => {
-        setloading(true)
+        setLoading(true);
 
-        const firstPageQuery = query(
-            salesCollectionRef,
-            where('customer.id', '==', customerId),
-            // orderBy('createdDate'),
-            limit(pageSize));
-        const querySnapshot = await getDocs(firstPageQuery);
+        try {
+            const firstPageQuery = query(
+                salesCollectionRef,
+                where('customer.id', '==', customerId),
+                orderBy('createdDate', 'desc'), // Adjust order as needed
+                limit(pageSize)
+            );
 
-        console.log('que ', querySnapshot.empty);
+            const querySnapshot = await getDocs(firstPageQuery);
 
-        const customerData = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
+            if (querySnapshot.empty) {
+                console.log('No documents found.');
+                setSales([]);
+                return;
+            }
 
-        setSales(customerData);
+            const customerData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
 
-        // Set pagination boundaries
-        setFirstVisible(querySnapshot.docs[0]);
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setIsPrevPageAvailable(false); // No previous page on the first load
-        setCurrentPage(1)
-        setloading(false)
+            setSales(customerData);
+
+            // Set pagination boundaries
+            setFirstVisible(querySnapshot.docs[0]);
+            setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+            setIsPrevPageAvailable(false); // No previous page on the first load
+            setCurrentPage(1);
+
+            console.log('First page of data loaded successfully');
+        } catch (error) {
+            console.error('Error fetching the first page: ', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
 
     // Function to get the next page
     const getNextPage = async () => {
         if (!lastVisible) return; // No more pages
-        setloading(true)
+        setLoading(true)
 
         const nextPageQuery = query(
             salesCollectionRef,
             where('customer.id', '==', customerId),
-            orderBy('createdDate'),
+            orderBy('createdDate', 'desc'),
             startAfter(lastVisible),
             limit(pageSize)
         );
@@ -139,18 +168,18 @@ function CustomerProductPurchases() {
             setIsPrevPageAvailable(true); // Previous page becomes available once you move forward
             setCurrentPage((prev) => prev + 1)
         }
-        setloading(false)
+        setLoading(false)
     };
 
 
     // Function to get the previous page
     const getPreviousPage = async () => {
         if (!firstVisible) return; // No previous pages
-        setloading(true)
+        setLoading(true)
         const prevPageQuery = query(
             salesCollectionRef,
             where('customer.id', '==', customerId),
-            orderBy('createdDate'),
+            orderBy('createdDate', 'desc'),
             endBefore(firstVisible),
             limitToLast(pageSize)
         );
@@ -172,7 +201,7 @@ function CustomerProductPurchases() {
             setIsPrevPageAvailable(querySnapshot.docs.length === pageSize);
             setCurrentPage((prev) => prev - 1)
         }
-        setloading(false)
+        setLoading(false)
     };
 
 
