@@ -16,6 +16,7 @@ import Modal from '../../../UI/modal/Modal';
 import { jalaliToGregorian } from 'shamsi-date-converter';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { toast } from 'react-toastify';
+import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
 
 function CustomerPayments() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -33,6 +34,18 @@ function CustomerPayments() {
         customerId: customerId,
         date: new Date()
     })
+
+    const [totalPayments, settotalPayments] = useState(0)
+    const [totalFactors, settotalFactors] = useState(0)
+
+
+    useEffect(() => {
+        if (payments && factors) {
+            settotalPayments(totalAmountOfAllCustomerPayments(payments));
+            settotalFactors(totalAmountOfAllFactors(factors));
+        }
+
+    }, [factors, payments])
 
 
 
@@ -98,9 +111,12 @@ function CustomerPayments() {
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{totalAmountOfAllFactors(factors)}</td>
-                                <td>{totalAmountOfAllCustomerPayments(payments)}</td>
-                                <td>{(totalAmountOfAllFactors(factors) - totalAmountOfAllCustomerPayments(payments))}</td>
+                                <td>{totalFactors}</td>
+                                <td>{totalPayments}</td>
+                                <td>
+                                    {Math.abs(totalFactors - totalPayments)}
+                                    <MoneyStatus number={totalFactors - totalPayments} />
+                                </td>
                             </tr>
 
                         </tbody>

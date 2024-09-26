@@ -75,7 +75,9 @@ function CustomerProductPurchases() {
 
         // Calculate the total number of pages
         const totalPageCount = Math.ceil(totalDocs / pageSize);
+        console.log('total-page: ', totalPageCount);
         setTotalPages(totalPageCount);
+        console.log('get first page: ', totalPages);
         getFirstPage(pageSize);
     };
 
@@ -87,7 +89,7 @@ function CustomerProductPurchases() {
         const firstPageQuery = query(
             salesCollectionRef,
             where('customer.id', '==', customerId),
-            orderBy('createdDate'),
+            // orderBy('createdDate'),
             limit(pageSize));
         const querySnapshot = await getDocs(firstPageQuery);
 

@@ -13,6 +13,7 @@ import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateCo
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { Timestamp } from 'firebase/firestore';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
+import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 
 function FactorForPrint({
     customerFactor,
@@ -149,8 +150,14 @@ function FactorForPrint({
                                         <td>{totalOfCurrent()}</td>
                                         <td>{userPayment.amount}</td>
                                         <td>{remainedAmount() < 0 ? 0 : remainedAmount()}</td>
-                                        <td>{(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments())}</td>
-                                        <td>{(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()) + remainedAmount()}</td>
+                                        <td>
+                                            {Math.abs(totalAmountOfAllFactors - totalAmountOfAllCustomerPayments)}
+                                            <MoneyStatus number={(totalAmountOfAllFactors - totalAmountOfAllCustomerPayments)} />
+                                        </td>
+                                        <td>
+                                            {Math.abs((totalAmountOfAllFactors - totalAmountOfAllCustomerPayments) + remainedAmount())}
+                                            <MoneyStatus number={(totalAmountOfAllFactors - totalAmountOfAllCustomerPayments) + remainedAmount()} />
+                                        </td>
                                     </tr>
 
                                 </tbody>

@@ -20,6 +20,7 @@ import Modal from '../../UI/modal/Modal';
 import Menu from "../../UI/Menu/Menu"
 import { factorStatus } from '../../../constants/FactorStatus';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
+import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 
 export const productForSale = {
     productId: '',
@@ -54,7 +55,9 @@ function AddSaleFactor({ updateMode }) {
     const salesCollectionRef = collection(db, Collections.Sales);
     const paymentCollectionRef = collection(db, Collections.Payments);
     const [allCustomerPayments, setAllCustomerPayments] = useState([]);
-
+    const [totalAmountOfCustomerPayments, settotalAmountOfCustomerPayments] = useState(0)
+    const [totalAmountOfCustomerFactors, settotalAmountOfCustomerFactors] = useState(0)
+    const [products, setProducts] = useState([]);
 
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
@@ -75,8 +78,11 @@ function AddSaleFactor({ updateMode }) {
         indexNumber: 0
     })
 
+    useEffect(() => {
+        settotalAmountOfCustomerPayments(totalAmountOfAllCustomerPayments());
+        settotalAmountOfCustomerFactors(totalAmountOfAllFactors());
+    }, [allCustomerPayments])
 
-    const [products, setProducts] = useState([]);
 
     useEffect(() => {
         const getImage = async () => {
@@ -412,6 +418,8 @@ function AddSaleFactor({ updateMode }) {
         }
     }, [])
 
+    console.log(totalAmountOfCustomerFactors, totalAmountOfCustomerPayments);
+
     return (
         <div className='full_width'>
             <div className='display_flex justify_content_space_between'>
@@ -441,8 +449,8 @@ function AddSaleFactor({ updateMode }) {
             <Modal show={showPrintModal} modalClose={() => setshowPrintModal(false)}>
                 <FactorForPrint
                     customerFactor={customerFactor}
-                    totalAmountOfAllCustomerPayments={() => totalAmountOfAllCustomerPayments()}
-                    totalAmountOfAllFactors={() => totalAmountOfAllFactors()}
+                    totalAmountOfAllCustomerPayments={totalAmountOfCustomerPayments}
+                    totalAmountOfAllFactors={totalAmountOfCustomerFactors}
                     remainedAmount={() => remainedAmount()}
                     totalOfCurrent={() => totalAll()}
                     userPayment={userPayment}
@@ -672,11 +680,18 @@ function AddSaleFactor({ updateMode }) {
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
                     <span className=''>{t('totalPrevRemainedAmount')}: </span>
-                    <span className='info_value'>{(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments())}</span>
+                    <span className='info_value'>
+                        {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments)}
+                        <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments)} />
+                    </span>
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
                     <span className=''>{t('totalRemainedAmount')}: </span>
-                    <span className='info_value'>{(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()) + remainedAmount()}</span>
+                    <span className='info_value'>
+                        {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount())}
+                        <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount())} />
+
+                    </span>
                 </div>
 
             </div>
