@@ -318,6 +318,7 @@ const fa = {
         people: 'افراد',
         numberOfElementPerPage: "تعداد ردیف ها در هر صفحه",
         enterValueForSearching: 'نام مورد نظر را وارد کنید',
+        enterValueForSearchingIndexNumber: 'شماره مسلسل مورد نظر را وارد کنید',
         selectTheDesiredCustomer: 'مشتری مورد نظر را انتخاب کنید',
         totalPrice: 'قیمت کل',
         pricePer: 'قیمت فی',
@@ -349,7 +350,9 @@ const fa = {
         customerListTitleForShortList: 'لیست مشتریان ولایات و ولسوالی ها شرکت شیرخشک ببی ویت',
         indexNumber: 'شماره مسلسل',
         employeeFee: 'کارمزد کارمند',
-        notExist: 'موجود نیست'
+        notExist: 'موجود نیست',
+        sundryFactor: 'فاکتور متفرقه',
+
 
 
 

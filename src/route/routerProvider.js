@@ -8,6 +8,7 @@ import Product from "../components/Products/Product/Product";
 import AddProduct from "../components/Products/AddProduct/AddProducts";
 import AddPurchaseProducts from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts";
 import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor";
+import AddSaleFactorForUnknowCustomer from "../components/Sales/AddSaleFactor/AddSaleFactorForUnknowCustomer";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -53,6 +54,11 @@ const browserRouter = createBrowserRouter([
         path: "/sales/add",
         element: <AddSaleFactor />,
       },
+      {
+        path: "/sales/add-custom",
+        element: <AddSaleFactorForUnknowCustomer />,
+      },
+
       {
         path: "/sales/:saleFactorId/update",
         element: <AddSaleFactor updateMode={true} />,

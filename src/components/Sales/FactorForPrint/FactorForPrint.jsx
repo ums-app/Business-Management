@@ -148,7 +148,7 @@ function FactorForPrint({
                                 <tbody>
                                     <tr>
                                         <td>{totalOfCurrent()}</td>
-                                        <td>{userPayment.amount}</td>
+                                        <td>{customerFactor.paidAmount}</td>
                                         <td>{remainedAmount() < 0 ? 0 : remainedAmount()}</td>
                                         <td>
                                             {Math.abs(totalAmountOfAllFactors - totalAmountOfAllCustomerPayments)}

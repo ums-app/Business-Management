@@ -328,7 +328,8 @@ const en = {
         totalPrevRemainedAmount: 'Previous Remained Amount',
         invoice: "Invoice",
         employeeFee: 'Employee Fee',
-        notExist: 'Not Exist'
+        notExist: 'Not Exist',
+        sundryFactor: "Sundry Factor"
     },
 };
 

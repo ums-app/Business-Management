@@ -305,7 +305,7 @@ function CustomerProductPurchases() {
                                 <td>{factor.createdDate && gregorianToJalali(new Date(factor?.createdDate.toDate())).join('/')} </td>
                                 <td>{getTotalProdcuts(factor?.productsInFactor)}</td>
                                 <td>{getTotalPriceOfProdcuts(factor?.productsInFactor)}</td>
-                                <td>{getTotalPaidAmount(factor?.payments)}</td>
+                                <td>{factor?.paidAmount}</td>
 
                             </tr>
                         })

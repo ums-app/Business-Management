@@ -18,9 +18,8 @@ import { toast } from 'react-toastify';
 import FactorForPrint from '../FactorForPrint/FactorForPrint';
 import Modal from '../../UI/modal/Modal';
 import Menu from "../../UI/Menu/Menu"
-import { factorStatus } from '../../../constants/FactorStatus';
-import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
+
 
 export const productForSale = {
     productId: '',
@@ -36,59 +35,23 @@ export const productForSale = {
 };
 
 
-const userPaymentObj = {
-    amount: 0,
-    createdDate: new Date(),
-    by: '',
-    saleId: '',
-    customerId: '',
-}
-
-function AddSaleFactor({ updateMode }) {
+function AddSaleFactorForUnknowCustomer({ updateMode }) {
     const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
-    const [customerImage, setcustomerImage] = useState();
-    const [customerFactors, setCustomeractors] = useState([]);
-    const [customerPayments, setCustomerPayments] = useState([]);
     const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
-    const paymentCollectionRef = collection(db, Collections.Payments);
-    const [allCustomerPayments, setAllCustomerPayments] = useState([]);
-    const [totalAmountOfCustomerPayments, settotalAmountOfCustomerPayments] = useState(0)
-    const [totalAmountOfCustomerFactors, settotalAmountOfCustomerFactors] = useState(0)
     const [products, setProducts] = useState([]);
 
-    // this is for tracking all user payments
-    const [userPayment, setUserPayment] = useState({
-        amount: 0,
-        createdDate: new Date(),
-        by: authentication.email,
-        saleId: factor?.id,
-        customerId: customerForSaleFactor?.id,
-        date: new Date()
-    })
-
-    const [showAddNewPayment, setShowAddNewPayment] = useState(false);
     const [customerFactor, setcustomerFactor] = useState({
         productsInFactor: [{ ...productForSale }],
         customer: customerForSaleFactor,
-        payments: [],
+        paidAmount: 0,
         createdDate: new Date(),
         indexNumber: 0,
     })
 
     useEffect(() => {
-        settotalAmountOfCustomerPayments(totalAmountOfAllCustomerPayments());
-        settotalAmountOfCustomerFactors(totalAmountOfAllFactors());
-    }, [allCustomerPayments])
-
-
-    useEffect(() => {
-        const getImage = async () => {
-            const url = await getUserImage(customerForSaleFactor.email);
-            setcustomerImage(url)
-        }
         const getTotalNumberOfFactors = async () => {
             const snapshot = await getCountFromServer(salesCollectionRef);
             const totalDocs = snapshot.data().count;
@@ -98,14 +61,9 @@ function AddSaleFactor({ updateMode }) {
             })
         }
 
-        console.log(factor);
-
         if (!updateMode) {
             getTotalNumberOfFactors();
         }
-        getCustomerFactors();
-        getAllCustomerPayments()
-        getImage();
         getProducts();
         addNewProdcut()
         if (updateMode) {
@@ -113,61 +71,7 @@ function AddSaleFactor({ updateMode }) {
         }
     }, [])
 
-    const getCustomerFactors = async () => {
-        console.log('get all incomplete fac func: ', 'customerId: ', customerForSaleFactor.id, 'status: ', factorStatus.INCOMPLETE);
 
-        const q = query(
-            salesCollectionRef,
-            where("customer.id", "==", customerForSaleFactor.id),
-        );
-
-        try {
-            const querySnapshot = await getDocs(q);
-            console.log('querysnapshot is empty: ', querySnapshot.empty);
-            // First map to an array, then filter and sort
-            let items = querySnapshot.docs
-                .map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
-                .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()); // Sort by date
-
-            console.log(factor);
-            if (updateMode) {
-                items = items.filter(doc => doc.id !== factor?.id);
-            }
-            // Try to set all the amount in a container
-            setCustomeractors(items);
-
-        } catch (error) {
-            console.error("Error getting documents: ", error);
-        }
-    };
-
-
-    const getAllCustomerPayments = async () => {
-        const q = query(
-            paymentCollectionRef,
-            where("customerId", "==", customerForSaleFactor.id),
-        );
-
-        try {
-            const querySnapshot = await getDocs(q);
-            console.log('querysnapshot is empty: ', querySnapshot.empty);
-            // First map to an array, then filter and sort
-            let items = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
-
-            // Try to set all the amount in a container
-            setAllCustomerPayments(items);
-
-            // if this is update mode then extract the payment of this factor into sperate list
-            if (updateMode) {
-                const paymentOfThisFactor = items.filter(item => item.saleId == factor?.id);
-                if (paymentOfThisFactor.length > 0)
-                    setUserPayment(paymentOfThisFactor[0]);
-            }
-
-        } catch (error) {
-            console.error("Error getting documents: ", error);
-        }
-    };
 
     const getProducts = async () => {
         const querySnapshot = await getDocs(productCollectionRef);
@@ -293,79 +197,11 @@ function AddSaleFactor({ updateMode }) {
     // this func is going to calculate the remained value of this factor
     const remainedAmount = () => {
         const total = totalAll();
-        return total - Number(userPayment.amount + '')
-        // return remained < 0 ? 0 : remained;
-    }
-
-    // this func is going to calculate the remained value of previous factors
-    const totalAmountOfAllFactors = () => {
-        // check if incomplete factors are fetched
-        if (!customerFactors) {
-            getCustomerFactors();
-        }
-        let totalRemainedOfAllFactor = 0;
-        customerFactors?.filter(item => item.createdDate < customerFactor.createdDate)
-            .forEach(fac => {
-                console.log((fac));
-                totalRemainedOfAllFactor += getTotalPriceOfFactor(fac);
-            })
-        return totalRemainedOfAllFactor;
-    }
-
-
-    // this func is going to calculate the remained value of previous factors
-    const totalAmountOfAllCustomerPayments = () => {
-        // check if incomplete factors are fetched
-        if (!allCustomerPayments) {
-            getAllCustomerPayments();
-        }
-        let totalAmountOfAllPayments = 0;
-        allCustomerPayments
-            .filter(item => item.createdDate < customerFactor.createdDate)
-            .forEach(py => {
-                totalAmountOfAllPayments += Number(py.amount);
-            })
-
-        console.log('totalpaymentamount:', totalAmountOfAllPayments);
-        return totalAmountOfAllPayments;
+        return total - Number(customerFactor.paidAmount + '')
     }
 
 
 
-
-    const getTotalPriceOfFactor = (fac) => {
-        let totalPriceOfFac = 0
-        fac.productsInFactor?.forEach(item => {
-            console.log("totalprice of fac: " + fac.id, totalPriceOfFac);
-            totalPriceOfFac += Number(item.totalPrice)
-        })
-
-        console.log('factor:' + fac.id, totalPriceOfFac);
-        return totalPriceOfFac;
-    }
-
-
-    const deleteUserPayment = async (index) => {
-
-        // if this is update mode then remove the payment from server
-
-        if (updateMode) {
-            // deleteDoc
-            const paymentDoc = doc(db, Collections.Products, userPayment.id)
-            try {
-                await deleteDoc(paymentDoc)
-                toast.success('successfullyDeleted')
-            } catch (err) {
-                toast.success(err.message)
-            }
-        }
-        // 
-        setUserPayment({
-            ...userPayment,
-            amount: 0
-        })
-
-    }
 
     const snedCustomerFactorToAPI = async () => {
         dispatch({
@@ -376,18 +212,11 @@ function AddSaleFactor({ updateMode }) {
         try {
             if (updateMode) {
                 const factorDoc = doc(db, Collections.Sales, factor.id)
-                if (customerFactor.paidAmount != userPayment.amount) {
-                    await updateDoc(factorDoc, { ...customerFactor, paidAmount: userPayment.amount });
-                }
                 await updateDoc(factorDoc, customerFactor);
                 toast.success(t('successfullyUpdated'))
                 nav('/sales')
             } else {
-                const factorDoc = await addDoc(salesCollectionRef, { ...customerFactor, paidAmount: userPayment.amount });
-                if (userPayment.amount > 0) {
-                    console.log('sending payment doc: ', userPayment.amount);
-                    addDoc(paymentCollectionRef, { ...userPayment, saleId: factorDoc.id });
-                }
+                await addDoc(salesCollectionRef, customerFactor);
                 toast.success(t('successfullyAdded'));
                 nav('/sales')
             }
@@ -402,31 +231,6 @@ function AddSaleFactor({ updateMode }) {
     }
 
 
-    // async function updateMultipleDocuments(docUpdates) {
-    //     const batch = writeBatch(db); // Create a batch
-
-    //     // Loop through each document update
-    //     incompletedFactors.forEach(update => {
-    //         const docRef = doc(db, Collections.Sales, update.id); // Get the document reference
-    //         batch.update(docRef, update); // Add the update operation to the batch
-    //     });
-
-    //     // Commit the batch
-    //     try {
-    //         await batch.commit();
-    //         console.log("Batch update successfully committed!");
-    //     } catch (error) {
-    //         console.error("Error committing batch update: ", error);
-    //     }
-    // }
-
-    useEffect(() => {
-        if (!customerForSaleFactor) {
-            nav(-1)
-        }
-    }, [])
-
-    console.log(totalAmountOfCustomerFactors, totalAmountOfCustomerPayments);
 
     return (
         <div className='full_width'>
@@ -457,26 +261,25 @@ function AddSaleFactor({ updateMode }) {
             <Modal show={showPrintModal} modalClose={() => setshowPrintModal(false)}>
                 <FactorForPrint
                     customerFactor={customerFactor}
-                    totalAmountOfAllCustomerPayments={totalAmountOfCustomerPayments}
-                    totalAmountOfAllFactors={totalAmountOfCustomerFactors}
+                    totalAmountOfAllCustomerPayments={0}
+                    totalAmountOfAllFactors={0}
                     remainedAmount={() => remainedAmount()}
                     totalOfCurrent={() => totalAll()}
-                    userPayment={userPayment}
+                // userPayment={userPayment}
                 />
             </Modal>
 
-            <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
+            <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('sundryFactor')}</h1>
 
             <div
                 className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
-                <DisplayLogo imgURL={customerImage} />
                 <div className='display_flex'>
                     <span className='bold'>{t('name')}:</span>
-                    <span className='info_value'> {customerForSaleFactor?.name}</span>
+                    <span className='info_value'> <input type="text" value={customerForSaleFactor?.name} /></span>
                     <span className='bold'>{t('lastName')}:</span>
-                    <span className='info_value'> {customerForSaleFactor?.lastName}</span>
+                    <span className='info_value'> <input type="text" value={customerForSaleFactor?.lastName} /></span>
                     <span className='bold'>{t('phoneNumber')}:</span>
-                    <span className='info_value'> {customerForSaleFactor?.phoneNumber}</span>
+                    <span className='info_value'><input type="text" value={customerForSaleFactor?.phoneNumber} /></span>
                 </div>
 
                 <div className='display_flex align_items_center'>
@@ -505,7 +308,7 @@ function AddSaleFactor({ updateMode }) {
                 </div>
             </div>
 
-            <div className='full_width ' style={{ overflowX: 'scroll' }}>
+            <div className='full_width margin_top_20' style={{ overflowX: 'scroll' }}>
                 <table className='custom_table full_width margin_bottom_10 '>
                     <thead>
                         <tr>
@@ -603,102 +406,18 @@ function AddSaleFactor({ updateMode }) {
                     <span className='info_value'>{totalAll()}</span>
                 </div>
                 <div>
-                    {!showAddNewPayment && userPayment.amount > 0 && (
-                        <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
-                            <span className='info_value'>1: </span>
-                            <span className=''>{t('paidAmount')}: </span>
-                            <span className='info_value'>{userPayment.amount} </span>
-                            <span className=''>{t('date')}: </span>
-                            <span className='info_value short_date'>{formatFirebaseDates(userPayment.date)} </span>
-                            <span>
-                                <Button
-                                    text={t('delete')}
-                                    type={'plusBtn'}
-                                    id={'delete_payment'}
-                                    onClick={deleteUserPayment}
-                                />
-                            </span>
-                        </div>)
-                    }
-
-                    {showAddNewPayment &&
-                        <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
-                            <span className='info_value'>{t('paidAmount')}: </span>
-                            <span className='info_value'>
-                                <input type="number" onChange={e => setUserPayment({ ...userPayment, amount: Number(e.target.value + "") })} />
-                            </span>
-                            <span className='info_value'>{t('date')}: </span>
-                            <span className='info_value short_date'>
-                                <CustomDatePicker onChange={e => {
-                                    const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                    const gDate = new Date();
-                                    gDate.setFullYear(date[0])
-                                    gDate.setMonth(date[1])
-                                    gDate.setDate(date[2]);
-                                    setUserPayment({
-                                        ...userPayment,
-                                        date: gDate
-                                    })
-                                }} />
-                            </span>
-                            <span>
-                                <Button
-                                    text={t('save')}
-                                    type={'plusBtn'}
-                                    id={'add_new_payment'}
-                                    onClick={() => setShowAddNewPayment(false)}
-                                />
-                                <Button
-                                    text={t('cancel')}
-                                    type={'crossBtn'}
-                                    id={'cancel_new_payment'}
-                                    onClick={() => {
-                                        setUserPayment({
-                                            ...userPayment,
-                                            amount: 0
-                                        })
-                                        setShowAddNewPayment(false)
-                                    }}
-                                />
-                            </span>
-                        </div>
-                    }
-                    {
-                        userPayment.amount == 0 &&
-                        <Button
-                            icon={ICONS.plus}
-                            text={t('payment')}
-                            type={'plusBtn'}
-                            id={'add_new_payment'}
-                            onClick={() => setShowAddNewPayment(true)}
-                        />
-                    }
-                    <Tooltip
-                        anchorSelect="#add_new_payment"
-                        place="left"
-                        className="toolTip_style"
-                    >
-                        {t("add")}
-                    </Tooltip>
-
+                    <div className='margin_top_10 margin_bottom_10'>
+                        <span className='info_value'>{t('paidAmount')}: </span>
+                        <span className='info_value'>
+                            <input type="number" onChange={e => setcustomerFactor({ ...customerFactor, paidAmount: Number(e.target.value + "") })} />
+                        </span>
+                    </div>
                 </div>
                 <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('remainedAmount')} {t('of')} {t('thisFactor')}: </span>
-                    <span className='info_value'>{remainedAmount() < 0 ? 0 : remainedAmount()}</span>
-                </div>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('totalPrevRemainedAmount')}: </span>
+                    <span className=''>{t('remainedAmount')}: </span>
                     <span className='info_value'>
-                        {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments)}
-                        <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments)} />
-                    </span>
-                </div>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('totalRemainedAmount')}: </span>
-                    <span className='info_value'>
-                        {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount())}
-                        <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount())} />
-
+                        {Math.abs(remainedAmount())}
+                        <MoneyStatus number={remainedAmount()} />
                     </span>
                 </div>
 
@@ -715,4 +434,4 @@ function AddSaleFactor({ updateMode }) {
     )
 }
 
-export default AddSaleFactor
+export default AddSaleFactorForUnknowCustomer
