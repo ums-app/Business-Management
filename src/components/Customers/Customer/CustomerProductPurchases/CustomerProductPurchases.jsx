@@ -271,6 +271,7 @@ function CustomerProductPurchases() {
                     <thead >
                         <tr>
                             <th>{t('number')}</th>
+                            <th>{t('indexNumber')}</th>
                             <th>{t('name')}</th>
                             <th>{t('lastName')}</th>
                             <th>{t('createdDate')}</th>
@@ -298,6 +299,7 @@ function CustomerProductPurchases() {
                                 key={factor.id}
                             >
                                 <td>{index + 1}</td>
+                                <td>{factor.indexNumber}</td>
                                 <td>{factor?.customer?.name}</td>
                                 <td>{factor?.customer?.lastName}</td>
                                 <td>{factor.createdDate && gregorianToJalali(new Date(factor?.createdDate.toDate())).join('/')} </td>
