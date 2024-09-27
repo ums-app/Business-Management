@@ -9,6 +9,7 @@ import AddProduct from "../components/Products/AddProduct/AddProducts";
 import AddPurchaseProducts from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts";
 import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor";
 import AddSaleFactorForUnknowCustomer from "../components/Sales/AddSaleFactor/AddSaleFactorForUnknowCustomer";
+import { FactorType } from "../constants/FactorStatus";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -57,6 +58,11 @@ const browserRouter = createBrowserRouter([
       {
         path: "/sales/add-custom",
         element: <AddSaleFactorForUnknowCustomer />,
+      },
+
+      {
+        path: "/sales/" + FactorType.SUNDRY_FACTOR + "/:saleFactorId",
+        element: <AddSaleFactorForUnknowCustomer updateMode={true} />,
       },
 
       {

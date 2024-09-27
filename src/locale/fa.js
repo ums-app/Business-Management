@@ -1,3 +1,5 @@
+import { FactorType } from "../constants/FactorStatus";
+
 const fa = {
     translation: {
         admin: "مدیر",
@@ -353,7 +355,9 @@ const fa = {
         notExist: 'موجود نیست',
         sundryFactor: 'فاکتور متفرقه',
         specification: "شهرت",
-
+        STANDARD_FACTOR: 'استاندارد',
+        SUNDRY_FACTOR: 'متفرقه',
+        type: "نوعیت"
     },
 };
 

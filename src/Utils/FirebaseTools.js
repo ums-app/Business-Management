@@ -1,4 +1,4 @@
-import { collection, getCountFromServer, getDoc, getDocs, orderBy, query, where } from "firebase/firestore"
+import { collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, where } from "firebase/firestore"
 import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
@@ -12,6 +12,7 @@ const salesCollectionRef = collection(db, Collections.Sales);
 const paymentCollectionRef = collection(db, Collections.Payments);
 const usersCollectionRef = collection(db, Collections.Users);
 const employeePaymentsCollectionRef = collection(db, Collections.EmployeePayments);
+const employeesCollectionRef = collection(db, Collections.Employees);
 
 export const checkIfEmailIsAlreadyExist = async (email) => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -56,6 +57,21 @@ export const getProducts = async () => {
 
 
 //  ========================== employee service ==================================
+
+
+// Function to get a document by its ID
+export async function getEmployeeById(docId) {
+    const docRef = doc(db, employeesCollectionRef, docId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return docSnap.data();  // Return document data
+    } else {
+        return null;  // Return null if no document found
+    }
+}
+
+
 
 export const getAllEmployeePayments = async (employeeId) => {
     const q = query(
@@ -111,6 +127,8 @@ export const getCustomers = async () => {
         return []
     }
 };
+
+
 
 
 

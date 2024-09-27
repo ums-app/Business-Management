@@ -5,7 +5,7 @@ import Button from '../../UI/Button/Button';
 import { useStateValue } from '../../../context/StateProvider';
 import "../Sales.css"
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
-import { getUserImage } from '../../../Utils/FirebaseTools';
+import { getEmployeeById, getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
 import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import FactorForPrint from '../FactorForPrint/FactorForPrint';
 import Modal from '../../UI/modal/Modal';
 import Menu from "../../UI/Menu/Menu"
-import { factorStatus } from '../../../constants/FactorStatus';
+import { FactorType, factorStatus } from '../../../constants/FactorStatus';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 
@@ -76,6 +76,8 @@ function AddSaleFactor({ updateMode }) {
         payments: [],
         createdDate: new Date(),
         indexNumber: 0,
+        type: FactorType.STANDARD_FACTOR,
+        by: authentication.email
     })
 
     useEffect(() => {
@@ -111,7 +113,20 @@ function AddSaleFactor({ updateMode }) {
         if (updateMode) {
             setcustomerFactor(factor)
         }
+
     }, [])
+
+
+    useEffect(() => {
+        console.log('get emp :', customerForSaleFactor);
+        if (customerForSaleFactor) {
+            console.log('in if: ', customerForSaleFactor);
+            getEmployeeById(customerForSaleFactor.visitor)
+                .then(res => {
+                    console.log(res);
+                })
+        }
+    }, [customerForSaleFactor])
 
     const getCustomerFactors = async () => {
         console.log('get all incomplete fac func: ', 'customerId: ', customerForSaleFactor.id, 'status: ', factorStatus.INCOMPLETE);
@@ -140,6 +155,10 @@ function AddSaleFactor({ updateMode }) {
             console.error("Error getting documents: ", error);
         }
     };
+
+
+
+
 
 
     const getAllCustomerPayments = async () => {

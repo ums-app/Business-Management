@@ -17,6 +17,7 @@ import FactorForPrint from '../FactorForPrint/FactorForPrint';
 import Modal from '../../UI/modal/Modal';
 import Menu from "../../UI/Menu/Menu"
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
+import { FactorType } from '../../../constants/FactorStatus';
 
 
 export const productForSale = {
@@ -34,7 +35,7 @@ export const productForSale = {
 
 
 function AddSaleFactorForUnknowCustomer({ updateMode }) {
-    const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
+    const [{ authentication, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
     const productCollectionRef = collection(db, Collections.Products)
@@ -51,6 +52,8 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
         paidAmount: 0,
         createdDate: new Date(),
         indexNumber: 0,
+        type: FactorType.SUNDRY_FACTOR,
+        by: authentication.email
     })
 
     useEffect(() => {
@@ -433,7 +436,9 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                     <div className='margin_top_10 margin_bottom_10'>
                         <span className='info_value'>{t('paidAmount')}: </span>
                         <span className='info_value'>
-                            <input type="number" onChange={e => setcustomerFactor({ ...customerFactor, paidAmount: Number(e.target.value + "") })} />
+                            <input type="number"
+                                value={customerFactor.paidAmount}
+                                onChange={e => setcustomerFactor({ ...customerFactor, paidAmount: Number(e.target.value + "") })} />
                         </span>
                     </div>
                 </div>

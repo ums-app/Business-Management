@@ -19,6 +19,7 @@ import { Tooltip } from 'react-tooltip';
 import Pagination from '../UI/Pagination/Pagination';
 import { pageSizes } from '../../constants/Others';
 import ICONS from '../../constants/Icons';
+import { FactorType } from '../../constants/FactorStatus';
 
 
 
@@ -280,10 +281,6 @@ function Sales() {
 
 
 
-
-
-
-
     const getTotalProdcuts = (products) => {
         let total = 0;
         products.forEach(item => {
@@ -296,14 +293,6 @@ function Sales() {
         let total = 0;
         products.forEach(item => {
             total += Number(item.totalPrice);
-        })
-        return total;
-    }
-
-    const getTotalPaidAmount = (payments) => {
-        let total = 0;
-        payments.forEach(item => {
-            total += Number(item.amount);
         })
         return total;
     }
@@ -409,8 +398,7 @@ function Sales() {
                                 <th>{t('totalElements')}</th>
                                 <th>{t('totalPrice')}</th>
                                 <th>{t('paidAmount')}</th>
-                                {/* <th>{t('remainedAmount')}</th> */}
-                                {/* <th>{t('status')}</th> */}
+                                <th>{t('type')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -428,6 +416,10 @@ function Sales() {
                                             type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
                                             payload: factor.customer
                                         })
+                                        if (factor.type == FactorType.SUNDRY_FACTOR) {
+                                            nav('/sales/' + FactorType.SUNDRY_FACTOR + '/' + factor.id)
+                                            return;
+                                        }
                                         nav('/sales/' + factor.id)
                                     }}
                                     key={factor.id}
@@ -441,7 +433,7 @@ function Sales() {
                                     <td>{getTotalPriceOfProdcuts(factor?.productsInFactor)}</td>
                                     <td>{factor?.paidAmount}</td>
                                     {/* <td>{getTotalPriceOfProdcuts(factor?.productsInFactor) - factor?.paidAmount}</td> */}
-                                    {/* <td>{getStatus(getTotalPriceOfProdcuts(factor?.productsInFactor), getTotalPaidAmount(factor?.payments))}</td> */}
+                                    <td>{t(factor.type)}</td>
                                 </tr>
                             })
                             }

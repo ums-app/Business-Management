@@ -331,6 +331,9 @@ const en = {
         notExist: 'Not Exist',
         sundryFactor: "Sundry Factor",
         specification: "Specification",
+        STANDARD_FACTOR: 'Standard',
+        SUNDRY_FACTOR: 'Sundry',
+        type: "Type"
     },
 };
 
