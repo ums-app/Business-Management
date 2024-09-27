@@ -329,7 +329,8 @@ const en = {
         invoice: "Invoice",
         employeeFee: 'Employee Fee',
         notExist: 'Not Exist',
-        sundryFactor: "Sundry Factor"
+        sundryFactor: "Sundry Factor",
+        specification: "Specification",
     },
 };
 

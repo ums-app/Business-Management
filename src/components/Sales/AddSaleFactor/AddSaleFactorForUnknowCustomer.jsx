@@ -5,8 +5,6 @@ import Button from '../../UI/Button/Button';
 import { useStateValue } from '../../../context/StateProvider';
 import "../Sales.css"
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
-import { getUserImage } from '../../../Utils/FirebaseTools';
-import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
 import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '../../../constants/FirebaseConfig';
@@ -45,7 +43,11 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
     const [customerFactor, setcustomerFactor] = useState({
         productsInFactor: [{ ...productForSale }],
-        customer: customerForSaleFactor,
+        customer: {
+            name: ' ',
+            lastName: ' ',
+            phoneNumber: ' '
+        },
         paidAmount: 0,
         createdDate: new Date(),
         indexNumber: 0,
@@ -204,23 +206,29 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
 
     const snedCustomerFactorToAPI = async () => {
+        console.log('set loading');
         dispatch({
             type: actionTypes.SET_SMALL_LOADING,
             payload: true
         })
 
         try {
+            console.log('sending data to api');
             if (updateMode) {
+                console.log('sending data to api as update');
                 const factorDoc = doc(db, Collections.Sales, factor.id)
                 await updateDoc(factorDoc, customerFactor);
                 toast.success(t('successfullyUpdated'))
                 nav('/sales')
             } else {
-                await addDoc(salesCollectionRef, customerFactor);
+                console.log('sending data to api as new factor');
+                console.log(customerFactor);
+                const data = await addDoc(salesCollectionRef, customerFactor);
                 toast.success(t('successfullyAdded'));
                 nav('/sales')
             }
         } catch (err) {
+            console.log(err);
             toast.error(err)
         } finally {
             dispatch({
@@ -228,6 +236,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                 payload: false
             })
         }
+        console.log('set loading false');
     }
 
 
@@ -275,11 +284,26 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                 className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
                 <div className='display_flex'>
                     <span className='bold'>{t('name')}:</span>
-                    <span className='info_value'> <input type="text" value={customerForSaleFactor?.name} /></span>
+                    <span className='info_value'>
+                        <input type="text"
+                            value={customerFactor?.customer?.name}
+                            onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, name: e.target.value } })}
+                        />
+                    </span>
                     <span className='bold'>{t('lastName')}:</span>
-                    <span className='info_value'> <input type="text" value={customerForSaleFactor?.lastName} /></span>
+                    <span className='info_value'>
+                        <input type="text"
+                            value={customerFactor?.customer?.lastName}
+                            onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, lastName: e.target.value } })}
+                        />
+                    </span>
                     <span className='bold'>{t('phoneNumber')}:</span>
-                    <span className='info_value'><input type="text" value={customerForSaleFactor?.phoneNumber} /></span>
+                    <span className='info_value'>
+                        <input type="text"
+                            value={customerFactor?.customer?.phoneNumber}
+                            onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, phoneNumber: e.target.value } })}
+                        />
+                    </span>
                 </div>
 
                 <div className='display_flex align_items_center'>

@@ -18,12 +18,12 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, discount,
                     <p className='bold'>{name}</p>
                     <p className='bold'>{englishName}</p>
                 </div>
-                <span className='after-discount margin_bottom_10'>
+                <span className='after-discount margin_bottom_5'>
                     <span className='bullet'>{t('price')}</span>
                     {price}
                     <sup>af</sup>
                 </span>
-                <span className='after-discount margin_bottom_10'>
+                <span className='after-discount margin_bottom_5'>
                     <span className='bullet'>{t('inventory')}</span>
                     {inventory}
                 </span>

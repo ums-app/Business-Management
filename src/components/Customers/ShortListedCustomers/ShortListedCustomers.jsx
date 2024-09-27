@@ -134,7 +134,7 @@ function ShortListedCustomers() {
                     <thead >
                         <tr style={{ backgroundColor: '#f744e2' }}>
                             <th rowSpan={2}>{t('number')}</th>
-                            <th colSpan={2}>{t('nameAndLastName')}</th>
+                            <th colSpan={2}>{t('specification')}</th>
                             <th rowSpan={2}>{t('location')}</th>
                             <th colSpan={2}>{t('lastPurchaseFactor')}</th>
                             <th rowSpan={2}>{t('phoneNumber')}</th>
@@ -152,6 +152,7 @@ function ShortListedCustomers() {
                         </tr>
                     </thead>
                     <tbody>
+
                         {shortListOfCustomers.map((item, index) => {
                             return (
                                 <tr style={{ height: '30px' }} key={index}>
@@ -169,6 +170,12 @@ function ShortListedCustomers() {
                                 </tr>
                             )
                         })}
+
+                        {shortListOfCustomers.length == 0 &&
+                            <tr>
+                                <td colSpan={11}>{t('notExist')}</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

@@ -352,10 +352,7 @@ const fa = {
         employeeFee: 'کارمزد کارمند',
         notExist: 'موجود نیست',
         sundryFactor: 'فاکتور متفرقه',
-
-
-
-
+        specification: "شهرت",
 
     },
 };
