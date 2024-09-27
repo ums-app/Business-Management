@@ -1,3 +1,4 @@
+
 export default {
     Users: 'Users',
     Customers: "Customers",
@@ -5,7 +6,8 @@ export default {
     Sales: 'Sales',
     Products: 'Products',
     Purchases: "Purchases",
-    Payments: 'Payments'
+    Payments: 'Payments',
+    EmployeePayments: 'EmployeePayments'
 
 
 }

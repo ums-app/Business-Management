@@ -11,6 +11,7 @@ const customersCollectionsRef = collection(db, Collections.Customers);
 const salesCollectionRef = collection(db, Collections.Sales);
 const paymentCollectionRef = collection(db, Collections.Payments);
 const usersCollectionRef = collection(db, Collections.Users);
+const employeePaymentsCollectionRef = collection(db, Collections.EmployeePayments);
 
 export const checkIfEmailIsAlreadyExist = async (email) => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -53,6 +54,34 @@ export const getProducts = async () => {
 
 
 
+
+//  ========================== employee service ==================================
+
+export const getAllEmployeePayments = async (employeeId) => {
+    const q = query(
+        employeePaymentsCollectionRef,
+        where("employeeId", "==", employeeId),
+        orderBy("createdDate", "desc")
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+        console.log('querysnapshot is empty: ', querySnapshot.empty);
+        // First map to an array, then filter and sort
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id }))
+            .sort((a, b) => b.createdDate - a.createdDate);// Map to data with id
+
+        console.log(items);
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+
+}
 
 
 // ============================ cutomer service ==================================

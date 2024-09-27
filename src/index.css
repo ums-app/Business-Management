@@ -637,6 +637,18 @@ img {
   padding: 0 6px;
 }
 
+/* show password */
+
+.ltr .show_pass {
+  right: 10px;
+  top: 10px;
+}
+
+.rtl .show_pass {
+  left: 10px;
+  top: 10px;
+}
+
 /* Button */
 .btn {
   font-family: inherit;

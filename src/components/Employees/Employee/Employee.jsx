@@ -20,6 +20,8 @@ import CardLoadingTemplate from '../../UI/LoadingTemplate/CardLoadingTemplate';
 import { toast } from 'react-toastify';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import { getUserImage } from '../../../Utils/FirebaseTools';
+import EmployeePayments from './EmployeePayments/EmployeePayments';
+import EmployeeFee from './EmployeeFee/EmployeeFee';
 
 
 // components for tabs
@@ -29,7 +31,8 @@ const components = {
         component: PersonalInformation,
     },
     Customers: { componentName: "customers", component: EmployeeCustomers },
-
+    Payments: { componentName: 'payments', component: EmployeePayments },
+    EmployeeFee: { componentName: 'employeeFee', component: EmployeeFee },
 };
 
 
@@ -181,6 +184,29 @@ function Employee() {
                     onClick={() => setDisplayComponent(components?.Customers)}
                 >
                     {t("customers")}
+                </li>
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.Payments?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent(components?.Payments)}
+                >
+                    {t("payments")}
+                </li>
+
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.EmployeeFee?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent(components?.EmployeeFee)}
+                >
+                    {t("employeeFee")}
                 </li>
             </TabMenu>
 

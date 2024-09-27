@@ -10,7 +10,7 @@ import { actionTypes } from '../../../../context/reducer';
 import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { getAllCustomerPayments, getCustomerFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools';
+import { getAllCustomerPayments, getAllEmployeePayments, getCustomerFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools';
 import Button from '../../../UI/Button/Button';
 import Modal from '../../../UI/modal/Modal';
 import { jalaliToGregorian } from 'shamsi-date-converter';
@@ -18,12 +18,11 @@ import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { toast } from 'react-toastify';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
 
-function CustomerPayments() {
+function EmployeePayments() {
     const [{ authentication }, dispatch] = useStateValue()
-    const { customerId } = useParams();
+    const { employeeId } = useParams();
     const [payments, setPayments] = useState();
-    const [factors, setFactors] = useState()
-    const paymentsCollectionRef = collection(db, Collections.Payments);
+    const paymentsCollectionRef = collection(db, Collections.EmployeePayments);
     const [showPaymentModal, setShowPaymentModal] = useState(false)
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
@@ -31,34 +30,30 @@ function CustomerPayments() {
         createdDate: new Date(),
         by: authentication.email,
         saleId: null,
-        customerId: customerId,
+        employeeId: employeeId,
         date: new Date()
     })
 
-    const [totalPayments, settotalPayments] = useState(0)
-    const [totalFactors, settotalFactors] = useState(0)
+    // const [totalPayments, settotalPayments] = useState(0)
+    // const [totalFactors, settotalFactors] = useState(0)
+
+
+    // useEffect(() => {
+    //     if (payments && factors) {
+    //         settotalPayments(totalAmountOfAllCustomerPayments(payments));
+    //         settotalFactors(totalAmountOfAllFactors(factors));
+    //     }
+
+    // }, [factors, payments])
+
 
 
     useEffect(() => {
-        if (payments && factors) {
-            settotalPayments(totalAmountOfAllCustomerPayments(payments));
-            settotalFactors(totalAmountOfAllFactors(factors));
-        }
-
-    }, [factors, payments])
-
-
-
-    useEffect(() => {
-        getAllCustomerPayments(customerId).then(res => {
+        getAllEmployeePayments(employeeId).then(res => {
             console.log(res);
             setPayments(res)
         })
 
-        getCustomerFactors(customerId)
-            .then(res => {
-                setFactors(res)
-            })
     }, []);
 
     const sendNewPaymentToAPI = async () => {
@@ -98,7 +93,7 @@ function CustomerPayments() {
 
     return (
         <div>
-            <div className='full_width input margin_bottom_10'>
+            {/* <div className='full_width input margin_bottom_10'>
                 <p className='title_2'>{t('status')}</p>
                 <div>
                     <table className='custom_table full_width' >
@@ -125,7 +120,7 @@ function CustomerPayments() {
 
                 </div>
 
-            </div>
+            </div> */}
 
 
             <Button
@@ -233,6 +228,7 @@ function CustomerPayments() {
                             </tr>
                         })
                         }
+                        {payments.length == 0 && <tr><td colSpan={4}>{t('notExist')}</td></tr>}
                     </tbody>
                 </table>
             </div>
@@ -240,4 +236,4 @@ function CustomerPayments() {
     )
 }
 
-export default CustomerPayments
+export default EmployeePayments

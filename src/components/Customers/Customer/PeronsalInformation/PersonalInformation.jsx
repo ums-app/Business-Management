@@ -79,8 +79,10 @@ function PersonalInformation() {
                 <span>{customer.email}</span>
             </div>
             {authentication?.roles?.includes('SUPER_ADMIN') &&
-                <div div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
-                    <span onClick={() => setshowPassword(!showPassword)}>
+                <div div className='info_card position_relative display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                    <span
+                        className='position_absolute show_pass'
+                        onClick={() => setshowPassword(!showPassword)}>
                         <i className={showPassword ? ICONS.eyeSlashFill : ICONS.eyeFill}></i>
                     </span>
                     <span>{t('password')} </span>

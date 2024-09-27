@@ -326,7 +326,9 @@ const en = {
         readyForPrint: "Ready for printing",
         thisFactor: 'this factor',
         totalPrevRemainedAmount: 'Previous Remained Amount',
-        invoice: "Invoice"
+        invoice: "Invoice",
+        employeeFee: 'Employee Fee',
+        notExist: 'Not Exist'
     },
 };
 
