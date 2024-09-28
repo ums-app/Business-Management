@@ -210,6 +210,30 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
     const snedCustomerFactorToAPI = async () => {
         console.log('set loading');
+        if (customerFactor.customer.name.trim().length == 0) {
+            toast.error(t('name') + " " + t('notEmptyMsg'))
+            return;
+        }
+        if (customerFactor.customer.lastName.trim().length == 0) {
+            toast.error(t('lastName') + " " + t('notEmptyMsg'))
+            return;
+        }
+        if (customerFactor.customer.phoneNumber.trim().length == 0) {
+            toast.error(t('phoneNumber') + " " + t('notEmptyMsg'))
+            return;
+        }
+        if (remainedAmount() > 0) {
+            toast.error(t('paidAmount') + " " + t('notEmptyMsg'))
+            return
+        }
+
+        if (customerFactor.productsInFactor.length == 0 ||
+            customerFactor.productsInFactor[0].total == 0
+        ) {
+            toast.error(t('products') + " " + t('notEmptyMsg'))
+            return
+        }
+
         dispatch({
             type: actionTypes.SET_SMALL_LOADING,
             payload: true
