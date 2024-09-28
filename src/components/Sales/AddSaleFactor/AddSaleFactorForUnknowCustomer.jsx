@@ -268,6 +268,47 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
 
 
+
+    const showDeleteModal = () => {
+        dispatch({
+            type: actionTypes.SHOW_ASKING_MODAL,
+            payload: {
+                show: true,
+                message: "deleteMessage",
+                btnAction: deleteFactor,
+                id: customerFactor.id,
+            },
+        });
+    };
+
+
+    const deleteFactor = async () => {
+        dispatch({
+            type: actionTypes.SET_GLOBAL_LOADING,
+            payload: { value: true },
+        });
+        dispatch({
+            type: actionTypes.HIDE_ASKING_MODAL,
+        });
+
+        console.log(customerFactor.id);
+        const factorDoc = doc(db, Collections.Sales, customerFactor.id);
+        try {
+            await deleteDoc(factorDoc)
+            toast.success(t('successfullyDeleted'))
+            nav(-1)
+        } catch (err) {
+            console.log(err);
+        } finally {
+            dispatch({
+                type: actionTypes.SET_GLOBAL_LOADING,
+                payload: { value: false },
+            });
+        }
+    }
+
+
+
     return (
         <div className='full_width'>
             <div className='display_flex justify_content_space_between'>
@@ -283,7 +324,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                         icon={ICONS.trash}
                         text={t("delete")}
                         onClick={() =>
-                            toast.error('notImplementedYet')
+                            showDeleteModal()
                         }
                     />
                 </Menu>
