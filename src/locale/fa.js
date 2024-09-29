@@ -359,7 +359,8 @@ const fa = {
         STANDARD_FACTOR: 'استاندارد',
         SUNDRY_FACTOR: 'متفرقه',
         type: "نوعیت",
-        customerAccount: 'حساب مشتری'
+        customerAccount: 'حساب مشتری',
+        checkNumber: 'شماره چک'
     },
 };
 

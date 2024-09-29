@@ -31,7 +31,8 @@ function CustomerPayments() {
         by: authentication.email,
         saleId: null,
         customerId: customerId,
-        date: new Date()
+        date: new Date(),
+        checkNumber: 0
     })
 
     const [totalPayments, settotalPayments] = useState(0)
@@ -71,6 +72,11 @@ function CustomerPayments() {
                 toast.error('amountShouldNotBeZeroOrNegative')
                 return
             }
+            if (userPayment.checkNumber <= 0) {
+                toast.error('checkNumberShouldNotBeZeroOrNegative')
+                return
+            }
+
             console.log('sending payment doc: ', userPayment.amount);
             addDoc(paymentsCollectionRef, userPayment);
             setPayments([userPayment, ...payments])
@@ -143,6 +149,13 @@ function CustomerPayments() {
                                     {payments.length + 1}
                                 </td>
                             </tr>
+                            <tr>
+                                <td>{t('checkNumber')}: </td>
+                                <td>
+                                    <input type="number" onChange={e => setUserPayment({ ...userPayment, checkNumber: e.target.value })} />
+                                </td>
+                            </tr>
+
                             <tr>
                                 <td>{t('paidAmount')}:</td>
                                 <td>

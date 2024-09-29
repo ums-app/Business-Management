@@ -334,7 +334,8 @@ const en = {
         STANDARD_FACTOR: 'Standard',
         SUNDRY_FACTOR: 'Sundry',
         type: "Type",
-        customerAccount: 'Customer account'
+        customerAccount: 'Customer account',
+        checkNumber: 'Check Number'
     },
 };
 
