@@ -10,7 +10,7 @@ const fa = {
         logout: "خروج",
         login: "ورود",
         offline: "شما به اینترنت متصل نیستید!",
-        personalInformation: "اطلاعات شخصی",
+        personalInformation: "مشخصات",
         indentification: "تذکره",
         electronicIDCard: "تذکره الکترونکی",
         paperIDCard: "تذکره کاغذی",

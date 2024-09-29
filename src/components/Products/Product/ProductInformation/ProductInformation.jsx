@@ -10,13 +10,16 @@ import Collections from '../../../../constants/Collections';
 import { t } from 'i18next';
 import "../../Products.css"
 import { gregorianToJalali } from 'shamsi-date-converter';
+import { getProductImage } from '../../../../Utils/FirebaseTools';
 
 function ProductInformation({ data }) {
     const { productId } = useParams();
     const [productImage, setproductImage] = useState();
     const [product, setproduct] = useState()
     useEffect(() => {
-        getProductImage(productId)
+        getProductImage(productId).then(res => {
+            setproductImage(res)
+        })
     }, [productId])
 
     const getProduct = async () => {
@@ -30,14 +33,6 @@ function ProductInformation({ data }) {
         }
     }
 
-
-
-    const getProductImage = async (productId) => {
-        const imageRef = ref(storage, Folders.ProductImages(productId));  // Adjust the path to your image
-        // Fetch the download URL
-        getDownloadURL(imageRef)
-            .then(url => setproductImage(url))
-    }
 
     if (!data) {
         return (

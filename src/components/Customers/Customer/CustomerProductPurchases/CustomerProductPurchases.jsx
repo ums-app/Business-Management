@@ -13,8 +13,9 @@ import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate
 import { pageSizes } from '../../../../constants/Others';
 import { Tooltip } from 'react-tooltip';
 import Pagination from '../../../UI/Pagination/Pagination';
+import Button from '../../../UI/Button/Button';
 
-function CustomerProductPurchases() {
+function CustomerProductPurchases({ data }) {
     const { customerId } = useParams();
     const nav = useNavigate();
     const [, dispatch] = useStateValue()
@@ -39,6 +40,7 @@ function CustomerProductPurchases() {
 
 
     console.log(sales);
+    console.log(data);
 
 
     const getTotalProdcuts = (products) => {
@@ -229,10 +231,20 @@ function CustomerProductPurchases() {
 
     return (
         <div>
-            <div className='full_width input'></div>
+            {/* <div className='full_width input'></div> */}
 
+            <Button
+                text={t('add') + " " + t('factor') + " " + t('sale')}
+                onClick={() => {
+                    dispatch({
+                        type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
+                        payload: data
+                    })
+                    nav('/sales/add')
+                }}
 
-            <div className='table_container '>
+            />
+            <div className='table_container margin_top_10'>
                 <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
                     <div className='pagination display_flex '>
                         <div className='display_flex align_items_center '>

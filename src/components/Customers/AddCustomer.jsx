@@ -32,7 +32,6 @@ function AddCustomer({ updateMode = false }) {
         name: '',
         lastName: '',
         phoneNumber: '',
-        organizationName: '',
         visitor: '',
         email: '',
         location: '',
@@ -224,21 +223,6 @@ function AddCustomer({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
-
-                        <div className='display_flex flex_direction_column margin_5'>
-                            <label htmlFor="organizationName">{t('name')} {t('organization')}</label>
-                            <Field
-                                name="organizationName"
-                                type="text"
-                                className="input"
-                                min={1}
-                            />
-                            <ErrorMessage
-                                name="organizationName"
-                                component="div"
-                                className="error_msg"
-                            />
-                        </div>
                         <div className='display_flex flex_direction_column margin_5'>
                             <label htmlFor="location">{t('location')}</label>
                             <Field
@@ -359,9 +343,6 @@ const CustomerSchema = yup.object().shape({
         .min(3, `${t("lastName")} ${t("isShortText")}`)
         .max(30, `${t("lastName")} ${t("isLongText")}`)
         .required(`${t("lastName")} ${t("isRequireText")}`),
-    organizationName: yup
-        .string()
-        .required(`${t("name") + " " + t('organization')} ${t("isRequireText")}`),
     location: yup
         .string()
         .min(3, `${t("location")} ${t("isShortText")}`)

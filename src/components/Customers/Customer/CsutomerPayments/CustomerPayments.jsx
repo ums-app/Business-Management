@@ -5,7 +5,6 @@ import { t } from 'i18next';
 import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
 import { useNavigate, useParams } from 'react-router-dom';
-import ICONS from '../../../../constants/Icons';
 import { actionTypes } from '../../../../context/reducer';
 import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';

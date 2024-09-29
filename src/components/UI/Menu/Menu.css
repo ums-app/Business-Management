@@ -8,7 +8,7 @@
   background-color: var(--show-color);
 }
 
-.settings_btn:hover + .settings_menu,
+.settings_btn:hover+.settings_menu,
 .settings_menu:hover {
   transform: translateY(0);
   visibility: visible;
@@ -83,6 +83,7 @@
   .settings_menu {
     width: 145px;
   }
+
   .settings_menu .btn {
     width: 130px;
   }

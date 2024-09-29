@@ -209,6 +209,11 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
 
     const snedCustomerFactorToAPI = async () => {
+        if (updateMode) {
+            toast.error('youAreNotAllowedToChangeTheFactor');
+            return;
+        }
+
         console.log('set loading');
         if (customerFactor.customer.name.trim().length == 0) {
             toast.error(t('name') + " " + t('notEmptyMsg'))
@@ -346,183 +351,188 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                 />
             </Modal>
 
-            <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('sundryFactor')}</h1>
 
-            <div
-                className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
-                <div className='display_flex'>
-                    <span className='bold'>{t('name')}:</span>
-                    <span className='info_value'>
-                        <input type="text"
-                            value={customerFactor?.customer?.name}
-                            onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, name: e.target.value } })}
-                        />
-                    </span>
-                    <span className='bold'>{t('lastName')}:</span>
-                    <span className='info_value'>
-                        <input type="text"
-                            value={customerFactor?.customer?.lastName}
-                            onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, lastName: e.target.value } })}
-                        />
-                    </span>
-                    <span className='bold'>{t('phoneNumber')}:</span>
-                    <span className='info_value'>
-                        <input type="text"
-                            value={customerFactor?.customer?.phoneNumber}
-                            onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, phoneNumber: e.target.value } })}
-                        />
-                    </span>
-                </div>
+            <div className='position_relative'>
+                {updateMode && <div className='lock_page'></div>}
 
-                <div className='display_flex align_items_center'>
+                <h1 className='title'>{!updateMode && t('add')}  {t('sundryFactor')}</h1>
 
-                    <span className='bold'>{t('createdDate')}:</span>
-                    <span className=' short_date'>
-                        {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
-                            const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                            const gDate = new Date();
-                            gDate.setFullYear(date[0])
-                            gDate.setMonth(date[1])
-                            gDate.setDate(date[2]);
-                            setcustomerFactor({
-                                ...customerFactor,
-                                createdDate: gDate
-                            })
-                        }} />}
-                    </span>
-                </div>
-
-                <div className='display_flex align_items_center'>
-                    <span className='bold'>{t('indexNumber')}:</span>
-                    <span className=''>
-                        {customerFactor.indexNumber}
-                    </span>
-                </div>
-            </div>
-
-            <div className='full_width margin_top_20' style={{ overflowX: 'scroll' }}>
-                <table className='custom_table full_width margin_bottom_10 '>
-                    <thead>
-                        <tr>
-                            <th>{t('number')}</th>
-                            <th>{t('name')} {t('product')}</th>
-                            <th>{t('englishName')}</th>
-                            <th>{t('total')}</th>
-                            <th>{t('pricePer')}</th>
-                            <th>{t('discount')}</th>
-                            <th>{t('totalPrice')}</th>
-                            <th>{t('actions')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {customerFactor?.productsInFactor?.map((prInFactor, index) => {
-                            return (
-                                <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td>
-                                        <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)} defaultValue={prInFactor.productId}>
-                                            <option value={null}>
-                                                {t("chooseTheProduct")}
-                                            </option>
-                                            {products.map(pr => {
-                                                return (
-                                                    <option value={pr.id} key={pr.id} selected={prInFactor.productId == pr.id} style={{ width: 'max-content' }}>
-                                                        {pr.name}
-                                                    </option>
-                                                )
-                                            })}
-                                        </select>
-                                    </td>
-                                    <td>{prInFactor.englishName}</td>
-                                    <td><input type="number" style={{ width: '100px' }} value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
-                                    <td><input type="number" style={{ width: '100px' }} value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
-                                    <td>
-                                        <div className='display_flex align_items_center'>
-                                            <input
-                                                type="number"
-                                                value={prInFactor.discount.value}
-                                                style={{ width: '120px' }}
-                                                onChange={(e) => handleChangeProductDiscount(e, index)} />
-                                            <select
-                                                name="discount_type"
-                                                style={{ width: '100px' }}
-                                                defaultValue={prInFactor.discount.type}
-                                                onChange={(e) => handleChangeProductDiscountType(e, index)}>
-                                                <option value="percent">{t('percent')}</option>
-                                                <option value="monetary">{t('monetary')}</option>
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td>{prInFactor.totalPrice}</td>
-                                    <td>
-                                        <Button
-                                            icon={ICONS.trash}
-                                            onClick={() => handleDeleteProduct(index)}
-                                            type={'crossBtn'}
-                                            id={'delete_row'}
-                                        />
-                                        <Tooltip
-                                            anchorSelect="#delete_row"
-                                            place="right"
-                                            className="toolTip_style"
-                                        >
-                                            {t("delete")}
-                                        </Tooltip>
-                                    </td>
-                                </tr>
-                            )
-                        })}
-
-                        <Button
-                            icon={ICONS.plus}
-                            onClick={addNewProdcut}
-                            type={'plusBtn'}
-                            id={'add_new_row'}
-                        />
-                        <Tooltip
-                            anchorSelect="#add_new_row"
-                            place="left"
-                            className="toolTip_style"
-                        >
-                            {t("add")}
-                        </Tooltip>
-
-                    </tbody>
-                </table>
-            </div>
-
-            <div className='full_width margin_top_20 padding_top_10 display_flex justify_content_end flex_direction_column align_items_start input'>
-                <h1 className='text_align_center margin_top_10 full_width'>{t('payments')}</h1>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('totalAll')}: </span>
-                    <span className='info_value'>{totalAll()}</span>
-                </div>
-                <div>
-                    <div className='margin_top_10 margin_bottom_10'>
-                        <span className='info_value'>{t('paidAmount')}: </span>
+                <div
+                    className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
+                    <div className='display_flex'>
+                        <span className='bold'>{t('name')}:</span>
                         <span className='info_value'>
-                            <input type="number"
-                                value={customerFactor.paidAmount}
-                                onChange={e => setcustomerFactor({ ...customerFactor, paidAmount: Number(e.target.value + "") })} />
+                            <input type="text"
+                                value={customerFactor?.customer?.name}
+                                onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, name: e.target.value } })}
+                            />
+                        </span>
+                        <span className='bold'>{t('lastName')}:</span>
+                        <span className='info_value'>
+                            <input type="text"
+                                value={customerFactor?.customer?.lastName}
+                                onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, lastName: e.target.value } })}
+                            />
+                        </span>
+                        <span className='bold'>{t('phoneNumber')}:</span>
+                        <span className='info_value'>
+                            <input type="text"
+                                value={customerFactor?.customer?.phoneNumber}
+                                onChange={e => setcustomerFactor({ ...customerFactor, customer: { ...customerFactor.customer, phoneNumber: e.target.value } })}
+                            />
+                        </span>
+                    </div>
+
+                    <div className='display_flex align_items_center'>
+
+                        <span className='bold'>{t('createdDate')}:</span>
+                        <span className=' short_date'>
+                            {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
+                                const date = jalaliToGregorian(e.year, e.month.number, e.day)
+                                const gDate = new Date();
+                                gDate.setFullYear(date[0])
+                                gDate.setMonth(date[1])
+                                gDate.setDate(date[2]);
+                                setcustomerFactor({
+                                    ...customerFactor,
+                                    createdDate: gDate
+                                })
+                            }} />}
+                        </span>
+                    </div>
+
+                    <div className='display_flex align_items_center'>
+                        <span className='bold'>{t('indexNumber')}:</span>
+                        <span className=''>
+                            {customerFactor.indexNumber}
                         </span>
                     </div>
                 </div>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('remainedAmount')}: </span>
-                    <span className='info_value'>
-                        {Math.abs(remainedAmount())}
-                        <MoneyStatus number={remainedAmount()} />
-                    </span>
+
+                <div className='full_width margin_top_20' style={{ overflowX: 'scroll' }}>
+                    <table className='custom_table full_width margin_bottom_10 '>
+                        <thead>
+                            <tr>
+                                <th>{t('number')}</th>
+                                <th>{t('name')} {t('product')}</th>
+                                <th>{t('englishName')}</th>
+                                <th>{t('total')}</th>
+                                <th>{t('pricePer')}</th>
+                                <th>{t('discount')}</th>
+                                <th>{t('totalPrice')}</th>
+                                <th>{t('actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {customerFactor?.productsInFactor?.map((prInFactor, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)} defaultValue={prInFactor.productId}>
+                                                <option value={null}>
+                                                    {t("chooseTheProduct")}
+                                                </option>
+                                                {products.map(pr => {
+                                                    return (
+                                                        <option value={pr.id} key={pr.id} selected={prInFactor.productId == pr.id} style={{ width: 'max-content' }}>
+                                                            {pr.name}
+                                                        </option>
+                                                    )
+                                                })}
+                                            </select>
+                                        </td>
+                                        <td>{prInFactor.englishName}</td>
+                                        <td><input type="number" style={{ width: '100px' }} value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
+                                        <td><input type="number" style={{ width: '100px' }} value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
+                                        <td>
+                                            <div className='display_flex align_items_center'>
+                                                <input
+                                                    type="number"
+                                                    value={prInFactor.discount.value}
+                                                    style={{ width: '120px' }}
+                                                    onChange={(e) => handleChangeProductDiscount(e, index)} />
+                                                <select
+                                                    name="discount_type"
+                                                    style={{ width: '100px' }}
+                                                    defaultValue={prInFactor.discount.type}
+                                                    onChange={(e) => handleChangeProductDiscountType(e, index)}>
+                                                    <option value="percent">{t('percent')}</option>
+                                                    <option value="monetary">{t('monetary')}</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>{prInFactor.totalPrice}</td>
+                                        <td>
+                                            <Button
+                                                icon={ICONS.trash}
+                                                onClick={() => handleDeleteProduct(index)}
+                                                type={'crossBtn'}
+                                                id={'delete_row'}
+                                            />
+                                            <Tooltip
+                                                anchorSelect="#delete_row"
+                                                place="right"
+                                                className="toolTip_style"
+                                            >
+                                                {t("delete")}
+                                            </Tooltip>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+
+                            <Button
+                                icon={ICONS.plus}
+                                onClick={addNewProdcut}
+                                type={'plusBtn'}
+                                id={'add_new_row'}
+                            />
+                            <Tooltip
+                                anchorSelect="#add_new_row"
+                                place="left"
+                                className="toolTip_style"
+                            >
+                                {t("add")}
+                            </Tooltip>
+
+                        </tbody>
+                    </table>
                 </div>
 
-            </div>
-            <div className='margin_top_20 margin_bottom_10 display_flex justify_content_center'>
-                <Button
-                    text={t('save')}
-                    type={'plusBtn'}
-                    id={'save_customer_factor'}
-                    onClick={snedCustomerFactorToAPI}
-                />
+                <div className='full_width margin_top_20 padding_top_10 display_flex justify_content_end flex_direction_column align_items_start input'>
+                    <h1 className='text_align_center margin_top_10 full_width'>{t('payments')}</h1>
+                    <div className='margin_top_10 margin_bottom_10'>
+                        <span className=''>{t('totalAll')}: </span>
+                        <span className='info_value'>{totalAll()}</span>
+                    </div>
+                    <div>
+                        <div className='margin_top_10 margin_bottom_10'>
+                            <span className='info_value'>{t('paidAmount')}: </span>
+                            <span className='info_value'>
+                                <input type="number"
+                                    value={customerFactor.paidAmount}
+                                    onChange={e => setcustomerFactor({ ...customerFactor, paidAmount: Number(e.target.value + "") })} />
+                            </span>
+                        </div>
+                    </div>
+                    <div className='margin_top_10 margin_bottom_10'>
+                        <span className=''>{t('remainedAmount')}: </span>
+                        <span className='info_value'>
+                            {Math.abs(remainedAmount())}
+                            <MoneyStatus number={remainedAmount()} />
+                        </span>
+                    </div>
+
+                </div>
+                <div className='margin_top_20 margin_bottom_10 display_flex justify_content_center'>
+                    <Button
+                        text={t('save')}
+                        type={'plusBtn'}
+                        id={'save_customer_factor'}
+                        onClick={snedCustomerFactorToAPI}
+                    />
+                </div>
             </div>
         </div>
     )

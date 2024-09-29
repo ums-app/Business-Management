@@ -67,8 +67,8 @@ function PersonalInformation() {
                 <span>{customer.lastName}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
-                <span>{t('organization')} </span>
-                <span>{customer.organizationName}</span>
+                <span>{t('location')} </span>
+                <span>{customer.location}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('phoneNumber')} </span>

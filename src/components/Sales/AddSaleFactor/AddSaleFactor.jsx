@@ -35,15 +35,6 @@ export const productForSale = {
     totalPrice: "",
 };
 
-
-const userPaymentObj = {
-    amount: 0,
-    createdDate: new Date(),
-    by: '',
-    saleId: '',
-    customerId: '',
-}
-
 function AddSaleFactor({ updateMode }) {
     const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
@@ -350,8 +341,6 @@ function AddSaleFactor({ updateMode }) {
     }
 
 
-
-
     const getTotalPriceOfFactor = (fac) => {
         let totalPriceOfFac = 0
         fac.productsInFactor?.forEach(item => {
@@ -365,18 +354,9 @@ function AddSaleFactor({ updateMode }) {
 
 
     const deleteUserPayment = async (index) => {
-
-        // if this is update mode then remove the payment from server
-
         if (updateMode) {
-            // deleteDoc
-            const paymentDoc = doc(db, Collections.Products, userPayment.id)
-            try {
-                await deleteDoc(paymentDoc)
-                toast.success('successfullyDeleted')
-            } catch (err) {
-                toast.success(err.message)
-            }
+            toast.error('youAreNotAllowedToChangeTheFactor');
+            return
         }
         // 
         setUserPayment({
@@ -387,6 +367,11 @@ function AddSaleFactor({ updateMode }) {
     }
 
     const snedCustomerFactorToAPI = async () => {
+        if (updateMode) {
+            toast.error('youAreNotAllowedToChangeTheFactor');
+            return;
+        }
+
         if (customerFactor.productsInFactor.length == 0 ||
             customerFactor.productsInFactor[0].total == 0 ||
             customerFactor.productsInFactor.some(item => item.name.trim().length == 0)
@@ -456,7 +441,8 @@ function AddSaleFactor({ updateMode }) {
     console.log(totalAmountOfCustomerFactors, totalAmountOfCustomerPayments);
 
     return (
-        <div className='full_width'>
+        <div className='full_width position_relative'>
+
             <div className='display_flex justify_content_space_between'>
 
                 {/* settings Menu */}
@@ -491,252 +477,255 @@ function AddSaleFactor({ updateMode }) {
                     userPayment={userPayment}
                 />
             </Modal>
+            <div className='position_relative'>
+                {updateMode && <div className='lock_page'></div>}
+                <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
 
-            <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
+                <div
+                    className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
+                    <DisplayLogo imgURL={customerImage} />
+                    <div className='display_flex'>
+                        <span className='bold'>{t('name')}:</span>
+                        <span className='info_value'> {customerForSaleFactor?.name}</span>
+                        <span className='bold'>{t('lastName')}:</span>
+                        <span className='info_value'> {customerForSaleFactor?.lastName}</span>
+                        <span className='bold'>{t('phoneNumber')}:</span>
+                        <span className='info_value'> {customerForSaleFactor?.phoneNumber}</span>
+                    </div>
 
-            <div
-                className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
-                <DisplayLogo imgURL={customerImage} />
-                <div className='display_flex'>
-                    <span className='bold'>{t('name')}:</span>
-                    <span className='info_value'> {customerForSaleFactor?.name}</span>
-                    <span className='bold'>{t('lastName')}:</span>
-                    <span className='info_value'> {customerForSaleFactor?.lastName}</span>
-                    <span className='bold'>{t('phoneNumber')}:</span>
-                    <span className='info_value'> {customerForSaleFactor?.phoneNumber}</span>
+                    <div className='display_flex align_items_center'>
+
+                        <span className='bold'>{t('createdDate')}:</span>
+                        <span className=' short_date'>
+                            {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
+                                const date = jalaliToGregorian(e.year, e.month.number, e.day)
+                                const gDate = new Date();
+                                gDate.setFullYear(date[0])
+                                gDate.setMonth(date[1])
+                                gDate.setDate(date[2]);
+                                setcustomerFactor({
+                                    ...customerFactor,
+                                    createdDate: gDate
+                                })
+                            }} />}
+                        </span>
+                    </div>
+
+                    <div className='display_flex align_items_center'>
+                        <span className='bold'>{t('indexNumber')}:</span>
+                        <span className=''>
+                            {customerFactor.indexNumber}
+                        </span>
+                    </div>
                 </div>
 
-                <div className='display_flex align_items_center'>
-
-                    <span className='bold'>{t('createdDate')}:</span>
-                    <span className=' short_date'>
-                        {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
-                            const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                            const gDate = new Date();
-                            gDate.setFullYear(date[0])
-                            gDate.setMonth(date[1])
-                            gDate.setDate(date[2]);
-                            setcustomerFactor({
-                                ...customerFactor,
-                                createdDate: gDate
-                            })
-                        }} />}
-                    </span>
-                </div>
-
-                <div className='display_flex align_items_center'>
-                    <span className='bold'>{t('indexNumber')}:</span>
-                    <span className=''>
-                        {customerFactor.indexNumber}
-                    </span>
-                </div>
-            </div>
-
-            <div className='full_width ' style={{ overflowX: 'scroll' }}>
-                <table className='custom_table full_width margin_bottom_10 '>
-                    <thead>
-                        <tr>
-                            <th>{t('number')}</th>
-                            <th>{t('name')} {t('product')}</th>
-                            <th>{t('englishName')}</th>
-                            <th>{t('total')}</th>
-                            <th>{t('pricePer')}</th>
-                            <th>{t('discount')}</th>
-                            <th>{t('totalPrice')}</th>
-                            <th>{t('actions')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {customerFactor?.productsInFactor?.map((prInFactor, index) => {
-                            return (
-                                <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td>
-                                        <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)} defaultValue={prInFactor.productId}>
-                                            <option value={null}>
-                                                {t("chooseTheProduct")}
-                                            </option>
-                                            {products.map(pr => {
-                                                return (
-                                                    <option value={pr.id} key={pr.id} selected={prInFactor.productId == pr.id} style={{ width: 'max-content' }}>
-                                                        {pr.name}
-                                                    </option>
-                                                )
-                                            })}
-                                        </select>
-                                    </td>
-                                    <td>{prInFactor.englishName}</td>
-                                    <td><input type="number" style={{ width: '100px' }} value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
-                                    <td><input type="number" style={{ width: '100px' }} value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
-                                    <td>
-                                        <div className='display_flex align_items_center'>
-                                            <input
-                                                type="number"
-                                                value={prInFactor.discount.value}
-                                                style={{ width: '120px' }}
-                                                onChange={(e) => handleChangeProductDiscount(e, index)} />
-                                            <select
-                                                name="discount_type"
-                                                style={{ width: '100px' }}
-                                                defaultValue={prInFactor.discount.type}
-                                                onChange={(e) => handleChangeProductDiscountType(e, index)}>
-                                                <option value="percent">{t('percent')}</option>
-                                                <option value="monetary">{t('monetary')}</option>
+                <div className='full_width ' style={{ overflowX: 'scroll' }}>
+                    <table className='custom_table full_width margin_bottom_10 '>
+                        <thead>
+                            <tr>
+                                <th>{t('number')}</th>
+                                <th>{t('name')} {t('product')}</th>
+                                {/* <th>{t('englishName')}</th> */}
+                                <th>{t('total')}</th>
+                                <th>{t('pricePer')}</th>
+                                <th>{t('discount')}</th>
+                                <th>{t('totalPrice')}</th>
+                                <th>{t('actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {customerFactor?.productsInFactor?.map((prInFactor, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)} defaultValue={prInFactor.productId}>
+                                                <option value={null}>
+                                                    {t("chooseTheProduct")}
+                                                </option>
+                                                {products.map(pr => {
+                                                    return (
+                                                        <option value={pr.id} key={pr.id} selected={prInFactor.productId == pr.id} style={{ width: 'max-content' }}>
+                                                            {pr.name}
+                                                        </option>
+                                                    )
+                                                })}
                                             </select>
-                                        </div>
-                                    </td>
-                                    <td>{prInFactor.totalPrice}</td>
-                                    <td>
-                                        <Button
-                                            icon={ICONS.trash}
-                                            onClick={() => handleDeleteProduct(index)}
-                                            type={'crossBtn'}
-                                            id={'delete_row'}
-                                        />
-                                        <Tooltip
-                                            anchorSelect="#delete_row"
-                                            place="right"
-                                            className="toolTip_style"
-                                        >
-                                            {t("delete")}
-                                        </Tooltip>
-                                    </td>
-                                </tr>
-                            )
-                        })}
+                                        </td>
+                                        {/* <td>{prInFactor.englishName}</td> */}
+                                        <td><input type="number" style={{ width: '100px' }} value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
+                                        <td><input type="number" style={{ width: '100px' }} value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
+                                        <td>
+                                            <div className='display_flex align_items_center'>
+                                                <input
+                                                    type="number"
+                                                    value={prInFactor.discount.value}
+                                                    style={{ width: '120px' }}
+                                                    onChange={(e) => handleChangeProductDiscount(e, index)} />
+                                                <select
+                                                    name="discount_type"
+                                                    style={{ width: '100px' }}
+                                                    defaultValue={prInFactor.discount.type}
+                                                    onChange={(e) => handleChangeProductDiscountType(e, index)}>
+                                                    <option value="percent">{t('percent')}</option>
+                                                    <option value="monetary">{t('monetary')}</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>{prInFactor.totalPrice}</td>
+                                        <td>
+                                            <Button
+                                                icon={ICONS.trash}
+                                                onClick={() => handleDeleteProduct(index)}
+                                                type={'crossBtn'}
+                                                id={'delete_row'}
+                                            />
+                                            <Tooltip
+                                                anchorSelect="#delete_row"
+                                                place="right"
+                                                className="toolTip_style"
+                                            >
+                                                {t("delete")}
+                                            </Tooltip>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
 
-                        <Button
-                            icon={ICONS.plus}
-                            onClick={addNewProdcut}
-                            type={'plusBtn'}
-                            id={'add_new_row'}
-                        />
+                            <Button
+                                icon={ICONS.plus}
+                                onClick={addNewProdcut}
+                                type={'plusBtn'}
+                                id={'add_new_row'}
+                            />
+                            <Tooltip
+                                anchorSelect="#add_new_row"
+                                place="left"
+                                className="toolTip_style"
+                            >
+                                {t("add")}
+                            </Tooltip>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className='full_width margin_top_20 padding_top_10 display_flex justify_content_end flex_direction_column align_items_start input'>
+                    <h1 className='text_align_center margin_top_10 full_width'>{t('payments')}</h1>
+                    <div className='margin_top_10 margin_bottom_10'>
+                        <span className=''>{t('totalAll')}: </span>
+                        <span className='info_value'>{totalAll()}</span>
+                    </div>
+                    <div>
+                        {!showAddNewPayment && userPayment.amount > 0 && (
+                            <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
+                                <span className='info_value'>1: </span>
+                                <span className=''>{t('paidAmount')}: </span>
+                                <span className='info_value'>{userPayment.amount} </span>
+                                <span className=''>{t('date')}: </span>
+                                <span className='info_value short_date'>{formatFirebaseDates(userPayment.date)} </span>
+                                <span>
+                                    <Button
+                                        text={t('delete')}
+                                        type={'plusBtn'}
+                                        id={'delete_payment'}
+                                        onClick={deleteUserPayment}
+                                    />
+                                </span>
+                            </div>)
+                        }
+
+                        {showAddNewPayment &&
+                            <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
+                                <span className='info_value'>{t('paidAmount')}: </span>
+                                <span className='info_value'>
+                                    <input type="number" onChange={e => setUserPayment({ ...userPayment, amount: Number(e.target.value + "") })} />
+                                </span>
+                                <span className='info_value'>{t('date')}: </span>
+                                <span className='info_value short_date'>
+                                    <CustomDatePicker onChange={e => {
+                                        const date = jalaliToGregorian(e.year, e.month.number, e.day)
+                                        const gDate = new Date();
+                                        gDate.setFullYear(date[0])
+                                        gDate.setMonth(date[1])
+                                        gDate.setDate(date[2]);
+                                        setUserPayment({
+                                            ...userPayment,
+                                            date: gDate
+                                        })
+                                    }} />
+                                </span>
+                                <span>
+                                    <Button
+                                        text={t('save')}
+                                        type={'plusBtn'}
+                                        id={'add_new_payment'}
+                                        onClick={() => setShowAddNewPayment(false)}
+                                    />
+                                    <Button
+                                        text={t('cancel')}
+                                        type={'crossBtn'}
+                                        id={'cancel_new_payment'}
+                                        onClick={() => {
+                                            setUserPayment({
+                                                ...userPayment,
+                                                amount: 0
+                                            })
+                                            setShowAddNewPayment(false)
+                                        }}
+                                    />
+                                </span>
+                            </div>
+                        }
+                        {
+                            userPayment.amount == 0 &&
+                            <Button
+                                icon={ICONS.plus}
+                                text={t('payment')}
+                                type={'plusBtn'}
+                                id={'add_new_payment'}
+                                onClick={() => setShowAddNewPayment(true)}
+                            />
+                        }
                         <Tooltip
-                            anchorSelect="#add_new_row"
+                            anchorSelect="#add_new_payment"
                             place="left"
                             className="toolTip_style"
                         >
                             {t("add")}
                         </Tooltip>
+                    </div>
+                    <div className='margin_top_10 margin_bottom_10'>
+                        <span className=''>{t('remainedAmount')} {t('of')} {t('thisFactor')}: </span>
+                        <span className='info_value'>{remainedAmount() < 0 ? 0 : remainedAmount().toFixed(2)}</span>
+                    </div>
+                    <div className='margin_top_10 margin_bottom_10'>
+                        <span className=''>{t('totalPrevRemainedAmount')}: </span>
+                        <span className='info_value'>
+                            {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments).toFixed(2)}
+                            <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments)} />
+                        </span>
+                    </div>
+                    <div className='margin_top_10 margin_bottom_10'>
+                        <span className=''>{t('totalRemainedAmount')}: </span>
+                        <span className='info_value'>
+                            {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount()).toFixed(2)}
+                            <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount())} />
 
-                    </tbody>
-                </table>
-            </div>
-
-            <div className='full_width margin_top_20 padding_top_10 display_flex justify_content_end flex_direction_column align_items_start input'>
-                <h1 className='text_align_center margin_top_10 full_width'>{t('payments')}</h1>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('totalAll')}: </span>
-                    <span className='info_value'>{totalAll()}</span>
-                </div>
-                <div>
-                    {!showAddNewPayment && userPayment.amount > 0 && (
-                        <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
-                            <span className='info_value'>1: </span>
-                            <span className=''>{t('paidAmount')}: </span>
-                            <span className='info_value'>{userPayment.amount} </span>
-                            <span className=''>{t('date')}: </span>
-                            <span className='info_value short_date'>{formatFirebaseDates(userPayment.date)} </span>
-                            <span>
-                                <Button
-                                    text={t('delete')}
-                                    type={'plusBtn'}
-                                    id={'delete_payment'}
-                                    onClick={deleteUserPayment}
-                                />
-                            </span>
-                        </div>)
-                    }
-
-                    {showAddNewPayment &&
-                        <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
-                            <span className='info_value'>{t('paidAmount')}: </span>
-                            <span className='info_value'>
-                                <input type="number" onChange={e => setUserPayment({ ...userPayment, amount: Number(e.target.value + "") })} />
-                            </span>
-                            <span className='info_value'>{t('date')}: </span>
-                            <span className='info_value short_date'>
-                                <CustomDatePicker onChange={e => {
-                                    const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                    const gDate = new Date();
-                                    gDate.setFullYear(date[0])
-                                    gDate.setMonth(date[1])
-                                    gDate.setDate(date[2]);
-                                    setUserPayment({
-                                        ...userPayment,
-                                        date: gDate
-                                    })
-                                }} />
-                            </span>
-                            <span>
-                                <Button
-                                    text={t('save')}
-                                    type={'plusBtn'}
-                                    id={'add_new_payment'}
-                                    onClick={() => setShowAddNewPayment(false)}
-                                />
-                                <Button
-                                    text={t('cancel')}
-                                    type={'crossBtn'}
-                                    id={'cancel_new_payment'}
-                                    onClick={() => {
-                                        setUserPayment({
-                                            ...userPayment,
-                                            amount: 0
-                                        })
-                                        setShowAddNewPayment(false)
-                                    }}
-                                />
-                            </span>
-                        </div>
-                    }
-                    {
-                        userPayment.amount == 0 &&
-                        <Button
-                            icon={ICONS.plus}
-                            text={t('payment')}
-                            type={'plusBtn'}
-                            id={'add_new_payment'}
-                            onClick={() => setShowAddNewPayment(true)}
-                        />
-                    }
-                    <Tooltip
-                        anchorSelect="#add_new_payment"
-                        place="left"
-                        className="toolTip_style"
-                    >
-                        {t("add")}
-                    </Tooltip>
+                        </span>
+                    </div>
 
                 </div>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('remainedAmount')} {t('of')} {t('thisFactor')}: </span>
-                    <span className='info_value'>{remainedAmount() < 0 ? 0 : remainedAmount()}</span>
-                </div>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('totalPrevRemainedAmount')}: </span>
-                    <span className='info_value'>
-                        {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments)}
-                        <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments)} />
-                    </span>
-                </div>
-                <div className='margin_top_10 margin_bottom_10'>
-                    <span className=''>{t('totalRemainedAmount')}: </span>
-                    <span className='info_value'>
-                        {Math.abs(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount())}
-                        <MoneyStatus number={(totalAmountOfCustomerFactors - totalAmountOfCustomerPayments + remainedAmount())} />
-
-                    </span>
+                <div className='margin_top_20 margin_bottom_10 display_flex justify_content_center'>
+                    <Button
+                        text={t('save')}
+                        type={'plusBtn'}
+                        id={'save_customer_factor'}
+                        onClick={snedCustomerFactorToAPI}
+                    />
                 </div>
 
-            </div>
-            <div className='margin_top_20 margin_bottom_10 display_flex justify_content_center'>
-                <Button
-                    text={t('save')}
-                    type={'plusBtn'}
-                    id={'save_customer_factor'}
-                    onClick={snedCustomerFactorToAPI}
-                />
+
             </div>
         </div>
     )
