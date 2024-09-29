@@ -49,6 +49,7 @@ function AddSaleFactor({ updateMode }) {
     const [totalAmountOfCustomerPayments, settotalAmountOfCustomerPayments] = useState(0)
     const [totalAmountOfCustomerFactors, settotalAmountOfCustomerFactors] = useState(0)
     const [products, setProducts] = useState([]);
+    const [saved, setsaved] = useState(false)
 
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
@@ -386,23 +387,16 @@ function AddSaleFactor({ updateMode }) {
         })
 
         try {
-            if (updateMode) {
-                const factorDoc = doc(db, Collections.Sales, factor.id)
-                if (customerFactor.paidAmount != userPayment.amount) {
-                    await updateDoc(factorDoc, { ...customerFactor, paidAmount: userPayment.amount });
-                }
-                await updateDoc(factorDoc, customerFactor);
-                toast.success(t('successfullyUpdated'))
-                nav('/sales')
-            } else {
-                const factorDoc = await addDoc(salesCollectionRef, { ...customerFactor, paidAmount: userPayment.amount });
-                if (userPayment.amount > 0) {
-                    console.log('sending payment doc: ', userPayment.amount);
-                    addDoc(paymentCollectionRef, { ...userPayment, saleId: factorDoc.id });
-                }
-                toast.success(t('successfullyAdded'));
-                nav('/sales')
+
+            const factorDoc = await addDoc(salesCollectionRef, { ...customerFactor, paidAmount: userPayment.amount });
+            if (userPayment.amount > 0) {
+                console.log('sending payment doc: ', userPayment.amount);
+                addDoc(paymentCollectionRef, { ...userPayment, saleId: factorDoc.id });
             }
+            toast.success(t('successfullyAdded'));
+            setsaved(true)
+            nav('/sales')
+
         } catch (err) {
             toast.error(err)
         } finally {
@@ -438,7 +432,7 @@ function AddSaleFactor({ updateMode }) {
         }
     }, [])
 
-    console.log(totalAmountOfCustomerFactors, totalAmountOfCustomerPayments);
+    console.log(updateMode, saved);
 
     return (
         <div className='full_width position_relative'>
@@ -447,11 +441,11 @@ function AddSaleFactor({ updateMode }) {
 
                 {/* settings Menu */}
                 <Menu >
-                    <Button
+                    {(updateMode || saved) && <Button
                         icon={ICONS.printer}
                         text={t('readyForPrint')}
                         onClick={() => setshowPrintModal(true)}
-                    />
+                    />}
                     <Button
                         icon={ICONS.trash}
                         text={t("delete")}
