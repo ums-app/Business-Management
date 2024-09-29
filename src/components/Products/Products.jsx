@@ -11,7 +11,6 @@ import Collections from '../../constants/Collections'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
-import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import ProductCard from './ProductCard/ProductCard'
 import CardsContainerLoadingTemplate from "../UI/LoadingTemplate/CardsContainerLoadingTemplate";
 import { getProductImage } from '../../Utils/FirebaseTools'

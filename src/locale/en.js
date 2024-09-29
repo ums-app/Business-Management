@@ -333,7 +333,8 @@ const en = {
         specification: "Specification",
         STANDARD_FACTOR: 'Standard',
         SUNDRY_FACTOR: 'Sundry',
-        type: "Type"
+        type: "Type",
+        customerAccount: 'Customer account'
     },
 };
 

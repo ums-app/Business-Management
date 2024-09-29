@@ -358,7 +358,8 @@ const fa = {
         specification: "شهرت",
         STANDARD_FACTOR: 'استاندارد',
         SUNDRY_FACTOR: 'متفرقه',
-        type: "نوعیت"
+        type: "نوعیت",
+        customerAccount: 'حساب مشتری'
     },
 };
 

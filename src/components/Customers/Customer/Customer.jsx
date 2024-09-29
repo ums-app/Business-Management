@@ -202,7 +202,7 @@ function Customer() {
                     }
                     onClick={() => setDisplayComponent(components?.CustomerPayments)}
                 >
-                    {t('payments')}
+                    {t('customerAccount')}
                 </li>
             </TabMenu>
 
