@@ -8,12 +8,12 @@
   border-radius: 8px;
   font-weight: 500;
   color: var(--text-color);
+  background-color: transparent;
   cursor: pointer;
   outline: none;
   text-align: center;
   vertical-align: middle;
-  background-image: none;
-  border: 1px solid transparent;
+  border: 1px solid var(--main-color);
   white-space: nowrap;
   letter-spacing: 0;
   padding: 2px 20px;
@@ -38,26 +38,12 @@
   text-align: right;
 }
 
-
 .btn:hover {
-  color: #fff;
-  border-color: transparent;
+  color: var(--text-color);
+  border: 1px solid #fff;
+  background-color: var(--main-color);
 }
 
-.btn:before {
-  top: 100%;
-  left: 100%;
-  transition: all 0.3s;
-}
-
-.btn:hover:before {
-  top: -30px;
-  left: -30px;
-}
-
-.btn:active:before {
-  transition: background 0s;
-}
 
 .loginBtn {
   border-radius: 30px;

@@ -663,55 +663,31 @@ img {
 }
 
 /* Button */
-.btn {
+/* .btn {
   font-family: inherit;
   display: inline-block;
   padding: 5px 10px;
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--gen-color);
+  border: 1px solid var(--main-color);
   transition: color 0.5s;
   z-index: 1;
   font-size: 16px;
   border-radius: 6px;
   font-weight: 500;
-  color: var(--text-color);
+  color: var(--main-color);
   cursor: pointer;
-  background: transparent;
   text-align: center;
   box-shadow: 0px 7px 25px rgba(0, 0, 0, 0.08);
   word-wrap: break-word;
-}
-
-.btn:before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  background: var(--gen-color);
-  height: 150px;
-  width: 300px;
-  border-radius: 50%;
-}
-
+} */
+/* 
 .btn:hover {
-  color: #fff;
-}
+  color: var(--main-color);
+  border: 1px solid var(--text-color);
+  background-color: #fff;
+} */
 
-.btn:before {
-  top: 100%;
-  left: 100%;
-  transition: all 0.3s;
-}
-
-.btn:hover:before {
-  top: -30px;
-  left: -30px;
-}
-
-.btn:active:before {
-  background: var(--gen-bg-color);
-  transition: background 0s;
-}
 
 /* End Button */
 

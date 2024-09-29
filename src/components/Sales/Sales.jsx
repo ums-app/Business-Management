@@ -322,6 +322,7 @@ function Sales() {
                 text={t('add') + " " + t('sundryFactor')}
                 // onClick={() => nav("/customers")}
                 onClick={() => nav('add-custom')}
+                type={"margin_10"}
             />
             <Modal show={showSelectCustomerModal} modalClose={() => setShowSelectCustomerModal(false)}>
                 <SelectCustomer />

@@ -1,10 +1,10 @@
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { useStateValue } from '../../../../context/StateProvider';
 import { t } from 'i18next';
 import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { actionTypes } from '../../../../context/reducer';
 import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
