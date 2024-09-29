@@ -22,11 +22,27 @@ export const checkIfEmailIsAlreadyExist = async (email) => {
 };
 
 
+// export const getProductImage = async (productId) => {
+//     const imageRef = ref(storage, Folders.ProductImages(productId));  // Adjust the path to your image
+//     // Fetch the download URL
+//     return await getDownloadURL(imageRef)
+// }
+
+
 export const getProductImage = async (productId) => {
-    const imageRef = ref(storage, Folders.ProductImages(productId));  // Adjust the path to your image
-    // Fetch the download URL
-    return await getDownloadURL(imageRef)
-}
+    try {
+        const imageRef = ref(storage, Folders.ProductImages(productId));  // Adjust the path to your image
+
+        // Fetch the download URL
+        const downloadURL = await getDownloadURL(imageRef);
+
+        return downloadURL;
+    } catch (err) {
+        const imageRef = ref(storage, Folders.DefaultImages('profile_avatar.png'))
+        const downloadURL = await getDownloadURL(imageRef);
+        return downloadURL;
+    }
+};
 
 
 

@@ -316,6 +316,7 @@ const fa = {
         analysis: "تحلیل اطلاعات",
         of: 'از',
         factor: 'فاکتور',
+        factors: 'فاکتورها',
         size: 'تعداد',
         people: 'افراد',
         numberOfElementPerPage: "تعداد ردیف ها در هر صفحه",

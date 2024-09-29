@@ -7,14 +7,14 @@ import { toast } from 'react-toastify'
 import { collection, getDocs } from 'firebase/firestore'
 import { db, storage } from '../../constants/FirebaseConfig'
 import Collections from '../../constants/Collections'
-import { getDownloadURL, ref } from 'firebase/storage'
-import Folders from '../../constants/Folders'
+
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import ProductCard from './ProductCard/ProductCard'
 import CardsContainerLoadingTemplate from "../UI/LoadingTemplate/CardsContainerLoadingTemplate";
+import { getProductImage } from '../../Utils/FirebaseTools'
 
 function Products() {
     const nav = useNavigate();
@@ -51,11 +51,7 @@ function Products() {
         console.log(items);
     }
 
-    const getProductImage = async (productId) => {
-        const imageRef = ref(storage, Folders.ProductImages(productId));  // Adjust the path to your image
-        // Fetch the download URL
-        return await getDownloadURL(imageRef)
-    }
+
 
 
     if (!products || !imageUrls) {

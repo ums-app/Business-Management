@@ -191,7 +191,7 @@ function Customer() {
                     }
                     onClick={() => setDisplayComponent(components?.CustomerProductPurchases)}
                 >
-                    {t('purchases')}
+                    {t('factors')}
                 </li>
                 <li
                     className={
