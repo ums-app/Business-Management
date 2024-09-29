@@ -2,7 +2,8 @@ import React from 'react'
 import ICONS from '../../../constants/Icons'
 
 function MoneyStatus({ number }) {
-    // if (number >= 0) return null
+    if (number == 0) return null
+
     return (
         <span
             className='border_radius_50 margin_5 '
