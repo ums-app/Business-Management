@@ -52,6 +52,32 @@ function Sales() {
         getTotalDocumentCount(pageSizes[0]);
     }, []);
 
+
+
+    useEffect(() => {
+        const debouncedSearch = debounce(handleInputChange, 300);
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [inputValue]);
+
+
+    const debounce = (func, delay) => {
+        let timeoutId;
+        const debounced = (...args) => {
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func(...args);
+            }, delay);
+        };
+
+        debounced.cancel = () => {
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+
+        return debounced;
+    };
+
     // Handler for input change
     const handleInputChange = async (e) => {
 
@@ -409,6 +435,7 @@ function Sales() {
                             onChange={handleInputChange}
                             id='searchBoxName'
                             value={inputValue}
+                            autoComplete="off"
                         />
                         <Tooltip
                             anchorSelect="#searchBoxName"

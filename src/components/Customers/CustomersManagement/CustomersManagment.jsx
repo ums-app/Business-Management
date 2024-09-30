@@ -67,6 +67,30 @@ function CustomersManagment() {
         }
     }, [customers]);
 
+    useEffect(() => {
+        const debouncedSearch = debounce(handleInputChange, 300);
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [inputValue]);
+
+
+    const debounce = (func, delay) => {
+        let timeoutId;
+        const debounced = (...args) => {
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func(...args);
+            }, delay);
+        };
+
+        debounced.cancel = () => {
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+
+        return debounced;
+    };
+
 
     // Handler for input change
     const handleInputChange = async (e) => {
@@ -304,6 +328,7 @@ function CustomersManagment() {
                             value={inputValue} onChange={handleInputChange}
                             id='searchBoxSelect'
                             className='full_width'
+                            autoComplete="off"
                         />
                         {suggestions.length > 0 && (
                             <ul className='suggestion_box'>
