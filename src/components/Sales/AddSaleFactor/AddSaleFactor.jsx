@@ -376,8 +376,9 @@ function AddSaleFactor({ updateMode }) {
             return
         }
         // 
-        customerFactor({ ...customerFactor, paidAmount: userPayment.amount })
+        setcustomerFactor({ ...customerFactor, paidAmount: userPayment.amount })
         setShowAddNewPayment(false)
+        console.log('saved and closed');
     }
 
 
