@@ -149,7 +149,7 @@ function FactorForPrint({
                                 <tr>
                                     <td>{totalOfCurrent()}</td>
                                     <td>{customerFactor.paidAmount}</td>
-                                    <td>{remainedAmount() < 0 ? 0 : remainedAmount()}</td>
+                                    <td>{remainedAmount() < 0 ? 0 : remainedAmount().toFixed(2)}</td>
                                     <td>
                                         {Math.abs(totalAmountOfAllFactors - totalAmountOfAllCustomerPayments).toFixed(2)}
                                         <MoneyStatus number={(totalAmountOfAllFactors - totalAmountOfAllCustomerPayments)} />

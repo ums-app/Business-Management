@@ -662,31 +662,44 @@ img {
   top: 10px;
 }
 
-/* Button */
-/* .btn {
-  font-family: inherit;
-  display: inline-block;
-  padding: 5px 10px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--main-color);
-  transition: color 0.5s;
-  z-index: 1;
-  font-size: 16px;
+.search_pagination .search_bar {
+  width: 50%;
+}
+
+@media (max-width: 760px) {
+  .search_pagination .search_bar {
+    width: 100%;
+  }
+}
+
+.suggestion_box {
+  position: absolute;
+  height: max-content;
+  border: 1px solid var(--border-color);
+  padding: 10px 5px;
   border-radius: 6px;
-  font-weight: 500;
-  color: var(--main-color);
-  cursor: pointer;
-  text-align: center;
-  box-shadow: 0px 7px 25px rgba(0, 0, 0, 0.08);
-  word-wrap: break-word;
-} */
-/* 
-.btn:hover {
-  color: var(--main-color);
-  border: 1px solid var(--text-color);
-  background-color: #fff;
-} */
+  width: 100%;
+  z-index: 10;
+  background-color: var(--light-dark);
+  box-shadow: 0 5px 10px #6c878733;
+
+}
+
+
+
+.suggestion_box li {
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin: 5px;
+
+}
+
+.suggestion_box li:hover {
+  background-color: var(--main-color);
+  font-weight: bold;
+}
+
+
 
 
 /* End Button */

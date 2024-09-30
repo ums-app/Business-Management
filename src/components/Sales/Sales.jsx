@@ -44,13 +44,82 @@ function Sales() {
     const [loading, setloading] = useState(false);
 
 
+    const [inputValue, setInputValue] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
 
 
     useEffect(() => {
         getTotalDocumentCount(pageSizes[0]);
     }, []);
 
+    // Handler for input change
+    const handleInputChange = async (e) => {
 
+        const value = e.target.value;
+        setInputValue(value);
+
+        if (value.trim().length === 0) {
+            getFirstPage();
+            setSuggestions([]);
+            return;
+        }
+
+        console.log(value);
+
+        // Firestore query to search by name or lastname
+        const q = query(
+            collection(db, Collections.Sales),
+            where('customer.name', '>=', value),
+            where('customer.name', '<=', value + '\uf8ff')
+        );
+
+        const querySnapshot = await getDocs(q);
+        const fetchedSuggestions = new Map();
+
+
+        querySnapshot.forEach((doc) => {
+            const customerData = doc.data();
+            console.log(customerData);
+            fetchedSuggestions.set(
+                `${customerData.customer.name} ${customerData.customer.lastName}`,
+                { name: customerData.customer.name, lastName: customerData.customer.lastName }
+            )
+        });
+
+        console.log(fetchedSuggestions.values());
+
+        setSuggestions([...fetchedSuggestions.values()]);
+    };
+
+    const findByNameAndLastName = async (name, lastName) => {
+        setloading(true)
+        console.log(name, lastName);
+        setInputValue(name + " " + lastName)
+
+        // Firestore query to search by name or lastname
+        const q = query(
+            collection(db, Collections.Sales),
+            where('customer.name', '==', name),
+            where('customer.lastName', '==', lastName)
+        );
+
+        try {
+            const querySnapshot = await getDocs(q);
+            const customerData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            console.log(customerData);
+
+            setFactors(customerData)
+            setSuggestions([]);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setloading(false)
+        }
+    };
 
 
 
@@ -133,10 +202,10 @@ function Sales() {
                 queryConstraints.unshift(where('indexNumber', '==', Number(searchValue)));
             }
 
-            // Add search filter by 'customer.name' if present
-            if (searchValueName.length > 0) {
-                queryConstraints.unshift(where('customer.name', '==', searchValueName));
-            }
+            // // Add search filter by 'customer.name' if present
+            // if (searchValueName.length > 0) {
+            //     queryConstraints.unshift(where('customer.name', '==', searchValueName));
+            // }
 
             // Construct the final query with dynamic constraints
             const firstPageQuery = query(salesCollectionRef, ...queryConstraints);
@@ -332,23 +401,44 @@ function Sales() {
 
 
             <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
-                <div className='search_bar'>
-                    <input type="text" placeholder={t('name')} onChange={e => setsearchValueName(e.target.value)} id='searchBoxName' />
-                    <Tooltip
-                        anchorSelect="#searchBoxName"
-                        place="top"
-                        className="toolTip_style"
-                    >
-                        {t("enterValueForSearching")}
-                    </Tooltip>
-                    <input type="text" placeholder={t('indexNumber')} onChange={e => setsearchValue(e.target.value)} id='searchBox' />
-                    <Tooltip
-                        anchorSelect="#searchBox"
-                        place="top"
-                        className="toolTip_style"
-                    >
-                        {t("enterValueForSearchingIndexNumber")}
-                    </Tooltip>
+                <div className='search_bar display_flex'>
+                    <div className='position_relative'>
+                        <input
+                            type="text"
+                            placeholder={t('name')}
+                            onChange={handleInputChange}
+                            id='searchBoxName'
+                            value={inputValue}
+                        />
+                        <Tooltip
+                            anchorSelect="#searchBoxName"
+                            place="top"
+                            className="toolTip_style"
+                        >
+                            {t("enterValueForSearching")}
+                        </Tooltip>
+                        <input type="text" placeholder={t('indexNumber')} onChange={e => setsearchValue(e.target.value)} id='searchBox' />
+                        <Tooltip
+                            anchorSelect="#searchBox"
+                            place="top"
+                            className="toolTip_style"
+                        >
+                            {t("enterValueForSearchingIndexNumber")}
+                        </Tooltip>
+                        {suggestions.length > 0 && (
+                            <ul className='suggestion_box'>
+                                {suggestions.map((suggestion, index) => (
+                                    <li
+                                        className='cursor_pointer'
+                                        key={index}
+                                        onClick={() => findByNameAndLastName(suggestion.name, suggestion.lastName)}
+                                    >
+                                        <span>{suggestion.name}</span> <span>{suggestion.lastName}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
                     <Button text={t('search')} icon={ICONS.search} onClick={getDocsBySearchValue} />
 
                 </div>

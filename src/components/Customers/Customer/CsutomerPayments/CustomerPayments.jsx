@@ -215,6 +215,7 @@ function CustomerPayments() {
                     <thead >
                         <tr>
                             <th>{t('number')}</th>
+                            <th>{t('checkNumber')}</th>
                             <th>{t('createdDate')}</th>
                             <th>{t('employee')}</th>
                             <th>{t('paidAmount')}</th>
@@ -239,6 +240,7 @@ function CustomerPayments() {
                                 key={pay.id}
                             >
                                 <td>{index + 1}</td>
+                                <td>{pay?.checkNumber}</td>
                                 <td>{formatFirebaseDates(pay.createdDate)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>

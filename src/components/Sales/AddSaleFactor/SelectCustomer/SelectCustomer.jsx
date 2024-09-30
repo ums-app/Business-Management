@@ -39,6 +39,9 @@ function SelectCustomer() {
     const [employees, setEmployees] = useState()
     const [imageUrls, setImageUrls] = useState()
 
+    const [inputValue, setInputValue] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+
     useEffect(() => {
         getEmployees();
         getTotalDocumentCount(pageSizes[0])
@@ -67,6 +70,71 @@ function SelectCustomer() {
             fetchImages();
         }
     }, [customers]);
+
+
+
+    // Handler for input change
+    const handleInputChange = async (e) => {
+
+        const value = e.target.value;
+        setsearchValue(value)
+        setInputValue(value);
+
+        if (value.trim().length === 0) {
+            setSuggestions([]);
+            return;
+        }
+
+        console.log(value);
+
+        // Firestore query to search by name or lastname
+        const q = query(
+            collection(db, Collections.Customers),
+            where('name', '>=', value),
+            where('name', '<=', value + '\uf8ff')
+        );
+
+        const querySnapshot = await getDocs(q);
+        const fetchedSuggestions = [];
+
+        querySnapshot.forEach((doc) => {
+            const customerData = doc.data();
+            console.log(customerData);
+            fetchedSuggestions.push({ name: customerData.name, lastName: customerData.lastName, id: doc.id })
+        });
+
+
+        console.log(fetchedSuggestions);
+
+        setSuggestions(fetchedSuggestions);
+    };
+
+    const findByNameAndLastName = async (name, lastName) => {
+        setloading(true)
+        setInputValue(name + " " + lastName)
+
+        // Firestore query to search by name or lastname
+        const q = query(
+            collection(db, Collections.Customers),
+            where('name', '==', name),
+            where('lastName', '==', lastName)
+        );
+
+        try {
+            const querySnapshot = await getDocs(q);
+            const customerData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setCustomers(customerData)
+            setSuggestions([]);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setloading(false)
+        }
+    };
 
 
 
@@ -228,16 +296,32 @@ function SelectCustomer() {
             <h1 className='margin_10 title'>{ }{t('selectTheDesiredCustomer')}</h1>
             <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
                 <div className='search_bar'>
-                    <input type="text" placeholder={t('search')} onChange={e => setsearchValue(e.target.value)} id='searchBox' />
+                    <div className='position_relative full_width'>
+                        <input type="text"
+                            placeholder={t('search')}
+                            value={inputValue} onChange={handleInputChange}
+                            id='searchBoxSelect'
+                            className='full_width'
+                        />
+                        {suggestions.length > 0 && (
+                            <ul className='suggestion_box'>
+                                {suggestions.map((suggestion, index) => (
+                                    <li
+                                        className='cursor_pointer'
+                                        key={index}
+                                        onClick={() => findByNameAndLastName(suggestion.name, suggestion.lastName)}>{suggestion.name} {suggestion.lastName}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
                     <Tooltip
-                        anchorSelect="#searchBox"
+                        anchorSelect="#searchBoxSelect"
                         place="top"
                         className="toolTip_style"
                     >
                         {t("enterValueForSearching")}
                     </Tooltip>
-                    <Button text={t('search')} icon={ICONS.search} onClick={getDocsBySearchValue} />
-
+                    {/* <Button text={t('search')} icon={ICONS.search} onClick={getDocsBySearchValue} /> */}
                 </div>
 
                 <div className='pagination display_flex '>
