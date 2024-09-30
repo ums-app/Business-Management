@@ -245,20 +245,13 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
         })
 
         try {
-            console.log('sending data to api');
-            if (updateMode) {
-                console.log('sending data to api as update');
-                const factorDoc = doc(db, Collections.Sales, factor.id)
-                await updateDoc(factorDoc, customerFactor);
-                toast.success(t('successfullyUpdated'))
-                nav('/sales')
-            } else {
-                console.log('sending data to api as new factor');
-                console.log(customerFactor);
-                const data = await addDoc(salesCollectionRef, customerFactor);
-                toast.success(t('successfullyAdded'));
-                nav('/sales')
-            }
+
+            console.log('sending data to api as new factor');
+            console.log(customerFactor);
+            const data = await addDoc(salesCollectionRef, customerFactor);
+            toast.success(t('successfullyAdded'));
+            // nav('/sales')
+
         } catch (err) {
             console.log(err);
             toast.error(err)

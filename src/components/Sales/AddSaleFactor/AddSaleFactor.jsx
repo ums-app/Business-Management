@@ -395,7 +395,7 @@ function AddSaleFactor({ updateMode }) {
             }
             toast.success(t('successfullyAdded'));
             setsaved(true)
-            nav('/sales')
+            // nav('/sales')
 
         } catch (err) {
             toast.error(err)
