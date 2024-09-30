@@ -354,7 +354,7 @@ function AddSaleFactor({ updateMode }) {
     }
 
 
-    const deleteUserPayment = async (index) => {
+    const deleteUserPayment = () => {
         if (updateMode) {
             toast.error('youAreNotAllowedToChangeTheFactor');
             return
@@ -364,8 +364,22 @@ function AddSaleFactor({ updateMode }) {
             ...userPayment,
             amount: 0
         })
+        customerFactor({ ...customerFactor, paidAmount: 0 })
+        setShowAddNewPayment(false)
 
     }
+
+
+    const saveUserPayment = () => {
+        if (updateMode) {
+            toast.error('youAreNotAllowedToChangeTheFactor');
+            return
+        }
+        // 
+        customerFactor({ ...customerFactor, paidAmount: userPayment.amount })
+        setShowAddNewPayment(false)
+    }
+
 
     const snedCustomerFactorToAPI = async () => {
         if (updateMode) {
@@ -637,7 +651,7 @@ function AddSaleFactor({ updateMode }) {
                                         text={t('save')}
                                         type={'plusBtn'}
                                         id={'add_new_payment'}
-                                        onClick={() => setShowAddNewPayment(false)}
+                                        onClick={saveUserPayment}
                                     />
                                     <Button
                                         text={t('cancel')}

@@ -32,6 +32,8 @@ function FactorForPrint({
         </LoadingTemplateContainer>
     }
 
+    console.log(customerFactor);
+
 
     return (
         <div className='factor_page'>
