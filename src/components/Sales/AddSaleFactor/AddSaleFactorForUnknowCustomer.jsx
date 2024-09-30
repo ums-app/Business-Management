@@ -408,7 +408,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                             <tr>
                                 <th>{t('number')}</th>
                                 <th>{t('name')} {t('product')}</th>
-                                <th>{t('englishName')}</th>
+                                {/* <th>{t('englishName')}</th> */}
                                 <th>{t('total')}</th>
                                 <th>{t('pricePer')}</th>
                                 <th>{t('discount')}</th>
@@ -435,7 +435,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                                                 })}
                                             </select>
                                         </td>
-                                        <td>{prInFactor.englishName}</td>
+                                        {/* <td>{prInFactor.englishName}</td> */}
                                         <td><input type="number" style={{ width: '100px' }} value={prInFactor.total} onChange={e => handleChangeTotalProducts(e, index)} /></td>
                                         <td><input type="number" style={{ width: '100px' }} value={prInFactor.pricePer} onChange={e => handleChangeProductPrice(e, index)} /></td>
                                         <td>

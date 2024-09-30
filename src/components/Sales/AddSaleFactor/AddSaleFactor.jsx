@@ -612,20 +612,17 @@ function AddSaleFactor({ updateMode }) {
                     </div>
                     <div>
                         {!showAddNewPayment && userPayment.amount > 0 && (
-                            <div className='margin_top_10 margin_bottom_10 border_1px_solid padding_10'>
-                                <span className='info_value'>1: </span>
+                            <div className='margin_top_10 margin_bottom_10'>
                                 <span className=''>{t('paidAmount')}: </span>
                                 <span className='info_value'>{userPayment.amount} </span>
-                                <span className=''>{t('date')}: </span>
-                                <span className='info_value short_date'>{formatFirebaseDates(userPayment.date)} </span>
-                                <span>
+                                {!updateMode && <span>
                                     <Button
                                         text={t('delete')}
                                         type={'plusBtn'}
                                         id={'delete_payment'}
                                         onClick={deleteUserPayment}
                                     />
-                                </span>
+                                </span>}
                             </div>)
                         }
 
@@ -634,20 +631,6 @@ function AddSaleFactor({ updateMode }) {
                                 <span className='info_value'>{t('paidAmount')}: </span>
                                 <span className='info_value'>
                                     <input type="number" onChange={e => setUserPayment({ ...userPayment, amount: Number(e.target.value + "") })} />
-                                </span>
-                                <span className='info_value'>{t('date')}: </span>
-                                <span className='info_value short_date'>
-                                    <CustomDatePicker onChange={e => {
-                                        const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                        const gDate = new Date();
-                                        gDate.setFullYear(date[0])
-                                        gDate.setMonth(date[1])
-                                        gDate.setDate(date[2]);
-                                        setUserPayment({
-                                            ...userPayment,
-                                            date: gDate
-                                        })
-                                    }} />
                                 </span>
                                 <span>
                                     <Button
