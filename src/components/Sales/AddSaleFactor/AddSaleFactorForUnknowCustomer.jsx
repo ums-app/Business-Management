@@ -41,6 +41,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
     const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
     const [products, setProducts] = useState([]);
+    const [saved, setsaved] = useState(false)
 
     const [customerFactor, setcustomerFactor] = useState({
         productsInFactor: [{ ...productForSale }],
@@ -250,6 +251,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
             console.log(customerFactor);
             const data = await addDoc(salesCollectionRef, customerFactor);
             toast.success(t('successfullyAdded'));
+            setsaved(true)
             // nav('/sales')
 
         } catch (err) {
@@ -313,11 +315,11 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
                 {/* settings Menu */}
                 <Menu >
-                    <Button
+                    {(updateMode || saved) && <Button
                         icon={ICONS.printer}
                         text={t('readyForPrint')}
                         onClick={() => setshowPrintModal(true)}
-                    />
+                    />}
                     <Button
                         icon={ICONS.trash}
                         text={t("delete")}
@@ -346,7 +348,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
 
             <div className='position_relative'>
-                {updateMode && <div className='lock_page'></div>}
+                {(updateMode || saved) && <div className='lock_page'></div>}
 
                 <h1 className='title'>{!updateMode && t('add')}  {t('sundryFactor')}</h1>
 
