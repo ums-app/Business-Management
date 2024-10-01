@@ -16,6 +16,8 @@ import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { toast } from 'react-toastify';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
+import ICONS from '../../../../constants/Icons';
+import { Tooltip } from 'react-tooltip';
 
 function CustomerPayments() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -94,6 +96,30 @@ function CustomerPayments() {
     }
 
     console.log(payments);
+
+
+    const showDeleteModal = (id, index) => {
+        dispatch({
+            type: actionTypes.SHOW_ASKING_MODAL,
+            payload: {
+                show: true,
+                message: "deleteMessage",
+                btnAction: () => deleteCustomerPayment(id, index),
+                id: id,
+            },
+        });
+    };
+
+
+
+
+    const deleteCustomerPayment = async (id, index) => {
+        console.log(id, index);
+
+
+
+
+    }
 
     if (!payments) {
         return <LoadingTemplateContainer>
@@ -210,7 +236,7 @@ function CustomerPayments() {
 
             <div className='table_container margin_top_20 input'>
                 <p className='title_2'>{t('payments')}</p>
-                <table className="full_width custom_table table_row_hover">
+                <table className="full_width custom_table">
                     <thead >
                         <tr>
                             <th>{t('number')}</th>
@@ -218,24 +244,13 @@ function CustomerPayments() {
                             <th>{t('createdDate')}</th>
                             <th>{t('employee')}</th>
                             <th>{t('paidAmount')}</th>
+                            <th>{t('actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {payments?.map((pay, index) => {
-                            console.log(pay.createdDate);
                             return <tr
-                                className=" cursor_pointer hover"
-                                onClick={() => {
-                                    // dispatch({
-                                    //     type: actionTypes.SET_FACTOR,
-                                    //     payload: pay.saleId
-                                    // })
-                                    // dispatch({
-                                    //     type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
-                                    //     payload: factor.customer
-                                    // })
-                                    // nav('/sales/' + factor.id)
-                                }}
+                                className=" cursor_pointer "
                                 key={pay.id}
                             >
                                 <td>{index + 1}</td>
@@ -243,6 +258,20 @@ function CustomerPayments() {
                                 <td>{formatFirebaseDates(pay.date)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>
+                                <td>
+                                    <Button
+                                        icon={ICONS.trash}
+                                        onClick={() => showDeleteModal(pay.id, index)}
+                                        type={'crossBtn'}
+                                    />
+                                    <Tooltip
+                                        anchorSelect="#delete_row"
+                                        place="right"
+                                        className="toolTip_style"
+                                    >
+                                        {t("delete")}
+                                    </Tooltip>
+                                </td>
                             </tr>
                         })
                         }

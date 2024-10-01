@@ -336,7 +336,8 @@ const en = {
         type: "Type",
         customerAccount: 'Customer account',
         checkNumber: 'Check Number',
-        shareOfSales: 'Share Of Sales'
+        shareOfSales: 'Share Of Sales',
+        withdrawableAmount: 'Withdrawable Amount'
     },
 };
 

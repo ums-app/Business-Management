@@ -363,6 +363,7 @@ const fa = {
         checkNumber: 'شماره چک',
         shareOfSales: 'سهم از فروشات',
         employeeAccount: 'حساب کارمند',
+        withdrawableAmount: 'مقدار قابل برداشت'
 
 
     },

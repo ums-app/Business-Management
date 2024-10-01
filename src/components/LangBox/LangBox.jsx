@@ -42,6 +42,7 @@ function LangBox() {
             <div className={'lang_menu showLangBox ' + (showLangBox && 'show')} >
                 <div
                     onClick={() => {
+                        if (locale == 'en') return;
                         dispatch({
                             type: actionTypes.CHANGE_LOCALE,
                             payload: {
@@ -55,6 +56,7 @@ function LangBox() {
                 </div>
                 <div
                     onClick={() => {
+                        if (locale == 'fa') return;
                         dispatch({
                             type: actionTypes.CHANGE_LOCALE,
                             payload: {
