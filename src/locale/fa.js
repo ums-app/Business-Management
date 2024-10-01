@@ -360,7 +360,11 @@ const fa = {
         SUNDRY_FACTOR: 'متفرقه',
         type: "نوعیت",
         customerAccount: 'حساب مشتری',
-        checkNumber: 'شماره چک'
+        checkNumber: 'شماره چک',
+        shareOfSales: 'سهم از فروشات',
+        employeeAccount: 'حساب کارمند',
+
+
     },
 };
 

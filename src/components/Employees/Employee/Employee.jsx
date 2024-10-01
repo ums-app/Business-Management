@@ -206,7 +206,7 @@ function Employee() {
                     }
                     onClick={() => setDisplayComponent(components?.EmployeeFee)}
                 >
-                    {t("employeeFee")}
+                    {t("employeeAccount")}
                 </li>
             </TabMenu>
 

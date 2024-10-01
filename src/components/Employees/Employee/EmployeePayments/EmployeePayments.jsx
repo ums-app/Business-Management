@@ -284,7 +284,7 @@ function EmployeePayments() {
                             </tr>
                         })
                         }
-                        {payments.length == 0 && <tr><td colSpan={4}>{t('notExist')}</td></tr>}
+                        {payments.length == 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
                     </tbody>
                 </table>
             </div>

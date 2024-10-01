@@ -93,7 +93,6 @@ export async function getEmployeeById(docId) {
 }
 
 
-
 export const getAllEmployeePayments = async (employeeId) => {
     const q = query(
         employeePaymentsCollectionRef,
@@ -120,10 +119,53 @@ export const getAllEmployeePayments = async (employeeId) => {
 
 }
 
+export async function getAllVisitorFactors(visitorId) {
+    const q = query(
+        salesCollectionRef,
+        where("visitorAccount.visitorId", "==", visitorId),
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+        // First map to an array, then filter and sort
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id }))
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+}
+
 
 // ============================ cutomer service ==================================
 
 
+
+export const getCustomerPaymentByCustomerIds = async (customerIds) => {
+    const q = query(
+        paymentCollectionRef,
+        where('customerId', 'in', customerIds),
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+        // First map to an array, then filter and sort
+        let items = querySnapshot.docs
+            .map(doc => ({ ...doc.data(), id: doc.id }))
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+
+
+
+};
 
 
 // const getProducts = async () => {

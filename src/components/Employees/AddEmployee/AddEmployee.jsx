@@ -9,7 +9,7 @@ import ICONS from '../../../constants/Icons'
 import { toast } from 'react-toastify';
 import Button from '../../UI/Button/Button';
 import "./AddEmployee.css"
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db, storage } from '../../../constants/FirebaseConfig';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
@@ -251,7 +251,9 @@ function AddEmployee({ updateMode = false }) {
                         <div className='display_flex flex_direction_column margin_5' style={{ direction: "rtl" }}>
                             <label htmlFor="joinedDate">{t('joinedDate')}</label>
                             <CustomDatePicker
-                                value={formData.joinedDate}
+                                value={formData?.joinedDate instanceof Timestamp ?
+                                    formData?.joinedDate?.toDate()
+                                    : new Date(formData?.joinedDate)}
                             />
                             <ErrorMessage
                                 name="joinedDate"

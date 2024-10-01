@@ -335,7 +335,8 @@ const en = {
         SUNDRY_FACTOR: 'Sundry',
         type: "Type",
         customerAccount: 'Customer account',
-        checkNumber: 'Check Number'
+        checkNumber: 'Check Number',
+        shareOfSales: 'Share Of Sales'
     },
 };
 

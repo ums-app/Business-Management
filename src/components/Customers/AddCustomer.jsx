@@ -5,7 +5,7 @@ import Button from '../UI/Button/Button'
 import { t } from 'i18next'
 import * as yup from "yup";
 import { toast } from 'react-toastify'
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
+import { Timestamp, addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
 import { auth, db, storage } from '../../constants/FirebaseConfig'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
@@ -240,7 +240,9 @@ function AddCustomer({ updateMode = false }) {
                         <div className='display_flex flex_direction_column margin_5' style={{ direction: "rtl" }}>
                             <label htmlFor="joinedDate">{t('joinedDate')}</label>
                             <CustomDatePicker
-                                value={formData.joinedDate}
+                                value={formData?.joinedDate instanceof Timestamp ?
+                                    formData?.joinedDate?.toDate()
+                                    : new Date(formData?.joinedDate)}
                             />
                             <ErrorMessage
                                 name="joinedDate"
