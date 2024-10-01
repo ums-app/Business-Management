@@ -4,6 +4,7 @@ import { getAllVisitorFactors, getCustomerPaymentByCustomerIds } from '../../../
 import { useParams } from 'react-router-dom';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
+import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
 
 function EmployeeFee() {
     const { employeeId } = useParams()
@@ -85,7 +86,7 @@ function EmployeeFee() {
                             <th>{t('totalAll')} {t('sales')}</th>
                             <th>{t('shareOfSales')}</th>
                             <th>{t('payments')} {t('customers')} </th>
-                            {/* <th>{t('remainedAmount')}</th> */}
+                            <th>{t('remainedAmount')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,7 +95,10 @@ function EmployeeFee() {
                             <td>{totalAmountOfAllFactors}</td>
                             <td>{totalShareOfEmployee}</td>
                             <td>{totalCustomersPaid}</td>
-                            {/* <td>{totalAmountOfAllFactors - totalCustomersPaid}</td> */}
+                            <td>
+                                {Math.abs(totalAmountOfAllFactors - totalCustomersPaid)}
+                                <MoneyStatus number={totalAmountOfAllFactors - totalCustomersPaid} />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
