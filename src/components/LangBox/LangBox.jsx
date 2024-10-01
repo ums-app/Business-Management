@@ -35,7 +35,7 @@ function LangBox() {
             <div className='lanBox' onClick={showBoxHandler}>
                 <i className={ICONS.translate}></i>
 
-                <div className={'lang_slc'}>{locale}</div>
+                <div className={'lang_slc'}>{locale} {!locale && 'fa'}</div>
 
                 <i className={ICONS.arrowDown}></i>
             </div>
