@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { useStateValue } from '../../../../context/StateProvider';
 import { t } from 'i18next';
@@ -17,6 +17,7 @@ import { jalaliToGregorian } from 'shamsi-date-converter';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { toast } from 'react-toastify';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
+import { Tooltip } from 'react-tooltip';
 
 function EmployeePayments() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -37,7 +38,6 @@ function EmployeePayments() {
     // const [totalPayments, settotalPayments] = useState(0)
     // const [totalFactors, settotalFactors] = useState(0)
 
-
     // useEffect(() => {
     //     if (payments && factors) {
     //         settotalPayments(totalAmountOfAllCustomerPayments(payments));
@@ -45,6 +45,8 @@ function EmployeePayments() {
     //     }
 
     // }, [factors, payments])
+
+
 
 
 
@@ -68,8 +70,8 @@ function EmployeePayments() {
                 return
             }
             console.log('sending payment doc: ', userPayment.amount);
-            addDoc(paymentsCollectionRef, userPayment);
-            setPayments([userPayment, ...payments])
+            const added = await addDoc(paymentsCollectionRef, userPayment);
+            setPayments([{ ...userPayment, id: added.id }, ...payments])
             toast.success(t('successfullyAdded'));
             setShowPaymentModal(false)
 
@@ -80,6 +82,47 @@ function EmployeePayments() {
                 type: actionTypes.SET_SMALL_LOADING,
                 payload: false
             })
+        }
+    }
+
+    const showDeleteModal = (id, index) => {
+        dispatch({
+            type: actionTypes.SHOW_ASKING_MODAL,
+            payload: {
+                show: true,
+                message: "deleteMessage",
+                btnAction: () => handleDeletePayment(id, index),
+                id: id,
+            },
+        });
+    };
+
+
+
+    const handleDeletePayment = async (id, index) => {
+        dispatch({
+            type: actionTypes.SET_GLOBAL_LOADING,
+            payload: { value: true },
+        });
+        dispatch({
+            type: actionTypes.HIDE_ASKING_MODAL,
+        });
+
+        const paymentDoc = doc(db, Collections.EmployeePayments, id);
+
+        try {
+            await deleteDoc(paymentDoc)
+            const temp = [...payments];
+            temp.splice(index, 1);
+            setPayments(temp);
+            toast.success(t('successfullyDeleted'));
+        } catch (err) {
+            console.log(err);
+        } finally {
+            dispatch({
+                type: actionTypes.SET_GLOBAL_LOADING,
+                payload: { value: false },
+            });
         }
     }
 
@@ -154,10 +197,7 @@ function EmployeePayments() {
                                 <td>
                                     <CustomDatePicker onChange={e => {
                                         const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                        const gDate = new Date();
-                                        gDate.setFullYear(date[0])
-                                        gDate.setMonth(date[1])
-                                        gDate.setDate(date[2]);
+                                        const gDate = new Date(date);
                                         setUserPayment({
                                             ...userPayment,
                                             date: gDate
@@ -201,6 +241,7 @@ function EmployeePayments() {
                             <th>{t('createdDate')}</th>
                             <th>{t('employee')}</th>
                             <th>{t('paidAmount')}</th>
+                            <th>{t('actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -225,6 +266,21 @@ function EmployeePayments() {
                                 <td>{formatFirebaseDates(pay.createdDate)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>
+                                <td>
+                                    <Button
+                                        icon={ICONS.trash}
+                                        onClick={() => showDeleteModal(pay.id, index)}
+                                        type={'crossBtn'}
+                                        id={'delete_row'}
+                                    />
+                                    <Tooltip
+                                        anchorSelect="#delete_row"
+                                        place="right"
+                                        className="toolTip_style"
+                                    >
+                                        {t("delete")}
+                                    </Tooltip>
+                                </td>
                             </tr>
                         })
                         }

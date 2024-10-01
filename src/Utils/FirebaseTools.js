@@ -77,11 +77,16 @@ export const getProducts = async () => {
 
 // Function to get a document by its ID
 export async function getEmployeeById(docId) {
-    const docRef = doc(db, employeesCollectionRef, docId);
+    console.log('doc id: ', docId);
+    const docRef = doc(employeesCollectionRef, docId);
+    console.log(docRef);
+
     const docSnap = await getDoc(docRef);
 
+    console.log(docSnap.exists);
+
     if (docSnap.exists()) {
-        return docSnap.data();  // Return document data
+        return { ...docSnap.data(), id: docSnap.id };  // Return document data
     } else {
         return null;  // Return null if no document found
     }
@@ -200,17 +205,14 @@ export const getAllCustomerPayments = async (customerId) => {
     const q = query(
         paymentCollectionRef,
         where("customerId", "==", customerId),
-        // orderBy("createdDate", "desc")
+        orderBy("date", "asc")
     );
 
     try {
         const querySnapshot = await getDocs(q);
-        console.log('querysnapshot is empty: ', querySnapshot.empty);
         // First map to an array, then filter and sort
         let items = querySnapshot.docs
             .map(doc => ({ ...doc.data(), id: doc.id }))
-            .sort((a, b) => b.createdDate - a.createdDate);// Map to data with id
-        console.log(items);
 
         return items;
 

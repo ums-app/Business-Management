@@ -12,7 +12,7 @@ import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate
 import { getAllCustomerPayments, getCustomerFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools';
 import Button from '../../../UI/Button/Button';
 import Modal from '../../../UI/modal/Modal';
-import { jalaliToGregorian } from 'shamsi-date-converter';
+import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { toast } from 'react-toastify';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
@@ -77,9 +77,9 @@ function CustomerPayments() {
                 return
             }
 
-            console.log('sending payment doc: ', userPayment.amount);
+            console.log('sending payment doc: ', userPayment);
             addDoc(paymentsCollectionRef, userPayment);
-            setPayments([userPayment, ...payments])
+            setPayments([...payments, userPayment])
             toast.success(t('successfullyAdded'));
             setShowPaymentModal(false)
 
@@ -171,13 +171,12 @@ function CustomerPayments() {
                                 <td>
                                     <CustomDatePicker onChange={e => {
                                         const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                        const gDate = new Date();
-                                        gDate.setFullYear(date[0])
-                                        gDate.setMonth(date[1])
-                                        gDate.setDate(date[2]);
+                                        console.log(date);
+                                        console.log(new Date(date));
+                                        console.log(gregorianToJalali(new Date(date)).join('-'));
                                         setUserPayment({
                                             ...userPayment,
-                                            date: gDate
+                                            date: new Date(date)
                                         })
                                     }} />
                                 </td>
@@ -241,7 +240,7 @@ function CustomerPayments() {
                             >
                                 <td>{index + 1}</td>
                                 <td>{pay?.checkNumber}</td>
-                                <td>{formatFirebaseDates(pay.createdDate)}</td>
+                                <td>{formatFirebaseDates(pay.date)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>
                             </tr>

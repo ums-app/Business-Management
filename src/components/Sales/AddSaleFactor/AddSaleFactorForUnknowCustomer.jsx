@@ -77,6 +77,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
         }
     }, [])
 
+    console.log(customerFactor);
 
 
     const getProducts = async () => {
@@ -384,10 +385,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                         <span className=' short_date'>
                             {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
                                 const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                const gDate = new Date();
-                                gDate.setFullYear(date[0])
-                                gDate.setMonth(date[1])
-                                gDate.setDate(date[2]);
+                                const gDate = new Date(date);
                                 setcustomerFactor({
                                     ...customerFactor,
                                     createdDate: gDate

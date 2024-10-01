@@ -32,7 +32,7 @@ function AddCustomer({ updateMode = false }) {
         name: '',
         lastName: '',
         phoneNumber: '',
-        visitor: '',
+        visitor: null,
         email: '',
         location: '',
         password: '',

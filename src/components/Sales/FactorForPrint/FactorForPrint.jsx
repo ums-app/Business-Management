@@ -113,7 +113,7 @@ function FactorForPrint({
 
                                     if (item.productId.lenght == 0) return null;
                                     return (
-                                        <tr>
+                                        <tr key={index}>
                                             <td>{index + 1}</td>
                                             <td>{item.name}</td>
                                             {/* <td>{item.englishName}</td> */}

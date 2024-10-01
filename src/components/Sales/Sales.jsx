@@ -221,7 +221,7 @@ function Sales() {
 
         try {
             // Build query constraints dynamically
-            let queryConstraints = [orderBy("createdDate", "desc"), limit(pageSize)];
+            let queryConstraints = [orderBy("createdDate", "asc"), limit(pageSize)];
 
             // Add search filter by 'indexNumber' if present
             if (searchValue.length > 0) {
@@ -277,7 +277,7 @@ function Sales() {
         try {
             // Build query constraints dynamically
             let queryConstraints = [
-                orderBy("createdDate", "desc"),
+                orderBy("createdDate", "asc"),
                 startAfter(lastVisible),
                 limit(pageSize)
             ];
@@ -521,8 +521,6 @@ function Sales() {
                         </thead>
                         <tbody>
                             {factors?.map((factor, index) => {
-                                console.log(factor);
-
                                 return <tr
                                     className=" cursor_pointer hover"
                                     onClick={() => {

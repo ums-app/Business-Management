@@ -41,7 +41,6 @@ function AddSaleFactor({ updateMode }) {
     const [showPrintModal, setshowPrintModal] = useState(false);
     const [customerImage, setcustomerImage] = useState();
     const [customerFactors, setCustomeractors] = useState([]);
-    const [customerPayments, setCustomerPayments] = useState([]);
     const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
     const paymentCollectionRef = collection(db, Collections.Payments);
@@ -50,6 +49,7 @@ function AddSaleFactor({ updateMode }) {
     const [totalAmountOfCustomerFactors, settotalAmountOfCustomerFactors] = useState(0)
     const [products, setProducts] = useState([]);
     const [saved, setsaved] = useState(false)
+    const [visitor, setvisitor] = useState()
 
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
@@ -62,15 +62,15 @@ function AddSaleFactor({ updateMode }) {
     })
 
     const [showAddNewPayment, setShowAddNewPayment] = useState(false);
-    const [customerFactor, setcustomerFactor] = useState({
+    const [customerFactor, setcustomerFactor] = useState(() => ({
         productsInFactor: [{ ...productForSale }],
         customer: customerForSaleFactor,
         payments: [],
         createdDate: new Date(),
         indexNumber: 0,
         type: FactorType.STANDARD_FACTOR,
-        by: authentication.email
-    })
+        by: authentication.email,
+    }))
 
     useEffect(() => {
         settotalAmountOfCustomerPayments(totalAmountOfAllCustomerPayments());
@@ -79,10 +79,6 @@ function AddSaleFactor({ updateMode }) {
 
 
     useEffect(() => {
-        const getImage = async () => {
-            const url = await getUserImage(customerForSaleFactor.email);
-            setcustomerImage(url)
-        }
         const getTotalNumberOfFactors = async () => {
             const snapshot = await getCountFromServer(salesCollectionRef);
             const totalDocs = snapshot.data().count;
@@ -92,37 +88,36 @@ function AddSaleFactor({ updateMode }) {
             })
         }
 
-        console.log(factor);
-
-        if (!updateMode) {
-            getTotalNumberOfFactors();
-        }
-        getCustomerFactors();
-        getAllCustomerPayments()
-        getImage();
-        getProducts();
         addNewProdcut()
         if (updateMode) {
             setcustomerFactor(factor)
         }
 
+        if (!updateMode) {
+            getTotalNumberOfFactors();
+        }
+
     }, [])
 
-
     useEffect(() => {
-        console.log('get emp :', customerForSaleFactor);
-        if (customerForSaleFactor) {
-            console.log('in if: ', customerForSaleFactor);
-            getEmployeeById(customerForSaleFactor.visitor)
-                .then(res => {
-                    console.log(res);
-                })
-        }
-    }, [customerForSaleFactor])
+        getUserImage(customerForSaleFactor.email).then(res => setcustomerImage(res))
+            .catch(err => setcustomerImage(err))
+        getProducts();
+        getCustomerFactors();
+        getAllCustomerPayments()
+        getEmployeeById(customerForSaleFactor.visitor)
+            .then(res => {
+                setvisitor(res)
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+    }, [])
+    console.log(customerFactor);
+
 
     const getCustomerFactors = async () => {
-        console.log('get all incomplete fac func: ', 'customerId: ', customerForSaleFactor.id, 'status: ', factorStatus.INCOMPLETE);
-
         const q = query(
             salesCollectionRef,
             where("customer.id", "==", customerForSaleFactor.id),
@@ -130,13 +125,11 @@ function AddSaleFactor({ updateMode }) {
 
         try {
             const querySnapshot = await getDocs(q);
-            console.log('querysnapshot is empty: ', querySnapshot.empty);
             // First map to an array, then filter and sort
             let items = querySnapshot.docs
                 .map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
                 .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()); // Sort by date
 
-            console.log(factor);
             if (updateMode) {
                 items = items.filter(doc => doc.id !== factor?.id);
             }
@@ -150,9 +143,6 @@ function AddSaleFactor({ updateMode }) {
 
 
 
-
-
-
     const getAllCustomerPayments = async () => {
         const q = query(
             paymentCollectionRef,
@@ -161,7 +151,7 @@ function AddSaleFactor({ updateMode }) {
 
         try {
             const querySnapshot = await getDocs(q);
-            console.log('querysnapshot is empty: ', querySnapshot.empty);
+
             // First map to an array, then filter and sort
             let items = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
 
@@ -184,7 +174,6 @@ function AddSaleFactor({ updateMode }) {
         const querySnapshot = await getDocs(productCollectionRef);
         const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
         setProducts(items);
-        console.log(items);
     }
 
     const addNewProdcut = () => {
@@ -336,8 +325,6 @@ function AddSaleFactor({ updateMode }) {
             .forEach(py => {
                 totalAmountOfAllPayments += Number(py.amount);
             })
-
-        console.log('totalpaymentamount:', totalAmountOfAllPayments);
         return totalAmountOfAllPayments;
     }
 
@@ -345,11 +332,9 @@ function AddSaleFactor({ updateMode }) {
     const getTotalPriceOfFactor = (fac) => {
         let totalPriceOfFac = 0
         fac.productsInFactor?.forEach(item => {
-            console.log("totalprice of fac: " + fac.id, totalPriceOfFac);
             totalPriceOfFac += Number(item.totalPrice)
         })
 
-        console.log('factor:' + fac.id, totalPriceOfFac);
         return totalPriceOfFac;
     }
 
@@ -402,14 +387,39 @@ function AddSaleFactor({ updateMode }) {
         })
 
         try {
+            console.log('sending data to the api');
+            console.log('vis: ', visitor);
+            const factorDoc = await addDoc(salesCollectionRef,
+                {
+                    ...customerFactor,
+                    paidAmount: userPayment.amount,
+                    totalAll: totalAll(),
+                    visitorAccount: visitor ? {
+                        visitorId: visitor?.id,
+                        visitorSalesPercent: visitor?.salesPercent,
+                        visitorAmount: (totalAll() * Number(visitor?.salesPercent) / 100),
+                    } : null
 
-            const factorDoc = await addDoc(salesCollectionRef, { ...customerFactor, paidAmount: userPayment.amount });
+                }
+            );
+            console.log(factorDoc);
             if (userPayment.amount > 0) {
                 console.log('sending payment doc: ', userPayment.amount);
                 addDoc(paymentCollectionRef, { ...userPayment, saleId: factorDoc.id });
             }
             toast.success(t('successfullyAdded'));
             setsaved(true)
+            setcustomerFactor({
+                ...customerFactor,
+                paidAmount: userPayment.amount,
+                totalAll: totalAll(),
+                visitorAccount: visitor ? {
+                    visitorId: visitor?.id,
+                    visitorSalesPercent: visitor?.salesPercent,
+                    visitorAmount: (totalAll() * Number(visitor?.salesPercent) / 100),
+                } : null
+
+            })
             // nav('/sales')
 
         } catch (err) {
@@ -447,7 +457,9 @@ function AddSaleFactor({ updateMode }) {
         }
     }, [])
 
-    console.log(updateMode, saved);
+
+    console.log(customerFactor);
+
 
     return (
         <div className='full_width position_relative'>
@@ -487,7 +499,7 @@ function AddSaleFactor({ updateMode }) {
                 />
             </Modal>
             <div className='position_relative'>
-                {updateMode && <div className='lock_page'></div>}
+                {(updateMode || saved) && <div className='lock_page'></div>}
                 <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
 
                 <div
@@ -508,10 +520,7 @@ function AddSaleFactor({ updateMode }) {
                         <span className=' short_date'>
                             {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
                                 const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                const gDate = new Date();
-                                gDate.setFullYear(date[0])
-                                gDate.setMonth(date[1])
-                                gDate.setDate(date[2]);
+                                const gDate = new Date(date);
                                 setcustomerFactor({
                                     ...customerFactor,
                                     createdDate: gDate

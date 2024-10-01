@@ -108,7 +108,7 @@ function CustomerProductPurchases({ data }) {
             const firstPageQuery = query(
                 salesCollectionRef,
                 where('customer.id', '==', customerId),
-                orderBy('createdDate', 'desc'), // Adjust order as needed
+                orderBy('createdDate', 'asc'), // Adjust order as needed
                 limit(pageSize)
             );
 
@@ -150,7 +150,7 @@ function CustomerProductPurchases({ data }) {
         const nextPageQuery = query(
             salesCollectionRef,
             where('customer.id', '==', customerId),
-            orderBy('createdDate', 'desc'),
+            orderBy('createdDate', 'asc'),
             startAfter(lastVisible),
             limit(pageSize)
         );
@@ -181,7 +181,7 @@ function CustomerProductPurchases({ data }) {
         const prevPageQuery = query(
             salesCollectionRef,
             where('customer.id', '==', customerId),
-            orderBy('createdDate', 'desc'),
+            orderBy('createdDate', 'asc'),
             endBefore(firstVisible),
             limitToLast(pageSize)
         );
