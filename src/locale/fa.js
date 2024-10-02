@@ -364,6 +364,7 @@ const fa = {
         shareOfSales: 'سهم از فروشات',
         employeeAccount: 'حساب کارمند',
         withdrawableAmount: 'مقدار قابل برداشت',
+        remainedAmountOfCustomers: 'مبلغ باقیمانده مشتریان',
         BasedOnProductNumber: 'بر اساس تعداد محصول',
 
         visitorContractType: "نوعیت قرارداد ویزیتور",

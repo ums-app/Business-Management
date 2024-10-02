@@ -338,6 +338,7 @@ const en = {
         checkNumber: 'Check Number',
         shareOfSales: 'Share Of Sales',
         withdrawableAmount: 'Withdrawable Amount',
+        remainedAmountOfCustomers: "Remained Amount Of Customers",
         BasedOnProductNumber: "Based On Product Number",
         package: 'Package',
         visitorContractType: "Type Of Visitor Contract",

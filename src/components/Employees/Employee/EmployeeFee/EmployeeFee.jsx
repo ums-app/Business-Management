@@ -95,7 +95,7 @@ function EmployeeFee() {
                             <th>{t('shareOfSales')}</th>
                             <th>{t('payments')} {t('customers')} </th>
                             <th>{t('withdrawableAmount')}</th>
-                            <th>{t('remainedAmount')}</th>
+                            <th>{t('remainedAmountOfCustomers')}</th>
                         </tr>
                     </thead>
                     <tbody>

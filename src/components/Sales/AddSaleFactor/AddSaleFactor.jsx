@@ -396,11 +396,15 @@ function AddSaleFactor({ updateMode }) {
         try {
 
             let visitorAmount = 0;
-            if (visitor && visitor.VisitorContractType == VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
+            if (visitor && visitor.visitorContractType == VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
                 visitorAmount = getTotalProductsOfFactor() * visitor.visitorAmount;
-            } else if (visitor && visitor.VisitorContractType == VisitorContractType.PERCENT) {
+            } else if (visitor && visitor.visitorContractType == VisitorContractType.PERCENT) {
                 visitorAmount = (totalAll() * Number(visitor?.salesPercent) / 100);
             }
+            console.log('visitor: ', visitor);
+            console.log('visitor_contract-type:', visitor.visitorContractType);
+            console.log('total-product: ', getTotalProductsOfFactor());
+            console.log('visitor amount: ', visitorAmount);
 
             const factorDoc = await addDoc(salesCollectionRef,
                 {
