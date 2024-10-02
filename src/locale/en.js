@@ -342,7 +342,8 @@ const en = {
         BasedOnProductNumber: "Based On Product Number",
         package: 'Package',
         visitorContractType: "Type Of Visitor Contract",
-        amountBasedOnEachProduct: 'Amount Based On Each Product'
+        amountBasedOnEachProduct: 'Amount Based On Each Product',
+        receipts: 'Receipts'
 
 
 

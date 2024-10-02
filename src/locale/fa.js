@@ -366,14 +366,9 @@ const fa = {
         withdrawableAmount: 'مقدار قابل برداشت',
         remainedAmountOfCustomers: 'مبلغ باقیمانده مشتریان',
         BasedOnProductNumber: 'بر اساس تعداد محصول',
-
         visitorContractType: "نوعیت قرارداد ویزیتور",
         amountBasedOnEachProduct: 'مبلغ بر اساس هر جنس',
-
-
-
-
-
+        receipts: "بردگی ها",
         package: 'کارتن'
 
 

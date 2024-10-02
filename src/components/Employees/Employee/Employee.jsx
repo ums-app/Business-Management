@@ -194,7 +194,7 @@ function Employee() {
                     }
                     onClick={() => setDisplayComponent(components?.Payments)}
                 >
-                    {t("payments")}
+                    {t("receipts")}
                 </li>
 
                 <li
