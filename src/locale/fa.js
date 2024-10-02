@@ -363,7 +363,17 @@ const fa = {
         checkNumber: 'شماره چک',
         shareOfSales: 'سهم از فروشات',
         employeeAccount: 'حساب کارمند',
-        withdrawableAmount: 'مقدار قابل برداشت'
+        withdrawableAmount: 'مقدار قابل برداشت',
+        BasedOnProductNumber: 'بر اساس تعداد محصول',
+
+        visitorContractType: "نوعیت قرارداد ویزیتور",
+        amountBasedOnEachProduct: 'مبلغ بر اساس هر جنس',
+
+
+
+
+
+        package: 'کارتن'
 
 
     },

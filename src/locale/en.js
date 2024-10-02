@@ -337,7 +337,15 @@ const en = {
         customerAccount: 'Customer account',
         checkNumber: 'Check Number',
         shareOfSales: 'Share Of Sales',
-        withdrawableAmount: 'Withdrawable Amount'
+        withdrawableAmount: 'Withdrawable Amount',
+        BasedOnProductNumber: "Based On Product Number",
+        package: 'Package',
+        visitorContractType: "Type Of Visitor Contract",
+        amountBasedOnEachProduct: 'Amount Based On Each Product'
+
+
+
+
     },
 };
 

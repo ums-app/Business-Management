@@ -126,7 +126,7 @@ function Employees() {
                             <th>{t('jobTitle')}</th>
                             <th>{t('phoneNumber')}</th>
                             <th>{t('salary')}</th>
-                            <th>{t('percent')} {t('sales')}</th>
+                            {/* <th>{t('percent')} {t('sales')}</th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -143,7 +143,7 @@ function Employees() {
                                 <td>{emp.jobTitle} </td>
                                 <td>{emp.phoneNumber}</td>
                                 <td>{emp.salary}</td>
-                                <td>{emp.salesPercent}%</td>
+                                {/* <td>{emp.salesPercent}%</td> */}
                             </tr>
                         })
                         }

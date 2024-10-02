@@ -21,6 +21,7 @@ import Menu from "../../UI/Menu/Menu"
 import { FactorType, factorStatus } from '../../../constants/FactorStatus';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
+import { VisitorContractType } from '../../../constants/Others';
 
 export const productForSale = {
     productId: '',
@@ -290,6 +291,12 @@ function AddSaleFactor({ updateMode }) {
         return totalAll;
     }
 
+    const getTotalProductsOfFactor = () => {
+        let total = 0;
+        customerFactor.productsInFactor.forEach(item => total += item.total)
+        return total;
+    }
+
     // this func is going to calculate the remained value of this factor
     const remainedAmount = () => {
         const total = totalAll();
@@ -387,8 +394,14 @@ function AddSaleFactor({ updateMode }) {
         })
 
         try {
-            console.log('sending data to the api');
-            console.log('vis: ', visitor);
+
+            let visitorAmount = 0;
+            if (visitor && visitor.VisitorContractType == VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
+                visitorAmount = getTotalProductsOfFactor() * visitor.visitorAmount;
+            } else if (visitor && visitor.VisitorContractType == VisitorContractType.PERCENT) {
+                visitorAmount = (totalAll() * Number(visitor?.salesPercent) / 100);
+            }
+
             const factorDoc = await addDoc(salesCollectionRef,
                 {
                     ...customerFactor,
@@ -396,10 +409,10 @@ function AddSaleFactor({ updateMode }) {
                     totalAll: totalAll(),
                     visitorAccount: visitor ? {
                         visitorId: visitor?.id,
-                        visitorSalesPercent: visitor?.salesPercent,
-                        visitorAmount: (totalAll() * Number(visitor?.salesPercent) / 100),
+                        VisitorContractType: visitor?.visitorContractType,
+                        visitorContractAmount: visitor?.visitorAmount,
+                        visitorAmount: visitorAmount,
                     } : null
-
                 }
             );
             console.log(factorDoc);
@@ -408,6 +421,7 @@ function AddSaleFactor({ updateMode }) {
                 addDoc(paymentCollectionRef, { ...userPayment, saleId: factorDoc.id });
             }
             toast.success(t('successfullyAdded'));
+
             setsaved(true)
             setcustomerFactor({
                 ...customerFactor,
@@ -415,12 +429,11 @@ function AddSaleFactor({ updateMode }) {
                 totalAll: totalAll(),
                 visitorAccount: visitor ? {
                     visitorId: visitor?.id,
-                    visitorSalesPercent: visitor?.salesPercent,
-                    visitorAmount: (totalAll() * Number(visitor?.salesPercent) / 100),
+                    VisitorContractType: visitor?.visitorContractType,
+                    visitorContractAmount: visitor?.visitorAmount,
+                    visitorAmount: visitorAmount,
                 } : null
-
             })
-            // nav('/sales')
 
         } catch (err) {
             toast.error(err)

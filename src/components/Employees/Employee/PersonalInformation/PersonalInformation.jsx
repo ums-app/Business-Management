@@ -10,6 +10,7 @@ import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate
 import { gregorianToJalali } from 'shamsi-date-converter';
 import { useStateValue } from '../../../../context/StateProvider';
 import ICONS from '../../../../constants/Icons';
+import { VisitorContractType } from '../../../../constants/Others';
 
 function PersonalInformation() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -90,10 +91,18 @@ function PersonalInformation() {
                 <span>{t('salary')} </span>
                 <span>{employee.salary}</span>
             </div>
-            <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
-                <span>{t('percent')} {t('sales')}</span>
-                <span>{employee.salesPercent}%</span>
-            </div>
+            {employee?.visitorContractType &&
+                <>
+                    <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                        <span>{t('visitorContractType')}</span>
+                        <span>{employee.visitorContractType == VisitorContractType.PERCENT ? t('percent') : t('BasedOnProductNumber')}</span>
+                    </div>
+                    <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                        <span>{employee.visitorContractType == VisitorContractType.PERCENT ? t('percent') : t('amountBasedOnEachProduct')}</span>
+                        <span>{employee.visitorAmount} {employee.visitorContractType == VisitorContractType.PERCENT && '%'}</span>
+                    </div>
+                </>
+            }
         </div >
     )
 }

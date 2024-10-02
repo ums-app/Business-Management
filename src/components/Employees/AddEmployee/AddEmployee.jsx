@@ -19,6 +19,7 @@ import { checkIfEmailIsAlreadyExist, getUserImage } from '../../../Utils/Firebas
 import Folders from '../../../constants/Folders';
 import { ref, uploadBytes } from 'firebase/storage';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
+import { VisitorContractType } from '../../../constants/Others';
 
 
 function AddEmployee({ updateMode = false }) {
@@ -36,11 +37,12 @@ function AddEmployee({ updateMode = false }) {
         lastName: '',
         phoneNumber: '',
         salary: '',
-        salesPercent: '',
         email: '',
         jobTitle: '',
         password: '',
-        joinedDate: new Date()
+        joinedDate: new Date(),
+        visitorContractType: null,
+        visitorAmount: 0
     })
     const [employee, setEmployee] = useState()
     const [error, seterror] = useState()
@@ -136,6 +138,8 @@ function AddEmployee({ updateMode = false }) {
         </LoadingTemplateContainer>
     }
 
+    console.log(formData);
+
     return (
         <Formik
             initialValues={formData}
@@ -148,7 +152,11 @@ function AddEmployee({ updateMode = false }) {
                     onClick={() => nav(-1)}
                 />
                 <h1 className='title'>{updateMode ? t('update') : t('add')} {t('employee')}</h1>
-                <Form className="add_form display_flex flex_direction_column">
+                <Form className="add_form display_flex flex_direction_column" onChange={e => {
+                    const name = e.target.name
+                    formData[name] = e.target.value;
+                    setformData({ ...formData, })
+                }}>
                     {/* Here you can select Profile Student img */}
                     <div className="add_img_profile">
                         <img
@@ -248,6 +256,20 @@ function AddEmployee({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
+                        <div className={`display_flex flex_direction_column margin_5  ${updateMode && ' display_none'}`}>
+                            <label htmlFor="password">{t('password')}</label>
+                            <Field
+                                name="password"
+                                type="text"
+                                className="input"
+                                min={10}
+                            />
+                            <ErrorMessage
+                                name="password"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
                         <div className='display_flex flex_direction_column margin_5' style={{ direction: "rtl" }}>
                             <label htmlFor="joinedDate">{t('joinedDate')}</label>
                             <CustomDatePicker
@@ -276,33 +298,54 @@ function AddEmployee({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
+
                         <div className='display_flex flex_direction_column margin_5'>
-                            <label htmlFor="salesPercent">{t('percent')} {t('sales')}</label>
+                            <label htmlFor="visitorContractType">{t('visitorContractType')}</label>
                             <Field
-                                name="salesPercent"
+                                name="visitorContractType"
+                                type="number"
+                                as='select'
+                                className="input"
+                            >
+                                <option value={null}></option>
+                                <option value={VisitorContractType.PERCENT}>{t('percent')}</option>
+                                <option value={VisitorContractType.BASED_ON_PRODUCT_NUMBER}>{t('BasedOnProductNumber')}</option>
+                                <option value={null}>{t('none')}</option>
+                            </Field>
+                            <ErrorMessage
+                                name="visitorContractType"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
+                        {formData.visitorContractType == VisitorContractType.PERCENT && <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="visitorAmount">{t('percent')} {t('sales')}</label>
+                            <Field
+                                name="visitorAmount"
                                 type="number"
                                 className="input"
                             />
                             <ErrorMessage
-                                name="salesPercent"
+                                name="visitorAmount"
                                 component="div"
                                 className="error_msg"
                             />
-                        </div>
-                        <div className={`display_flex flex_direction_column margin_5  ${updateMode && ' display_none'}`}>
-                            <label htmlFor="password">{t('password')}</label>
-                            <Field
-                                name="password"
-                                type="text"
-                                className="input"
-                                min={10}
-                            />
-                            <ErrorMessage
-                                name="password"
-                                component="div"
-                                className="error_msg"
-                            />
-                        </div>
+                        </div>}
+                        {formData.visitorContractType == VisitorContractType.BASED_ON_PRODUCT_NUMBER &&
+                            <div className='display_flex flex_direction_column margin_5'>
+                                <label htmlFor="visitorAmount">{t('amountBasedOnEachProduct')}</label>
+                                <Field
+                                    name="visitorAmount"
+                                    type="number"
+                                    className="input"
+                                />
+                                <ErrorMessage
+                                    name="visitorAmount"
+                                    component="div"
+                                    className="error_msg"
+                                />
+                            </div>}
+
                     </div>
                     <div className=' margin_top_10 margin_left_10 margin_right_10'>
                         <Button
@@ -332,11 +375,14 @@ const EmployeeSchema = yup.object().shape({
         .min(3, `${t("lastName")} ${t("isShortText")}`)
         .max(30, `${t("lastName")} ${t("isLongText")}`)
         .required(`${t("lastName")} ${t("isRequireText")}`),
-    salesPercent: yup
+    visitorAmount: yup
         .number()
         .min(0, `${t("percent") + " " + t("sales")} ${t("isShortText")}`)
-        .max(100, `${t("percent") + " " + t("sales")} ${t("isLongText")}`)
         .required(`${t("percent") + " " + t("sales")} ${t("isRequireText")}`),
+    visitorContractType: yup
+        .string()
+        .required(`${t("visitorContractType")} ${t("isRequireText")}`),
+
     phoneNumber: yup
         .string()
         .matches(/^07[0-9]{8}$/, t("invalidContactNumber"))
