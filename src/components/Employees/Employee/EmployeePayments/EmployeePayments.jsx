@@ -167,7 +167,7 @@ function EmployeePayments() {
 
 
             <Button
-                text={t('add') + " " + t('payment')}
+                text={t('add') + " " + t('receipt')}
                 onClick={() => setShowPaymentModal(true)}
             />
 
@@ -233,7 +233,7 @@ function EmployeePayments() {
 
 
             <div className='table_container margin_top_20 input'>
-                <p className='title_2'>{t('payments')}</p>
+                <p className='title_2'>{t('receipts')}</p>
                 <table className="full_width custom_table table_row_hover">
                     <thead >
                         <tr>

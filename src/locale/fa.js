@@ -369,6 +369,7 @@ const fa = {
         visitorContractType: "نوعیت قرارداد ویزیتور",
         amountBasedOnEachProduct: 'مبلغ بر اساس هر جنس',
         receipts: "بردگی ها",
+        receipt: "بردگی ",
         package: 'کارتن'
 
 
