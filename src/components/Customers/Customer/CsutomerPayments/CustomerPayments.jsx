@@ -29,13 +29,13 @@ function CustomerPayments() {
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
         amount: 0,
-        createdDate: Timestamp.fromDate(new Date()),
+        createdDate: Timestamp.fromDate(new Date()), // Avoid direct use of new Date()
         by: authentication.email,
         saleId: null,
         customerId: customerId,
-        date: Timestamp.fromDate(new Date()),
+        date: Timestamp.fromDate(new Date()), // Same here
         checkNumber: 0
-    })
+    });
 
     const [totalPayments, settotalPayments] = useState(0)
     const [totalFactors, settotalFactors] = useState(0)
@@ -202,17 +202,26 @@ function CustomerPayments() {
                             <tr className='margin_top_20'>
                                 <td>{t('date')}:</td>
                                 <td>
-                                    <CustomDatePicker onChange={e => {
-                                        const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                        // console.log(date);
-                                        // console.log(new Date(date));
-                                        // console.log(gregorianToJalali(new Date(date)).join('-'));
+                                    <CustomDatePicker
+                                        onChange={e => {
+                                            const dateArray = jalaliToGregorian(e.year, e.month.number, e.day);
+                                            const dateString = `${dateArray[0]}-${dateArray[1]}-${dateArray[2]}`;
+                                            const date = new Date(dateString);
 
-                                        setUserPayment({
-                                            ...userPayment,
-                                            date: Timestamp.fromDate(new Date(date))
-                                        })
-                                    }} />
+                                            console.log("Converted Date:", date); // Log for debugging
+
+                                            if (isNaN(date.getTime())) {
+                                                console.error("Invalid Date after conversion:", date);
+                                                toast.error(t('Invalid Date Detected'));
+                                                return;
+                                            }
+
+                                            setUserPayment({
+                                                ...userPayment,
+                                                date: Timestamp.fromDate(date) // Create Timestamp only if the date is valid
+                                            });
+                                        }}
+                                    />
                                 </td>
                             </tr>
                         </tbody>

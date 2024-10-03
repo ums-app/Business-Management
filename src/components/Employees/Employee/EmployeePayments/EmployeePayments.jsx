@@ -218,14 +218,27 @@ function EmployeePayments() {
                             <tr className='margin_top_20'>
                                 <td>{t('date')}:</td>
                                 <td>
-                                    <CustomDatePicker onChange={e => {
-                                        const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                        const gDate = new Date(date);
-                                        setUserPayment({
-                                            ...userPayment,
-                                            date: Timestamp.fromDate(gDate)
-                                        })
-                                    }} />
+                                    <CustomDatePicker
+                                        onChange={e => {
+                                            const dateArray = jalaliToGregorian(e.year, e.month.number, e.day);
+                                            const dateString = `${dateArray[0]}-${dateArray[1]}-${dateArray[2]}`;
+                                            const date = new Date(dateString);
+
+                                            console.log("Converted Date:", date); // Log for debugging
+
+                                            if (isNaN(date.getTime())) {
+                                                console.error("Invalid Date after conversion:", date);
+                                                toast.error(t('Invalid Date Detected'));
+                                                return;
+                                            }
+
+                                            setUserPayment({
+                                                ...userPayment,
+                                                date: Timestamp.fromDate(date) // Create Timestamp only if the date is valid
+                                            });
+                                        }}
+                                    />
+
                                 </td>
                             </tr>
                         </tbody>
