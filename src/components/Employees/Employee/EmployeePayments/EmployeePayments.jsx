@@ -31,7 +31,6 @@ function EmployeePayments() {
         amount: 0,
         createdDate: new Date(),
         by: authentication.email,
-        saleId: null,
         employeeId: employeeId,
         date: new Date(),
         type: EmployeePaymentType.SALARY
@@ -40,13 +39,14 @@ function EmployeePayments() {
     // const [totalPayments, settotalPayments] = useState(0)
     // const [totalFactors, settotalFactors] = useState(0)
 
-    // useEffect(() => {
-    //     if (payments && factors) {
-    //         settotalPayments(totalAmountOfAllCustomerPayments(payments));
-    //         settotalFactors(totalAmountOfAllFactors(factors));
-    //     }
+    useEffect(() => {
+        getAllEmployeePayments(employeeId)
+            .then(res => {
+                console.log(res);
+                setPayments(res)
+            })
 
-    // }, [factors, payments])
+    }, [])
 
 
 

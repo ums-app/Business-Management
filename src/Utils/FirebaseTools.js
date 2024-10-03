@@ -97,7 +97,7 @@ export const getAllEmployeePayments = async (employeeId) => {
     const q = query(
         employeePaymentsCollectionRef,
         where("employeeId", "==", employeeId),
-        orderBy("createdDate", "desc")
+        orderBy("createdDate", "asc")
     );
 
     try {
