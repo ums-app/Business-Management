@@ -1,11 +1,13 @@
 import { t } from 'i18next'
 import React, { useEffect, useState } from 'react'
-import { getAllVisitorFactors, getCustomerPaymentByCustomerIds } from '../../../../Utils/FirebaseTools';
+import { getAllEmployeePayments, getAllVisitorFactors, getCustomerPaymentByCustomerIds } from '../../../../Utils/FirebaseTools';
 import { useParams } from 'react-router-dom';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
 import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemplate';
+import { EmployeePaymentType } from '../../../../constants/Others';
+import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
 
 function EmployeeFee() {
     const { employeeId } = useParams()
@@ -14,6 +16,7 @@ function EmployeeFee() {
     const [totalShareOfEmployee, setTotalShareOfEmployee] = useState(0)
     const [totalCustomersPaid, setTotalCustomersPaid] = useState(0)
     const [loading, setLoading] = useState(false)
+    const [totalEmployeePaidAmount, settotalEmployeePaidAmount] = useState();
 
 
     useEffect(() => {
@@ -24,6 +27,15 @@ function EmployeeFee() {
 
             }).catch(err => {
                 setallFactors([])
+            })
+
+        getAllEmployeePayments(employeeId)
+            .then(res => {
+                let total = 0;
+                res.filter(item => item.type == EmployeePaymentType.SALES)
+                    .forEach(item => total += item.amount)
+
+                settotalEmployeePaidAmount(total);
             })
 
 
@@ -84,6 +96,21 @@ function EmployeeFee() {
     return (
         <div>
             <div>
+                {totalEmployeePaidAmount ?
+                    <div className='display_flex input justify_content_space_between '>
+                        <div className=' padding_right_10 bold padding_left_10 border_radius_6 margin_left_10 margin_right_10'>
+                            <span>{t('receipts')}: </span>
+                            <span>{totalEmployeePaidAmount}</span>
+                        </div>
+                        {/* <div className=' padding_right_10 padding_left_10  border_radius_6  margin_left_10 margin_right_10'>
+                            <span>{t('paidAmount')}: </span>
+                            <span>{totalPayments}</span>
+                        </div> */}
+
+                    </div>
+                    :
+                    <HeadingMenuTemplate />
+                }
                 <table className='custom_table full_width'>
                     <thead>
                         <tr style={{ background: 'orange' }}>
@@ -108,7 +135,11 @@ function EmployeeFee() {
                                 {loading ? <ButtonLoadingTemplate /> :
                                     totalCustomersPaid}
                             </td>
-                            <td>{calculateWithdrawableAmount()}</td>
+                            <td>
+                                {calculateWithdrawableAmount() - totalEmployeePaidAmount}
+                                {/* <MoneyStatus number={calculateWithdrawableAmount() - totalEmployeePaidAmount} /> */}
+
+                            </td>
                             <td>
                                 {loading ? <ButtonLoadingTemplate /> :
                                     <>
