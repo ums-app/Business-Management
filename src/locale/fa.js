@@ -1,4 +1,3 @@
-import { FactorType } from "../constants/FactorStatus";
 
 const fa = {
     translation: {
@@ -373,6 +372,8 @@ const fa = {
         package: 'کارتن',
         amountShouldNotBeZeroOrNegative: 'مقدار نباید صفر یا منفی باشد',
         checkNumberShouldNotBeZeroOrNegative: 'چک نمبر نباید صفر یا منفی باشد',
+        salaries: 'معاشات',
+        salaryTableOf: 'جدول معاشات'
 
 
 

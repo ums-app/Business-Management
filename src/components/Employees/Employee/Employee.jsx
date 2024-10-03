@@ -22,6 +22,7 @@ import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import { getUserImage } from '../../../Utils/FirebaseTools';
 import EmployeePayments from './EmployeePayments/EmployeePayments';
 import EmployeeFee from './EmployeeFee/EmployeeFee';
+import EmployeeSalaries from './EmployeeSalaries/EmployeeSalaries';
 
 
 // components for tabs
@@ -31,6 +32,7 @@ const components = {
         component: PersonalInformation,
     },
     Customers: { componentName: "customers", component: EmployeeCustomers },
+    Salaries: { componentName: "salaries", component: EmployeeSalaries },
     Payments: { componentName: 'payments', component: EmployeePayments },
     EmployeeFee: { componentName: 'employeeFee', component: EmployeeFee },
 };
@@ -184,6 +186,17 @@ function Employee() {
                     onClick={() => setDisplayComponent(components?.Customers)}
                 >
                     {t("customers")}
+                </li>
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.Salaries?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent(components?.Salaries)}
+                >
+                    {t("salaries")}
                 </li>
                 <li
                     className={

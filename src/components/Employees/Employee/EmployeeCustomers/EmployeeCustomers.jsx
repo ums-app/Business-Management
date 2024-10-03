@@ -58,7 +58,7 @@ function EmployeeCustomers() {
                         <th>{t('number')}</th>
                         <th>{t('name')}</th>
                         <th>{t('lastName')}</th>
-                        <th>{t('name')} {t('organization')}</th>
+                        <th>{t('location')}</th>
                         <th>{t('phoneNumber')}</th>
                     </tr>
                 </thead>
@@ -74,7 +74,7 @@ function EmployeeCustomers() {
                             <td>{index + 1}</td>
                             <td>{cus.name}</td>
                             <td>{cus.lastName}</td>
-                            <td>{cus.organizationName} </td>
+                            <td>{cus.location} </td>
                             <td>{cus.phoneNumber}</td>
 
                         </tr>

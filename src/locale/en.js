@@ -309,6 +309,7 @@ const en = {
         analysis: "Data Analysis",
         of: 'Of',
         factor: 'Factor',
+        factors: 'Factors',
         size: "Size",
         people: 'People',
         numberOfElementPerPage: "Number of Element Per Page",
@@ -327,6 +328,9 @@ const en = {
         thisFactor: 'this factor',
         totalPrevRemainedAmount: 'Previous Remained Amount',
         invoice: "Invoice",
+        totalAmountOfAllPurchases: 'Total Amount Of All Factors',
+        totalAmountOfAllPayments: 'Total Amount Of All Payments',
+        totalRemainedAmount: 'Total Remained Amount',
         employeeFee: 'Employee Fee',
         notExist: 'Not Exist',
         sundryFactor: "Sundry Factor",
@@ -335,6 +339,7 @@ const en = {
         SUNDRY_FACTOR: 'Sundry',
         type: "Type",
         customerAccount: 'Customer account',
+        employeeAccount: 'Employee Account',
         checkNumber: 'Check Number',
         shareOfSales: 'Share Of Sales',
         withdrawableAmount: 'Withdrawable Amount',
@@ -344,8 +349,12 @@ const en = {
         visitorContractType: "Type Of Visitor Contract",
         amountBasedOnEachProduct: 'Amount Based On Each Product',
         receipts: 'Receipts',
+        receipt: 'Receipt',
         amountShouldNotBeZeroOrNegative: 'Amount Should Not Be Zero Or Negative',
         checkNumberShouldNotBeZeroOrNegative: 'Check-Number Should Not Be Zero Or Negative',
+        salaries: 'Salaries',
+        salaryTableOf: 'Salary Table of',
+        indexNumber: 'Serial Number'
 
 
 

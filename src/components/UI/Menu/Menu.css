@@ -44,8 +44,6 @@
 
 .settings_menu .btn {
   padding: 3px 10px;
-  border: 1px solid transparent;
-  background-color: var(--gen-bg-color);
   width: 180px;
   word-wrap: break-word !important;
 }

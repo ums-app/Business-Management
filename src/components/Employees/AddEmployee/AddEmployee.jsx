@@ -20,6 +20,7 @@ import Folders from '../../../constants/Folders';
 import { ref, uploadBytes } from 'firebase/storage';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { VisitorContractType } from '../../../constants/Others';
+import { jalaliToGregorian } from 'shamsi-date-converter';
 
 
 function AddEmployee({ updateMode = false }) {
@@ -78,12 +79,17 @@ function AddEmployee({ updateMode = false }) {
         console.log('send method called');
         setloading(true);
 
+        console.log(formData, values);
+
+
         try {
             if (updateMode) {
                 console.log('In update mode');
                 const employeeDoc = doc(db, Collections.Employees, employeeId);
 
-                await updateDoc(employeeDoc, values);
+                console.log('values: ', formData);
+
+                await updateDoc(employeeDoc, formData);
                 console.log('Employee updated successfully');
 
                 await uploadImage(employee.email);
@@ -107,7 +113,7 @@ function AddEmployee({ updateMode = false }) {
 
                 console.log('Saving employee information');
                 const employeeRes = await addDoc(employeesCollectionRef, {
-                    ...values,
+                    ...formData,
                     createdDate: new Date(),
                 });
                 console.log('Employee added with ID:', employeeRes.id);
@@ -314,6 +320,18 @@ function AddEmployee({ updateMode = false }) {
                                 value={formData?.joinedDate instanceof Timestamp ?
                                     formData?.joinedDate?.toDate()
                                     : new Date(formData?.joinedDate)}
+                                onChange={(e) => {
+
+                                    let date = jalaliToGregorian(e.year, e.month.number, e.day)
+                                    date = new Date(date.join('/'))
+                                    console.log(e);
+                                    console.log(date);
+                                    setformData({
+                                        ...formData,
+                                        joinedDate: date
+                                    })
+
+                                }}
                             />
                             <ErrorMessage
                                 name="joinedDate"

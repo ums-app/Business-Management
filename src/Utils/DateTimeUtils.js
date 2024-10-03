@@ -115,3 +115,47 @@ export const formatFirebaseDates = (date) => {
 
 
 
+
+export function getTotalMonthsBetweenDates(startDate, endDate) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const yearsDiff = end.getFullYear() - start.getFullYear();
+  const monthsDiff = end.getMonth() - start.getMonth();
+
+  // Calculate total months
+  let totalMonths = (yearsDiff * 12) + monthsDiff;
+
+  // Adjust if the end day is before the start day
+  if (end.getDate() < start.getDate()) {
+    totalMonths -= 1;
+  }
+
+  return totalMonths;
+}
+
+
+export function getMonthsBetweenDates(startDate, endDate) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const result = [];
+
+  // Create a loop to iterate through months
+  let current = new Date(start);
+
+  while (current <= end) {
+    result.push({
+      year: current.getFullYear(),
+      month: current.getMonth() + 1 // Months are zero-based in JS, so add 1
+    });
+
+    // Move to the next month
+    current.setMonth(current.getMonth() + 1);
+  }
+
+  return result;
+}
+
+
+
+
