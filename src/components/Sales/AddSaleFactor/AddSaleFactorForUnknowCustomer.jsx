@@ -79,6 +79,11 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
     console.log(customerFactor);
 
+    const checkIfProductIsInList = (productId) => {
+        return customerFactor.productsInFactor.some(item => item.productId == productId)
+    }
+
+
 
     const getProducts = async () => {
         const querySnapshot = await getDocs(productCollectionRef);
@@ -428,7 +433,10 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                                                 </option>
                                                 {products.map(pr => {
                                                     return (
-                                                        <option value={pr.id} key={pr.id} selected={prInFactor.productId == pr.id} style={{ width: 'max-content' }}>
+                                                        <option value={pr.id} key={pr.id}
+                                                            selected={prInFactor.productId == pr.id} style={{ width: 'max-content' }}
+                                                            disabled={checkIfProductIsInList(pr.id)}
+                                                        >
                                                             {pr.name}
                                                         </option>
                                                     )
@@ -475,12 +483,13 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                                 )
                             })}
 
-                            <Button
+                            {customerFactor.productsInFactor.length < products.length && <Button
                                 icon={ICONS.plus}
                                 onClick={addNewProdcut}
                                 type={'plusBtn'}
                                 id={'add_new_row'}
                             />
+                            }
                             <Tooltip
                                 anchorSelect="#add_new_row"
                                 place="left"
