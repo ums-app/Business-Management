@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, Timestamp, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { useStateValue } from '../../../../context/StateProvider';
 import { t } from 'i18next';
@@ -29,10 +29,10 @@ function EmployeePayments() {
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
         amount: 0,
-        createdDate: new Date(),
+        createdDate: Timestamp.fromDate(new Date()),
         by: authentication.email,
         employeeId: employeeId,
-        date: new Date(),
+        date: Timestamp.fromDate(new Date()),
         type: EmployeePaymentType.SALARY
     })
 
@@ -223,7 +223,7 @@ function EmployeePayments() {
                                         const gDate = new Date(date);
                                         setUserPayment({
                                             ...userPayment,
-                                            date: gDate
+                                            date: Timestamp.fromDate(gDate)
                                         })
                                     }} />
                                 </td>

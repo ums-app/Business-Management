@@ -1,10 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
-import { db } from '../../../../constants/FirebaseConfig';
-import Collections from '../../../../constants/Collections';
-import { getMonthsBetweenDates, getTotalMonthsBetweenDates } from '../../../../Utils/DateTimeUtils';
+import { getMonthsBetweenDates } from '../../../../Utils/DateTimeUtils';
 import { gregorianToJalali } from 'shamsi-date-converter';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';

@@ -1,4 +1,4 @@
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { useStateValue } from '../../../../context/StateProvider';
 import { t } from 'i18next';
@@ -29,11 +29,11 @@ function CustomerPayments() {
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
         amount: 0,
-        createdDate: new Date(),
+        createdDate: Timestamp.fromDate(new Date()),
         by: authentication.email,
         saleId: null,
         customerId: customerId,
-        date: new Date(),
+        date: Timestamp.fromDate(new Date()),
         checkNumber: 0
     })
 
@@ -204,12 +204,13 @@ function CustomerPayments() {
                                 <td>
                                     <CustomDatePicker onChange={e => {
                                         const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                        console.log(date);
-                                        console.log(new Date(date));
-                                        console.log(gregorianToJalali(new Date(date)).join('-'));
+                                        // console.log(date);
+                                        // console.log(new Date(date));
+                                        // console.log(gregorianToJalali(new Date(date)).join('-'));
+
                                         setUserPayment({
                                             ...userPayment,
-                                            date: new Date(date)
+                                            date: Timestamp.fromDate(new Date(date))
                                         })
                                     }} />
                                 </td>

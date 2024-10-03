@@ -36,7 +36,7 @@ function AddCustomer({ updateMode = false }) {
         email: '',
         location: '',
         password: '',
-        joinedDate: new Date()
+        joinedDate: Timestamp.fromDate(new Date())
     });
     const [customer, setCustomer] = useState();
 
@@ -90,28 +90,28 @@ function AddCustomer({ updateMode = false }) {
             if (updateMode) {
                 const customerDoc = doc(db, Collections.Customers, customerId)
                 await updateDoc(customerDoc, values);
-                uploadImage(customer.email)
+                uploadImage(customer.email.toLowerCase())
                 toast.success(t('successfullyUpdated'))
                 nav('/customers/' + customerId)
             } else {
 
-                const emailExists = await checkIfEmailIsAlreadyExist(values.email);
+                const emailExists = await checkIfEmailIsAlreadyExist(values.email.toLowerCase());
                 if (emailExists) {
                     toast.error(t('email') + " " + t('alreadyExist'));
                     return;
                 }
 
-                createUserWithEmailAndPassword(auth, values.email, values.password)
-                const customerRes = await addDoc(cusomtersCollectionRef, { ...values, createdDate: new Date(), })
+                createUserWithEmailAndPassword(auth, values.email.toLowerCase(), values.password)
+                const customerRes = await addDoc(cusomtersCollectionRef, { ...values, createdDate: Timestamp.fromDate(new Date()), })
                 uploadImage(values.email)
                 await addDoc(usersCollectionRef, {
-                    joinedDate: new Date(),
+                    joinedDate: Timestamp.fromDate(new Date()),
                     lastName: values.lastName,
                     name: values.name,
                     originalEntityId: customerRes.id,
                     password: values.password,
                     phoneNumber: values.phoneNumber,
-                    email: values.email,
+                    email: values.email.toLowerCase(),
                     roles: [],
                     userType: 'Customer'
                 })

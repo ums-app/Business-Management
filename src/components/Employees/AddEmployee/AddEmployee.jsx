@@ -41,7 +41,7 @@ function AddEmployee({ updateMode = false }) {
         email: '',
         jobTitle: '',
         password: '',
-        joinedDate: new Date(),
+        joinedDate: Timestamp.fromDate(new Date()),
         visitorContractType: null,
         visitorAmount: 0
     })
@@ -92,7 +92,7 @@ function AddEmployee({ updateMode = false }) {
                 await updateDoc(employeeDoc, formData);
                 console.log('Employee updated successfully');
 
-                await uploadImage(employee.email);
+                await uploadImage(employee.email.toLowerCase());
                 console.log('Image uploaded successfully');
 
                 toast.success(t('successfullyUpdated'));
@@ -101,39 +101,41 @@ function AddEmployee({ updateMode = false }) {
                 console.log('In adding new employee mode');
 
                 // Check if email already exists
-                const emailExists = await checkIfEmailIsAlreadyExist(values.email);
+                const emailExists = await checkIfEmailIsAlreadyExist(values.email.toLowerCase());
                 if (emailExists) {
                     toast.error(t('email') + " " + t('alreadyExist'));
                     return; // Stop function if email exists
                 }
 
                 console.log('Email does not exist, creating user account');
-                await createUserWithEmailAndPassword(auth, values.email, values.password);
+                await createUserWithEmailAndPassword(auth, values.email.toLowerCase(), values.password);
                 console.log('User account created successfully');
 
                 console.log('Saving employee information');
                 const employeeRes = await addDoc(employeesCollectionRef, {
                     ...formData,
+                    email: formData.email.toLowerCase(),
                     createdDate: new Date(),
                 });
                 console.log('Employee added with ID:', employeeRes.id);
 
                 console.log('Saving user entity data');
                 const userDoc = await addDoc(usersCollectionRef, {
-                    joinedDate: new Date(),
+                    joinedDate: Timestamp.fromDate(new Date()),
                     lastName: values.lastName,
                     name: values.name,
                     originalEntityId: employeeRes.id,
                     password: values.password,
                     phoneNumber: values.phoneNumber,
-                    email: values.email,
+                    email: values.email.toLowerCase(),
                     roles: [],
                     userType: 'Employee',
                 });
+
                 console.log('User entity saved with ID:', userDoc.id);
 
                 console.log('Uploading image');
-                await uploadImage(values.email);
+                await uploadImage(values.email.toLowerCase());
                 console.log('Image uploaded successfully');
 
                 console.log('Navigating to /employees');
@@ -328,7 +330,7 @@ function AddEmployee({ updateMode = false }) {
                                     console.log(date);
                                     setformData({
                                         ...formData,
-                                        joinedDate: date
+                                        joinedDate: Timestamp.fromDate(date)
                                     })
 
                                 }}
