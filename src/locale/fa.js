@@ -340,7 +340,7 @@ const fa = {
         successfullyUpdated: "با موفقیت بروزرسانی شد",
         totalPrevRemainedAmount: 'باقیمانده قبلی',
         invoice: 'صورتحساب',
-        totalAmountOfAllPurchases: "مجموعه بردگی ها",
+        totalAmountOfAllPurchases: "مجموعه بُردگی ها",
         totalAmountOfAllPayments: 'مجموعه پرداخت ها',
         customersManagement: 'مدیریت مشتریان',
         shortListedCustomers: 'شارت لیست مشتریان',
@@ -348,7 +348,7 @@ const fa = {
         lastPurchase: 'آخرین خرید',
         lastPayment: "آخرین پرداخت",
         currentAmount: "رسید فعلی",
-        lastPurchaseFactor: "آخرین بردگی",
+        lastPurchaseFactor: "آخرین بُردگی",
         customerListTitleForShortList: 'لیست مشتریان ولایات و ولسوالی ها شرکت شیرخشک ببی ویت',
         indexNumber: 'شماره مسلسل',
         employeeFee: 'کارمزد کارمند',
@@ -367,13 +367,14 @@ const fa = {
         BasedOnProductNumber: 'بر اساس تعداد محصول',
         visitorContractType: "نوعیت قرارداد ویزیتور",
         amountBasedOnEachProduct: 'مبلغ بر اساس هر جنس',
-        receipts: "بردگی ها",
-        receipt: "بردگی ",
+        receipts: "بُردگی ها",
+        receipt: "بُردگی ",
         package: 'کارتن',
         amountShouldNotBeZeroOrNegative: 'مقدار نباید صفر یا منفی باشد',
         checkNumberShouldNotBeZeroOrNegative: 'چک نمبر نباید صفر یا منفی باشد',
         salaries: 'معاشات',
-        salaryTableOf: 'جدول معاشات'
+        salaryTableOf: 'جدول معاشات',
+        purpose: 'بابت'
 
 
 

@@ -5,3 +5,9 @@ export const VisitorContractType = {
     PERCENT: 'PERCENT',
     BASED_ON_PRODUCT_NUMBER: 'BASED_ON_PRODUCT_NUMBER'
 }
+
+
+export const EmployeePaymentType = {
+    SALARY: 'SALARY',
+    SALES: 'SALES'
+}

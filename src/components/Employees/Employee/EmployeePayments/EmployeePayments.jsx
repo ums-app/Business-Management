@@ -18,6 +18,7 @@ import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { toast } from 'react-toastify';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
 import { Tooltip } from 'react-tooltip';
+import { EmployeePaymentType } from '../../../../constants/Others';
 
 function EmployeePayments() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -32,7 +33,8 @@ function EmployeePayments() {
         by: authentication.email,
         saleId: null,
         employeeId: employeeId,
-        date: new Date()
+        date: new Date(),
+        type: EmployeePaymentType.SALARY
     })
 
     // const [totalPayments, settotalPayments] = useState(0)
@@ -69,6 +71,11 @@ function EmployeePayments() {
                 toast.error('amountShouldNotBeZeroOrNegative')
                 return
             }
+            if (!userPayment.type) {
+                toast.error(t('type') + " " + t("isRequireText"))
+                return
+            }
+
             console.log('sending payment doc: ', userPayment.amount);
             const added = await addDoc(paymentsCollectionRef, userPayment);
             setPayments([{ ...userPayment, id: added.id }, ...payments])
@@ -173,13 +180,29 @@ function EmployeePayments() {
 
             <Modal show={showPaymentModal} modalClose={() => setShowPaymentModal(false)}>
                 <div className='display_flex flex_direction_column align_items_center  margin_bottom_10 margin_top_20'>
-                    <p className='title margin_top_20 margin_bottom_10'>{t('add')} {t('payment')}</p>
+                    <p className='title margin_top_20 margin_bottom_10'>{t('add')} {t('receipt')}</p>
                     <table className='margin_top_20'>
                         <tbody>
                             <tr>
                                 <td>{t('number')}: </td>
                                 <td>
                                     {payments.length + 1}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{t('receipt')} {t('purpose')}: </td>
+                                <td>
+                                    <select name="" id=""
+                                        onChange={(e) => {
+                                            setUserPayment({
+                                                ...userPayment,
+                                                type: e.target.value
+                                            })
+                                        }}
+                                    >
+                                        <option value={EmployeePaymentType.SALARY}>{t('salary')}</option>
+                                        <option value={EmployeePaymentType.SALES}>{t('sales')}</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
@@ -241,6 +264,7 @@ function EmployeePayments() {
                             <th>{t('createdDate')}</th>
                             <th>{t('employee')}</th>
                             <th>{t('paidAmount')}</th>
+                            <th>{t('receipt')} {t('purpose')}</th>
                             <th>{t('actions')}</th>
                         </tr>
                     </thead>
@@ -266,6 +290,7 @@ function EmployeePayments() {
                                 <td>{formatFirebaseDates(pay.createdDate)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>
+                                <td>{pay.type == EmployeePaymentType.SALARY ? t('salary') : t('sales')}</td>
                                 <td>
                                     <Button
                                         icon={ICONS.trash}
@@ -284,7 +309,7 @@ function EmployeePayments() {
                             </tr>
                         })
                         }
-                        {payments.length == 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
+                        {payments.length == 0 && <tr><td colSpan={6}>{t('notExist')}</td></tr>}
                     </tbody>
                 </table>
             </div>

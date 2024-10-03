@@ -354,7 +354,8 @@ const en = {
         checkNumberShouldNotBeZeroOrNegative: 'Check-Number Should Not Be Zero Or Negative',
         salaries: 'Salaries',
         salaryTableOf: 'Salary Table of',
-        indexNumber: 'Serial Number'
+        indexNumber: 'Serial Number',
+        purpose: 'Purpose'
 
 
 
