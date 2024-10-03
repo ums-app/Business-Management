@@ -75,27 +75,45 @@ function AddEmployee({ updateMode = false }) {
     console.log(formData);
 
     const sendDataToAPI = async (values, { setSubmitting }) => {
-        // e.preventDefault();
-
         console.log('send method called');
-        setloading(true)
+        setloading(true);
+
         try {
             if (updateMode) {
-                const employeeDoc = doc(db, Collections.Employees, employeeId)
-                await updateDoc(employeeDoc, values)
-                uploadImage(employee.email)
-                toast.success(t('successfullyUpdated'))
-                nav('/employees/' + employeeId)
+                console.log('In update mode');
+                const employeeDoc = doc(db, Collections.Employees, employeeId);
+
+                await updateDoc(employeeDoc, values);
+                console.log('Employee updated successfully');
+
+                await uploadImage(employee.email);
+                console.log('Image uploaded successfully');
+
+                toast.success(t('successfullyUpdated'));
+                nav('/employees/' + employeeId);
             } else {
+                console.log('In adding new employee mode');
+
+                // Check if email already exists
                 const emailExists = await checkIfEmailIsAlreadyExist(values.email);
                 if (emailExists) {
                     toast.error(t('email') + " " + t('alreadyExist'));
-                    return;
+                    return; // Stop function if email exists
                 }
-                createUserWithEmailAndPassword(auth, values.email, values.password)
-                const employeeRes = await addDoc(employeesCollectionRef, { ...values, createdDate: new Date(), })
-                uploadImage(values.email)
-                await addDoc(usersCollectionRef, {
+
+                console.log('Email does not exist, creating user account');
+                await createUserWithEmailAndPassword(auth, values.email, values.password);
+                console.log('User account created successfully');
+
+                console.log('Saving employee information');
+                const employeeRes = await addDoc(employeesCollectionRef, {
+                    ...values,
+                    createdDate: new Date(),
+                });
+                console.log('Employee added with ID:', employeeRes.id);
+
+                console.log('Saving user entity data');
+                const userDoc = await addDoc(usersCollectionRef, {
                     joinedDate: new Date(),
                     lastName: values.lastName,
                     name: values.name,
@@ -104,32 +122,52 @@ function AddEmployee({ updateMode = false }) {
                     phoneNumber: values.phoneNumber,
                     email: values.email,
                     roles: [],
-                    userType: 'Employee'
-                })
-                nav('/employees')
-                toast.success(t('successfullyAdded'))
+                    userType: 'Employee',
+                });
+                console.log('User entity saved with ID:', userDoc.id);
+
+                console.log('Uploading image');
+                await uploadImage(values.email);
+                console.log('Image uploaded successfully');
+
+                console.log('Navigating to /employees');
+                nav('/employees');
+
+                toast.success(t('successfullyAdded'));
             }
-
         } catch (err) {
-            toast.error(err)
-
+            console.error('Error occurred:', err);
+            toast.error(err.message || t('An error occurred'));
         } finally {
-            setloading(false)
+            // Ensure loading is stopped and submitting is reset
+            console.log('Closing the loading and setting submission to false');
+            setloading(false);
             setSubmitting(false);
         }
-        // navigate to the employees page
-    }
+    };
+
 
     const uploadImage = async (email) => {
-        if (!fileValue) return
+        if (!fileValue) {
+            console.warn('No file to upload');
+            return;
+        }
 
         try {
             const folderRef = ref(storage, Folders.UserImages(email));
-            await uploadBytes(folderRef, fileValue)
+
+            // Upload the file
+            const uploadResult = await uploadBytes(folderRef, fileValue);
+            console.log('Image uploaded successfully:', uploadResult.metadata.fullPath);
+
+            return uploadResult; // Return the result in case you need it later
+
         } catch (err) {
-            console.error(err);
+            console.error('Error during image upload:', err.message || err);
+            throw new Error('Failed to upload image'); // Throw the error to handle it in the calling function
         }
-    }
+    };
+
 
 
     if (updateMode && formData.name.length == 0) {
