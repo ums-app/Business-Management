@@ -343,7 +343,9 @@ const en = {
         package: 'Package',
         visitorContractType: "Type Of Visitor Contract",
         amountBasedOnEachProduct: 'Amount Based On Each Product',
-        receipts: 'Receipts'
+        receipts: 'Receipts',
+        amountShouldNotBeZeroOrNegative: 'Amount Should Not Be Zero Or Negative',
+        checkNumberShouldNotBeZeroOrNegative: 'Check-Number Should Not Be Zero Or Negative',
 
 
 

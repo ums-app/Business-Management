@@ -64,36 +64,43 @@ function CustomerPayments() {
     }, []);
 
     const sendNewPaymentToAPI = async () => {
-        dispatch({
-            type: actionTypes.SET_SMALL_LOADING,
-            payload: true
-        })
+        // Start loading
+        dispatch({ type: actionTypes.SET_SMALL_LOADING, payload: true });
 
         try {
-            if (userPayment.amount <= 0) {
-                toast.error('amountShouldNotBeZeroOrNegative')
-                return
-            }
+            // Validate payment fields
             if (userPayment.checkNumber <= 0) {
-                toast.error('checkNumberShouldNotBeZeroOrNegative')
-                return
+                toast.error(t('checkNumberShouldNotBeZeroOrNegative'));
+                return;
             }
 
-            console.log('sending payment doc: ', userPayment);
-            addDoc(paymentsCollectionRef, userPayment);
-            setPayments([...payments, userPayment])
+            if (userPayment.amount <= 0) {
+                toast.error(t('amountShouldNotBeZeroOrNegative'));
+                return;
+            }
+
+            // Log and send payment
+            console.log('Sending payment document:', userPayment);
+
+            await addDoc(paymentsCollectionRef, userPayment);
+            console.log('Payment successfully sent to Firestore');
+
+            // Update state after successful addition
+            setPayments(prevPayments => [...prevPayments, userPayment]);
             toast.success(t('successfullyAdded'));
-            setShowPaymentModal(false)
+
+            // Close the payment modal
+            setShowPaymentModal(false);
 
         } catch (err) {
-            toast.error(err)
+            console.error('Error adding payment:', err);
+            toast.error(err.message || t('An error occurred while adding payment'));
         } finally {
-            dispatch({
-                type: actionTypes.SET_SMALL_LOADING,
-                payload: false
-            })
+            // Stop loading
+            dispatch({ type: actionTypes.SET_SMALL_LOADING, payload: false });
         }
-    }
+    };
+
 
     console.log(payments);
 

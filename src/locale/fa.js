@@ -370,7 +370,10 @@ const fa = {
         amountBasedOnEachProduct: 'مبلغ بر اساس هر جنس',
         receipts: "بردگی ها",
         receipt: "بردگی ",
-        package: 'کارتن'
+        package: 'کارتن',
+        amountShouldNotBeZeroOrNegative: 'مقدار نباید صفر یا منفی باشد',
+        checkNumberShouldNotBeZeroOrNegative: 'چک نمبر نباید صفر یا منفی باشد',
+
 
 
     },
