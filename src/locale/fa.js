@@ -374,7 +374,8 @@ const fa = {
         checkNumberShouldNotBeZeroOrNegative: 'چک نمبر نباید صفر یا منفی باشد',
         salaries: 'معاشات',
         salaryTableOf: 'جدول معاشات',
-        purpose: 'بابت'
+        purpose: 'بابت',
+        currentSalary: 'معاش فعلی'
 
 
 

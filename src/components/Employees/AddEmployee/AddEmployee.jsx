@@ -343,7 +343,7 @@ function AddEmployee({ updateMode = false }) {
                         </div>
 
 
-                        <div className='display_flex flex_direction_column margin_5'>
+                        {!updateMode && <div className='display_flex flex_direction_column margin_5'>
                             <label htmlFor="salary">{t('salary')}</label>
                             <Field
                                 name="salary"
@@ -356,6 +356,7 @@ function AddEmployee({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
+                        }
 
                         <div className='display_flex flex_direction_column margin_5'>
                             <label htmlFor="visitorContractType">{t('visitorContractType')}</label>
