@@ -356,7 +356,8 @@ const en = {
         salaryTableOf: 'Salary Table of',
         indexNumber: 'Serial Number',
         purpose: 'Purpose',
-        currentSalary: "Current Salary"
+        currentSalary: "Current Salary",
+        tableSalaryChangesOf: "Salary Changes Table of"
 
 
 

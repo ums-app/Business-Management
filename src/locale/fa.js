@@ -375,7 +375,11 @@ const fa = {
         salaries: 'معاشات',
         salaryTableOf: 'جدول معاشات',
         purpose: 'بابت',
-        currentSalary: 'معاش فعلی'
+        currentSalary: 'معاش فعلی',
+        tableSalaryChangesOf: 'جدول تغییرات معاش',
+        currentSalary: 'معاش فعلی',
+        previousSalary: 'معاش قبلی',
+
 
 
 

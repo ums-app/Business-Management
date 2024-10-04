@@ -22,6 +22,8 @@ import Collections from '../../../constants/Collections';
 import { getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from "../../UI/DisplayLogo/DisplayLogo"
 import CustomerPayments from './CsutomerPayments/CustomerPayments';
+import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
+import AvatarLoadingTemplate from '../../UI/LoadingTemplate/AvatarLoadingTemplate';
 
 
 // components for tabs
@@ -122,7 +124,10 @@ function Customer() {
     if (!customer) {
         return (
             <LoadingTemplateContainer>
-                <CardLoadingTemplate />
+                <LoadingTemplateContainer className="display_flex justify_content_space_between align_items_center">
+                    <ButtonLoadingTemplate />
+                    <AvatarLoadingTemplate size="xlarge" />
+                </LoadingTemplateContainer>
                 <HeadingMenuTemplate />
                 <ShotLoadingTemplate />
             </LoadingTemplateContainer>

@@ -23,6 +23,8 @@ import { getUserImage } from '../../../Utils/FirebaseTools';
 import EmployeePayments from './EmployeePayments/EmployeePayments';
 import EmployeeFee from './EmployeeFee/EmployeeFee';
 import EmployeeSalaries from './EmployeeSalaries/EmployeeSalaries';
+import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
+import AvatarLoadingTemplate from "../../UI/LoadingTemplate/AvatarLoadingTemplate"
 
 
 // components for tabs
@@ -120,7 +122,10 @@ function Employee() {
     if (!employee) {
         return (
             <LoadingTemplateContainer>
-                <CardLoadingTemplate />
+                <LoadingTemplateContainer className="display_flex justify_content_space_between align_items_center">
+                    <ButtonLoadingTemplate />
+                    <AvatarLoadingTemplate size="xlarge" />
+                </LoadingTemplateContainer>
                 <HeadingMenuTemplate />
                 <ShotLoadingTemplate />
             </LoadingTemplateContainer>
@@ -224,7 +229,7 @@ function Employee() {
             </TabMenu>
 
             <div>
-                {<displayComponent.component data={employee} />}
+                {<displayComponent.component data={employee} setData={setemployee} />}
             </div>
 
         </div>

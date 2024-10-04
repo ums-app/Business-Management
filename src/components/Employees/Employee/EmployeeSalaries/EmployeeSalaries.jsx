@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMonthsBetweenDates } from '../../../../Utils/DateTimeUtils';
+import { formatFirebaseDates, getMonthsBetweenDates } from '../../../../Utils/DateTimeUtils';
 import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
@@ -24,7 +24,7 @@ import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
 import { toast } from 'react-toastify';
 
-function EmployeeSalaries({ data }) {
+function EmployeeSalaries({ data, setData }) {
     const { employeeId } = useParams()
     const [employee, setEmployee] = useState(null);
     const [monthlySalaries, setMonthlySalaries] = useState([]);
@@ -105,11 +105,9 @@ function EmployeeSalaries({ data }) {
     const calculateMonthlySalaries = (employee) => {
         const currentDate = new Date();
         let joinedDate = new Date(employee.joinedDate.toDate()); // Convert Firestore timestamp to JS date
-        const salaryHistory = data?.salaryHistory || []; // Fallback to an empty array if salaryHistory is undefined
+        const salaryHistory = employee?.salaryHistory || []; // Fallback to an empty array if salaryHistory is undefined
         const totalMonths = getMonthsBetweenDates(joinedDate, currentDate); // Ensure this function is correct
 
-        console.log('Joined Date: ', joinedDate);
-        console.log('Salary History:', salaryHistory);
 
         let salaries = [];
         let total = 0;
@@ -127,6 +125,7 @@ function EmployeeSalaries({ data }) {
 
                 if (salaryChangeDate <= monthStartDate) {
                     applicableSalary = salaryHistory[i].amount;
+                    monthStartDate.setDate(salaryHistory[i].date.toDate().getDate())
                     break;
                 }
             }
@@ -136,7 +135,7 @@ function EmployeeSalaries({ data }) {
             const nextDate = totalMonths[monthIndex + 1];
             endDate.setFullYear(nextDate.year);
             endDate.setMonth(nextDate.month)
-            endDate.setDate(nextDate.day);
+            endDate.setDate(monthStartDate.getDate());
 
             // Add this month's salary to the list
             salaries.push({
@@ -150,7 +149,7 @@ function EmployeeSalaries({ data }) {
                 persianEndDate: gregorianToJalali(
                     nextDate.year,
                     nextDate.month, // +1 because JavaScript months are 0-indexed
-                    nextDate.day
+                    endDate.getDate()
                 ).join('/'),
                 salary: applicableSalary,
             });
@@ -165,6 +164,7 @@ function EmployeeSalaries({ data }) {
 
     const updateEmployeeSalaryAmount = async () => {
         dispatch({ type: actionTypes.SET_SMALL_LOADING, payload: true });
+
         try {
             let salaryHistory = data.salaryHistory || [];
             const employeeDoc = doc(db, Collections.Employees, employeeId);
@@ -174,11 +174,16 @@ function EmployeeSalaries({ data }) {
                 ...data,
                 salaryHistory: salaryHistory
             });
+            setData({
+                ...data,
+                salaryHistory: salaryHistory
+            })
 
             console.log('Employee updated successfully');
 
             toast.success(t('successfullyUpdated'));
             setshowUpdateSalaryModal(false)
+            calculateMonthlySalaries(data);
         } catch (err) {
             console.error(err)
         } finally {
@@ -186,6 +191,47 @@ function EmployeeSalaries({ data }) {
         }
 
 
+    }
+
+    const showDeleteModal = (index) => {
+        dispatch({
+            type: actionTypes.SHOW_ASKING_MODAL,
+            payload: {
+                show: true,
+                message: "deleteMessage",
+                btnAction: () => deleteSalaryHistory(index),
+                id: index,
+            },
+        });
+    };
+
+    const deleteSalaryHistory = async (index) => {
+        dispatch({ type: actionTypes.SET_SMALL_LOADING, payload: true });
+        dispatch({
+            type: actionTypes.HIDE_ASKING_MODAL,
+        });
+
+        try {
+            let salaryHistory = [...data.salaryHistory];
+            salaryHistory.splice(index, 1);
+            const employeeDoc = doc(db, Collections.Employees, employeeId);
+            await updateDoc(employeeDoc, {
+                ...data,
+                salaryHistory: salaryHistory
+            });
+
+            setData({ ...data, salaryHistory: salaryHistory })
+
+            console.log('Employee updated successfully');
+
+            toast.success(t('successfullyUpdated'));
+            calculateMonthlySalaries({ ...data, salaryHistory: salaryHistory });
+            setshowUpdateSalaryModal(false)
+        } catch (err) {
+            console.error(err)
+        } finally {
+            dispatch({ type: actionTypes.SET_SMALL_LOADING, payload: false });
+        }
     }
 
     if (!data) {
@@ -200,6 +246,64 @@ function EmployeeSalaries({ data }) {
 
     return (
         <div className='margin_top_20'>
+
+
+
+            <div className='margin_bottom_10 margin_top_10'>
+                <table className='custom_table full_width'>
+                    <thead>
+                        <tr>
+                            <th colSpan={5}>
+                                {t('tableSalaryChangesOf')} {data.name} {data.lastName}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>{t('number')}</th>
+                            <th>{t('date')}</th>
+                            <th>{t('previousSalary')}</th>
+                            <th>{t('currentSalary')}</th>
+                            <th>{t('actions')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{1}</td>
+                            <td>{formatFirebaseDates(data.joinedDate)}</td>
+                            <td>0</td>
+                            <td>{data?.salary}</td>
+                            <td></td>
+                        </tr>
+                        {data?.salaryHistory?.map((item, index) => {
+                            let prevAmount = data.salary;
+                            if (index > 0) {
+                                prevAmount = data.salaryHistory[index - 1].amount;
+                            }
+
+                            console.log((item));
+
+
+                            return (
+                                <tr key={index}>
+                                    <td>{index + 2}</td>
+                                    <td>{formatFirebaseDates(item.date)}</td>
+                                    <td>{prevAmount}</td>
+                                    <td>{item.amount}</td>
+                                    <td>
+                                        <Button
+                                            icon={ICONS.trash}
+                                            onClick={() => {
+                                                showDeleteModal(index)
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+
+                            )
+                        })}
+
+                    </tbody>
+                </table>
+            </div>
 
             <div className='display_flex justify_content_space_between '>
                 {/* Profile Menu */}

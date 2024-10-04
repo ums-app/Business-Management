@@ -125,7 +125,6 @@ function CustomerPayments() {
 
 
 
-
     }
 
     if (!payments) {
