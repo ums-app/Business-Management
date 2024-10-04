@@ -205,23 +205,33 @@ function CustomerPayments() {
                                     <CustomDatePicker
                                         onChange={e => {
                                             const dateArray = jalaliToGregorian(e.year, e.month.number, e.day);
-                                            const dateString = `${dateArray[0]}-${dateArray[1]}-${dateArray[2]}`;
+
+                                            // Ensure leading zeros for month and day
+                                            const year = dateArray[0];
+                                            const month = String(dateArray[1]).padStart(2, '0');
+                                            const day = String(dateArray[2]).padStart(2, '0');
+
+                                            // ISO format: YYYY-MM-DD
+                                            const dateString = `${year}-${month}-${day}T00:00:00Z`;
                                             const date = new Date(dateString);
 
                                             console.log("Converted Date:", date); // Log for debugging
 
+                                            // Validate the date
                                             if (isNaN(date.getTime())) {
                                                 console.error("Invalid Date after conversion:", date);
-                                                toast.error(t('Invalid Date Detected'));
+                                                toast.error(t('Invalid Date Detected'), date);
                                                 return;
                                             }
 
+                                            // If the date is valid, store it in the Firebase Timestamp
                                             setUserPayment({
                                                 ...userPayment,
-                                                date: Timestamp.fromDate(date) // Create Timestamp only if the date is valid
+                                                date: Timestamp.fromDate(date) // Ensure it's in the correct format
                                             });
                                         }}
                                     />
+
                                 </td>
                             </tr>
                         </tbody>

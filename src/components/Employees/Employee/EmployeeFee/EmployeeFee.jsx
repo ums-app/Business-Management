@@ -129,21 +129,20 @@ function EmployeeFee() {
 
                         <tr>
                             <td>{allFactors.length}</td>
-                            <td>{totalAmountOfAllFactors}</td>
-                            <td>{totalShareOfEmployee}</td>
+                            <td>{totalAmountOfAllFactors.toFixed(2)}</td>
+                            <td>{totalShareOfEmployee.toFixed(2)}</td>
                             <td>
                                 {loading ? <ButtonLoadingTemplate /> :
-                                    totalCustomersPaid}
+                                    totalCustomersPaid.toFixed(2)}
                             </td>
                             <td>
-                                {calculateWithdrawableAmount() - totalEmployeePaidAmount}
+                                {(calculateWithdrawableAmount() - totalEmployeePaidAmount).toFixed(2)}
                                 {/* <MoneyStatus number={calculateWithdrawableAmount() - totalEmployeePaidAmount} /> */}
-
                             </td>
                             <td>
                                 {loading ? <ButtonLoadingTemplate /> :
                                     <>
-                                        {Math.abs(totalAmountOfAllFactors - totalCustomersPaid)}
+                                        {Math.abs(totalAmountOfAllFactors - totalCustomersPaid).toFixed(2)}
                                         <MoneyStatus number={totalAmountOfAllFactors - totalCustomersPaid} />
                                     </>}
                             </td>

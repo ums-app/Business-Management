@@ -114,7 +114,7 @@ function EmployeeSalaries({ data }) {
         let salaries = [];
         let total = 0;
 
-        for (let monthIndex = 0; monthIndex < totalMonths.length; monthIndex++) {
+        for (let monthIndex = 0; monthIndex < totalMonths.length - 1; monthIndex++) {
             // Calculate the start date of each month
             let monthStartDate = new Date(joinedDate);
             monthStartDate.setMonth(joinedDate.getMonth() + monthIndex);
@@ -132,6 +132,11 @@ function EmployeeSalaries({ data }) {
             }
 
             total += applicableSalary;
+            const endDate = new Date();
+            const nextDate = totalMonths[monthIndex + 1];
+            endDate.setFullYear(nextDate.year);
+            endDate.setMonth(nextDate.month)
+            endDate.setDate(nextDate.day);
 
             // Add this month's salary to the list
             salaries.push({
@@ -140,6 +145,12 @@ function EmployeeSalaries({ data }) {
                     monthStartDate.getFullYear(),
                     monthStartDate.getMonth() + 1, // +1 because JavaScript months are 0-indexed
                     monthStartDate.getDate()
+                ).join('/'),
+                endDate: endDate,
+                persianEndDate: gregorianToJalali(
+                    nextDate.year,
+                    nextDate.month, // +1 because JavaScript months are 0-indexed
+                    nextDate.day
                 ).join('/'),
                 salary: applicableSalary,
             });
@@ -167,6 +178,7 @@ function EmployeeSalaries({ data }) {
             console.log('Employee updated successfully');
 
             toast.success(t('successfullyUpdated'));
+            setshowUpdateSalaryModal(false)
         } catch (err) {
             console.error(err)
         } finally {
@@ -312,7 +324,7 @@ function EmployeeSalaries({ data }) {
                         {monthlySalaries.map((item, index) => {
                             return <tr >
                                 <td>{index + 1}</td>
-                                <td>{item.persianDate}</td>
+                                <td>{item.persianDate} - {item.persianEndDate}</td>
                                 <td>{item.salary}</td>
                             </tr>
                         })}

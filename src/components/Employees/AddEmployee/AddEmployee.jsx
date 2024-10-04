@@ -198,11 +198,13 @@ function AddEmployee({ updateMode = false }) {
                     onClick={() => nav(-1)}
                 />
                 <h1 className='title'>{updateMode ? t('update') : t('add')} {t('employee')}</h1>
-                <Form className="add_form display_flex flex_direction_column" onChange={e => {
-                    const name = e.target.name
-                    formData[name] = e.target.value;
-                    setformData({ ...formData, })
-                }}>
+                <Form className="add_form display_flex flex_direction_column"
+                    onChange={e => {
+                        const name = e.target.name
+                        formData[name] = e.target.value;
+                        setformData({ ...formData, })
+                    }}
+                >
                     {/* Here you can select Profile Student img */}
                     <div className="add_img_profile">
                         <img
@@ -319,20 +321,36 @@ function AddEmployee({ updateMode = false }) {
                         <div className='display_flex flex_direction_column margin_5' style={{ direction: "rtl" }}>
                             <label htmlFor="joinedDate">{t('joinedDate')}</label>
                             <CustomDatePicker
+                                name={'joinedDate'}
                                 value={formData?.joinedDate instanceof Timestamp ?
                                     formData?.joinedDate?.toDate()
                                     : new Date(formData?.joinedDate)}
-                                onChange={(e) => {
+                                onChange={e => {
+                                    const dateArray = jalaliToGregorian(e.year, e.month.number, e.day);
 
-                                    let date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                    date = new Date(date.join('/'))
-                                    console.log(e);
-                                    console.log(date);
+                                    // Ensure leading zeros for month and day
+                                    const year = dateArray[0];
+                                    const month = String(dateArray[1]).padStart(2, '0');
+                                    const day = String(dateArray[2]).padStart(2, '0');
+
+                                    // ISO format: YYYY-MM-DD
+                                    const dateString = `${year}-${month}-${day}T00:00:00Z`;
+                                    const date = new Date(dateString);
+
+                                    console.log("Converted Date:", date); // Log for debugging
+
+                                    // Validate the date
+                                    if (isNaN(date.getTime())) {
+                                        console.error("Invalid Date after conversion:", date);
+                                        toast.error(t('Invalid Date Detected'));
+                                        return;
+                                    }
+
+                                    // If the date is valid, store it in the Firebase Timestamp
                                     setformData({
                                         ...formData,
-                                        joinedDate: Timestamp.fromDate(date)
-                                    })
-
+                                        joinedDate: Timestamp.fromDate(date) // Ensure it's in the correct format
+                                    });
                                 }}
                             />
                             <ErrorMessage

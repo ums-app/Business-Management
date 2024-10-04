@@ -98,11 +98,11 @@ function PurchaseProducts() {
     return (
         <div>
             <Button
-                text={t('add') + " " + t('purchase')}
+                text={t('add') + " " + t('purchases')}
                 onClick={() => nav("add")}
             />
 
-            <h1 className='margin_10 title'>{t('receipts')}</h1>
+            <h1 className='margin_10 title'>{t('purchases')}</h1>
 
             <div className='table_container '>
                 <table className="full_width custom_table table_row_hover">

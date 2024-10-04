@@ -146,7 +146,8 @@ export function getMonthsBetweenDates(startDate, endDate) {
   while (current <= end) {
     result.push({
       year: current.getFullYear(),
-      month: current.getMonth() + 1 // Months are zero-based in JS, so add 1
+      month: current.getMonth() + 1, // Months are zero-based in JS, so add 1,
+      day: current.getDate()
     });
 
     // Move to the next month

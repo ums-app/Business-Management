@@ -18,6 +18,7 @@ import { ref, uploadBytes } from 'firebase/storage'
 import Folders from '../../constants/Folders'
 import ICONS from '../../constants/Icons'
 import avatar from "../../assets/img/profile_avatar.png"
+import { jalaliToGregorian } from 'shamsi-date-converter'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -89,7 +90,7 @@ function AddCustomer({ updateMode = false }) {
 
             if (updateMode) {
                 const customerDoc = doc(db, Collections.Customers, customerId)
-                await updateDoc(customerDoc, values);
+                await updateDoc(customerDoc, { ...formData });
                 uploadImage(customer.email.toLowerCase())
                 toast.success(t('successfullyUpdated'))
                 nav('/customers/' + customerId)
@@ -102,8 +103,8 @@ function AddCustomer({ updateMode = false }) {
                 }
 
                 createUserWithEmailAndPassword(auth, values.email.toLowerCase(), values.password)
-                const customerRes = await addDoc(cusomtersCollectionRef, { ...values, createdDate: Timestamp.fromDate(new Date()), })
-                uploadImage(values.email)
+                const customerRes = await addDoc(cusomtersCollectionRef, { ...formData, createdDate: Timestamp.fromDate(new Date()), })
+                await uploadImage(values.email)
                 await addDoc(usersCollectionRef, {
                     joinedDate: Timestamp.fromDate(new Date()),
                     lastName: values.lastName,
@@ -167,6 +168,11 @@ function AddCustomer({ updateMode = false }) {
                 <Form
                     className="add_form display_flex flex_direction_column"
                     style={{ gap: "3px" }}
+                    onChange={e => {
+                        const name = e.target.name
+                        formData[name] = e.target.value;
+                        setformData({ ...formData, })
+                    }}
                 >
                     <div className="add_img_profile">
                         <img
@@ -243,7 +249,36 @@ function AddCustomer({ updateMode = false }) {
                                 value={formData?.joinedDate instanceof Timestamp ?
                                     formData?.joinedDate?.toDate()
                                     : new Date(formData?.joinedDate)}
+                                name={'joinedDate'}
+                                onChange={e => {
+                                    const dateArray = jalaliToGregorian(e.year, e.month.number, e.day);
+
+                                    // Ensure leading zeros for month and day
+                                    const year = dateArray[0];
+                                    const month = String(dateArray[1]).padStart(2, '0');
+                                    const day = String(dateArray[2]).padStart(2, '0');
+
+                                    // ISO format: YYYY-MM-DD
+                                    const dateString = `${year}-${month}-${day}T00:00:00Z`;
+                                    const date = new Date(dateString);
+
+                                    console.log("Converted Date:", date); // Log for debugging
+
+                                    // Validate the date
+                                    if (isNaN(date.getTime())) {
+                                        console.error("Invalid Date after conversion:", date);
+                                        toast.error(t('Invalid Date Detected'));
+                                        return;
+                                    }
+
+                                    // If the date is valid, store it in the Firebase Timestamp
+                                    setformData({
+                                        ...formData,
+                                        joinedDate: Timestamp.fromDate(date) // Ensure it's in the correct format
+                                    });
+                                }}
                             />
+
                             <ErrorMessage
                                 name="joinedDate"
                                 component="div"
