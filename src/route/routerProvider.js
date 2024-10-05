@@ -6,7 +6,7 @@ import AddCustomer from "../components/Customers/AddCustomer";
 import Customer from "../components/Customers/Customer/Customer";
 import Product from "../components/Products/Product/Product";
 import AddProduct from "../components/Products/AddProduct/AddProducts";
-import AddPurchaseProducts from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts";
+import AddPurchaseProducts from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts.tsx";
 import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor.tsx";
 import AddSaleFactorForUnknowCustomer from "../components/Sales/AddSaleFactor/AddSaleFactorForUnknowCustomer";
 import { FactorType } from "../constants/FactorStatus";

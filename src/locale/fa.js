@@ -383,6 +383,8 @@ const fa = {
         debtorCustomers: 'مشتریان بدهکار',
         creditorCustomers: 'مشتریان طلبکار',
         settled: 'تسویه شده',
+        customsFees: "مصارف گمرکی",
+        additionalCosts: "مصارف اضافی",
 
 
 

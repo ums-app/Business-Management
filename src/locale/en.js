@@ -362,6 +362,8 @@ const en = {
         debtorCustomers: 'Debtor Customers',
         creditorCustomers: 'Creditor Customers',
         settled: 'Settled',
+        customsFees: "Customs Fees",
+        additionalCosts: "Additional Costs",
 
 
 
