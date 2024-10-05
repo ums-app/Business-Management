@@ -216,7 +216,7 @@ function ShortListedCustomers() {
                                                 <MoneyStatus number={item.remainedAmount} />
                                             </span>
                                         </td>
-                                        {/* <td></td> */}
+                                        <td></td>
                                     </tr>
                                 )
                             })}
