@@ -184,17 +184,6 @@ function Employee() {
                 <li
                     className={
                         displayComponent?.componentName ==
-                            components?.Customers?.componentName
-                            ? "active"
-                            : ""
-                    }
-                    onClick={() => setDisplayComponent(components?.Customers)}
-                >
-                    {t("customers")}
-                </li>
-                <li
-                    className={
-                        displayComponent?.componentName ==
                             components?.Salaries?.componentName
                             ? "active"
                             : ""
@@ -213,6 +202,17 @@ function Employee() {
                     onClick={() => setDisplayComponent(components?.Payments)}
                 >
                     {t("receipts")}
+                </li>
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.Customers?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent(components?.Customers)}
+                >
+                    {t("customers")}
                 </li>
 
                 <li
