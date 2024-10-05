@@ -15,7 +15,7 @@ import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateCo
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { createUserWithEmailAndPassword, updateEmail } from 'firebase/auth';
 import Collections from '../../../constants/Collections';
-import { checkIfEmailIsAlreadyExist, getUserImage } from '../../../Utils/FirebaseTools';
+import { checkIfEmailIsAlreadyExist, getUserImage } from '../../../Utils/FirebaseTools.ts';
 import Folders from '../../../constants/Folders';
 import { ref, uploadBytes } from 'firebase/storage';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';

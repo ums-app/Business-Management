@@ -9,7 +9,7 @@ import LoadingTemplateContainer from "../UI/LoadingTemplate/LoadingTemplateConta
 import HeadingMenuTemplate from "../UI/LoadingTemplate/HeadingMenuTemplate"
 import ShotLoadingTemplate from "../UI/LoadingTemplate/ShotLoadingTemplate"
 import ButtonLoadingTemplate from "../UI/LoadingTemplate/ButtonLoadingTemplate"
-import { getProductImage, getUserImage } from '../../Utils/FirebaseTools'
+import { getProductImage, getUserImage } from '../../Utils/FirebaseTools.ts'
 import Collections from '../../constants/Collections';
 
 

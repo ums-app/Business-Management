@@ -19,7 +19,7 @@ import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import CardLoadingTemplate from '../../UI/LoadingTemplate/CardLoadingTemplate';
 import { toast } from 'react-toastify';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
-import { getUserImage } from '../../../Utils/FirebaseTools';
+import { getUserImage } from '../../../Utils/FirebaseTools.ts';
 import EmployeePayments from './EmployeePayments/EmployeePayments';
 import EmployeeFee from './EmployeeFee/EmployeeFee';
 import EmployeeSalaries from './EmployeeSalaries/EmployeeSalaries';

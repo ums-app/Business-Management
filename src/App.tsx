@@ -16,7 +16,7 @@ import RestrictWarning from "./components/UI/RestrictWarning/RestrictWarning"
 import Circle from "./components/UI/Loading/Circle"
 
 
-const App = () => {
+const App: React.FC = () => {
   const [{ askingModal, locale, restrictWarning, confirmModal, globalLoading }, dispatch] = useStateValue();
 
   const hideShowAskingModal = () => {

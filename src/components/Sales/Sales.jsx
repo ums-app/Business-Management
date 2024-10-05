@@ -25,10 +25,13 @@ import { FactorType } from '../../constants/FactorStatus';
 
 function Sales() {
     const nav = useNavigate();
-    const [, dispatch] = useStateValue()
+    const [globalState, dispatch] = useStateValue()
     const [sales, setSales] = useState();
     const salesCollectionRef = collection(db, Collections.Sales);
     const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false)
+
+
+    console.log(globalState);
 
     const [factors, setFactors] = useState()
 
@@ -46,6 +49,10 @@ function Sales() {
 
     const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
+
+
+    console.log(factors);
+
 
 
     useEffect(() => {
@@ -196,8 +203,8 @@ function Sales() {
             }
 
             const customerData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
                 ...doc.data(),
+                id: doc.id,
             }));
 
             setFactors(customerData);
@@ -245,10 +252,9 @@ function Sales() {
                 return;
             }
 
-            // Map the document data
             const customerData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
                 ...doc.data(),
+                id: doc.id,
             }));
 
             setFactors(customerData);
@@ -299,8 +305,8 @@ function Sales() {
 
             if (!querySnapshot.empty) {
                 const customerData = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
                     ...doc.data(),
+                    id: doc.id,
                 }));
 
                 setFactors(customerData);
@@ -351,8 +357,8 @@ function Sales() {
 
             if (!querySnapshot.empty) {
                 const customerData = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
                     ...doc.data(),
+                    id: doc.id,
                 }));
 
                 setFactors(customerData);
@@ -524,21 +530,25 @@ function Sales() {
                                 return <tr
                                     className=" cursor_pointer hover"
                                     onClick={() => {
+                                        if (factor.type == FactorType.SUNDRY_FACTOR) {
+                                            nav('/sales/' + FactorType.SUNDRY_FACTOR + '/' + factor.id);
+                                            return;
+                                        }
+                                        nav('/sales/' + factor.id);
+                                        console.log('nav');
+
                                         dispatch({
                                             type: actionTypes.SET_FACTOR,
                                             payload: factor
-                                        })
+                                        });
+
                                         dispatch({
                                             type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
                                             payload: factor.customer
-                                        })
-                                        if (factor.type == FactorType.SUNDRY_FACTOR) {
-                                            nav('/sales/' + FactorType.SUNDRY_FACTOR + '/' + factor.id)
-                                            return;
-                                        }
-                                        nav('/sales/' + factor.id)
+                                        });
+
                                     }}
-                                    key={factor.id}
+                                    key={index}
                                 >
                                     <td>{index + 1}</td>
                                     <td>{factor.indexNumber}</td>
@@ -560,7 +570,7 @@ function Sales() {
 
 
 
-        </div>
+        </div >
     )
 }
 

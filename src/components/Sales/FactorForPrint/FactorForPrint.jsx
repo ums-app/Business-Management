@@ -21,7 +21,7 @@ function FactorForPrint({
     totalAmountOfAllCustomerPayments,
     remainedAmount,
     userPayment,
-    totalOfCurrent = 0 }) {
+    totalOfCurrent = () => 0 }) {
 
     let factorRef = useRef();
     const [, dispatch] = useStateValue()

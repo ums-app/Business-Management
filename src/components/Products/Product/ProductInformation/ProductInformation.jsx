@@ -10,7 +10,7 @@ import Collections from '../../../../constants/Collections';
 import { t } from 'i18next';
 import "../../Products.css"
 import { gregorianToJalali } from 'shamsi-date-converter';
-import { getProductImage } from '../../../../Utils/FirebaseTools';
+import { getProductImage } from '../../../../Utils/FirebaseTools.ts';
 
 function ProductInformation({ data }) {
     const { productId } = useParams();

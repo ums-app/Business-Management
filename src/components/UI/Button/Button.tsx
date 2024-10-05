@@ -2,20 +2,12 @@ import React from "react";
 import "./Button.css";
 import ButtonLoading from "../Loading/ButtonLoading";
 import ICONS from "../../../constants/Icons";
+import { ButtonProps } from "../../../Types/Types";
 
-const Button = ({
-  type,
-  icon,
-  onClick,
-  btnType,
-  text,
-  id,
-  loading = false,
-  title = "",
-  isLock = false,
-  isConfirmed = false,
-  ...props
-}) => {
+
+
+
+const Button: React.FC<ButtonProps> = ({ btnType = null, isLock = undefined, isConfirmed = null, type = null, title, onClick, text, loading = null, icon = null, props }) => {
   return (
     <div className="btn_container">
       {isLock ? <span
@@ -26,16 +18,15 @@ const Button = ({
         {isConfirmed && <i className={"bi " + ICONS.thick}></i>}
       </span> : null}
       <button
-        className={"btn " + type}
-        type={btnType}
-        onClick={!isLock ? onClick : null}
+        className={"btn " + btnType}
+        onClick={onClick}
         title={title}
-        id={id}
         disabled={isLock}
+        {...props}
       >
         <i className={"bi " + icon}></i>
         {text}
-        {props.children}
+
       </button>
       {loading && <ButtonLoading />}
 

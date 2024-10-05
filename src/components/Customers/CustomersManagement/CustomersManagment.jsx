@@ -12,7 +12,7 @@ import Button from '../../UI/Button/Button';
 import { Tooltip } from 'react-tooltip';
 import Pagination from '../../UI/Pagination/Pagination';
 import { db } from '../../../constants/FirebaseConfig';
-import { getUserImage } from '../../../Utils/FirebaseTools';
+import { getUserImage } from '../../../Utils/FirebaseTools.ts';
 import ICONS from '../../../constants/Icons';
 
 function CustomersManagment() {

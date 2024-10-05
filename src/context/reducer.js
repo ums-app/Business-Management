@@ -46,6 +46,12 @@ function getLocale() {
   return locale;
 }
 
+// interface GlobalState {
+//   authentication: AuthenticationType;  // Define these types as per your app structure
+//   customerForSaleFactor: CustomerForSaleFactorType;
+//   factor: FactorType;
+// }
+
 export const initialState = {
   term: null,
   authentication: {
@@ -62,7 +68,8 @@ export const initialState = {
   confirmModal: { show: false, message: "", iconType: "" },
   relations: [],
   globalLoading: false,
-  navbarCollapse: false
+  navbarCollapse: false,
+  customerForSaleFactor: null
 };
 
 export const actionTypes = {

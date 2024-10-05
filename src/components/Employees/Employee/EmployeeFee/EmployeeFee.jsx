@@ -1,6 +1,6 @@
 import { t } from 'i18next'
 import React, { useEffect, useState } from 'react'
-import { getAllEmployeePayments, getAllVisitorFactors, getCustomerPaymentByCustomerIds } from '../../../../Utils/FirebaseTools';
+import { getAllEmployeePayments, getAllVisitorFactors, getCustomerPaymentByCustomerIds } from '../../../../Utils/FirebaseTools.ts';
 import { useParams } from 'react-router-dom';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
@@ -150,8 +150,8 @@ function EmployeeFee() {
                                     totalCustomersPaid.toFixed(2)}
                             </td>
                             <td>
-                                {(calculateWithdrawableAmount() - totalEmployeePaidAmount).toFixed(2)}
-                                {/* <MoneyStatus number={calculateWithdrawableAmount() - totalEmployeePaidAmount} /> */}
+                                {Math.abs(calculateWithdrawableAmount() - totalEmployeePaidAmount).toFixed(2)}
+                                <MoneyStatus number={calculateWithdrawableAmount() - totalEmployeePaidAmount > 0 ? -1 : 1} />
                             </td>
                             <td>
                                 {loading ? <ButtonLoadingTemplate /> :

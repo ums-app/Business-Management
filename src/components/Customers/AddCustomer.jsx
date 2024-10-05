@@ -11,7 +11,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import Collections from '../../constants/Collections'
-import { checkIfEmailIsAlreadyExist, getUserImage } from '../../Utils/FirebaseTools'
+import { checkIfEmailIsAlreadyExist, getUserImage } from '../../Utils/FirebaseTools.ts'
 import "./Customers.css"
 import CustomDatePicker from '../UI/DatePicker/CustomDatePicker'
 import { ref, uploadBytes } from 'firebase/storage'

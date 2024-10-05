@@ -8,7 +8,7 @@ import { Tooltip } from 'react-tooltip'
 import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
 import { pageSizes } from '../../../../constants/Others';
-import { getUserImage } from '../../../../Utils/FirebaseTools';
+import { getUserImage } from '../../../../Utils/FirebaseTools.ts';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemplate';
 import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
@@ -47,6 +47,9 @@ function SelectCustomer() {
         getTotalDocumentCount(pageSizes[0])
 
     }, []);
+
+    console.log(employees);
+
 
 
 
@@ -161,8 +164,6 @@ function SelectCustomer() {
     };
 
 
-
-
     // Get the total number of documents in the collection
     const getTotalDocumentCount = async (pageSize) => {
         const snapshot = await getCountFromServer(customersCollectionRef);
@@ -175,34 +176,6 @@ function SelectCustomer() {
         getFirstPage(pageSize);
     };
 
-
-
-    // Function to get the first page
-    const getDocsBySearchValue = async () => {
-        setloading(true)
-        const whereObj = searchValue.length > 0 ? where('name', '==', searchValue) : null;
-        const firstPageQuery = query(
-            customersCollectionRef,
-            whereObj,
-            orderBy('name'),
-            limit(pageSize)
-        );
-        const querySnapshot = await getDocs(firstPageQuery);
-
-        const customerData = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-
-        setCustomers(customerData);
-
-        // Set pagination boundaries
-        setFirstVisible(querySnapshot.docs[0]);
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setIsPrevPageAvailable(false); // No previous page on the first load
-        setCurrentPage(1)
-        setloading(false)
-    };
 
     // Function to get the first page
     const getFirstPage = async (pageSize) => {

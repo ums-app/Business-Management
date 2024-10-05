@@ -11,7 +11,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import Button from '../UI/Button/Button';
 import bebevit from "../../assets/img/bebvit.jpg"
 import { useLocalStorage } from 'usehooks-ts';
-import { getUserImage } from '../../Utils/FirebaseTools';
+import { getUserImage } from '../../Utils/FirebaseTools.ts';
 import Collections from '../../constants/Collections';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { actionTypes } from '../../context/reducer';

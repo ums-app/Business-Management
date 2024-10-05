@@ -13,7 +13,7 @@ import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 import ProductCard from './ProductCard/ProductCard'
 import CardsContainerLoadingTemplate from "../UI/LoadingTemplate/CardsContainerLoadingTemplate";
-import { getProductImage } from '../../Utils/FirebaseTools'
+import { getProductImage } from '../../Utils/FirebaseTools.ts'
 
 function Products() {
     const nav = useNavigate();

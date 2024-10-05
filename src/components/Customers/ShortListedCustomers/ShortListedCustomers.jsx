@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { getAllCustomerPayments, getAllPayments, getCustomerFactors, getCustomers, getFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../Utils/FirebaseTools';
+import { getAllCustomerPayments, getAllPayments, getCustomerFactors, getCustomers, getFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../Utils/FirebaseTools.ts';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 import { t } from 'i18next';
 import { gregorianToJalali } from 'shamsi-date-converter';

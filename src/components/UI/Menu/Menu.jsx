@@ -2,7 +2,7 @@ import React from "react";
 import "./Menu.css";
 import ICONS from "../../../constants/Icons";
 
-function Menu({ children, icon = ICONS.threeDotsVerticle, style }) {
+function Menu({ children, icon = ICONS.threeDotsVerticle, style = null }) {
   return (
     <div className="menu position_relative" >
       <span className="settings_btn cursor_pointer border_radius_50">

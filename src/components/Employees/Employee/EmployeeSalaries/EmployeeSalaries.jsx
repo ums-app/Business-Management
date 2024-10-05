@@ -13,7 +13,7 @@ import ReactToPrint from 'react-to-print';
 import { useStateValue } from '../../../../context/StateProvider';
 import { actionTypes } from '../../../../context/reducer';
 import print from '../../../../constants/PrintCssStyles';
-import { getAllEmployeePayments } from '../../../../Utils/FirebaseTools';
+import { getAllEmployeePayments } from '../../../../Utils/FirebaseTools.ts';
 import { EmployeePaymentType } from '../../../../constants/Others';
 import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
 import DatePicker from 'react-multi-date-picker';

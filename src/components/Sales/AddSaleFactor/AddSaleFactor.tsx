@@ -5,10 +5,10 @@ import Button from '../../UI/Button/Button';
 import { useStateValue } from '../../../context/StateProvider';
 import "../Sales.css"
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
-import { getEmployeeById, getUserImage } from '../../../Utils/FirebaseTools';
+// import { getEmployeeById, getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, runTransaction, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
@@ -18,64 +18,87 @@ import { toast } from 'react-toastify';
 import FactorForPrint from '../FactorForPrint/FactorForPrint';
 import Modal from '../../UI/modal/Modal';
 import Menu from "../../UI/Menu/Menu"
-import { FactorType, factorStatus } from '../../../constants/FactorStatus';
-import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
+import { FactorType } from '../../../constants/FactorStatus';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { VisitorContractType } from '../../../constants/Others';
+import { productForSale } from './AddSaleFactorForUnknowCustomer';
+import { CustomerFactor, CustomerPayment, Employee, Product, UpdateModeProps } from '../../../Types/Types';
+import { getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
 
-export const productForSale = {
-    productId: '',
-    name: "",
-    englishName: "",
-    total: "",
-    pricePer: "",
+export interface ProductForSale {
+    productId: string;
+    name: string,
+    englishName: string,
+    total: number,
+    pricePer: number,
     discount: {
-        value: 0,
-        type: 'percent'
+        value: number;
+        type: string
     },
-    totalPrice: "",
+    totalPrice: number,
 };
 
-function AddSaleFactor({ updateMode }) {
+
+export interface userPayment {
+    amount: number;
+    createdDate: Date;
+    by: string;
+    saleId: string;
+    customerId: string;
+    date: Date;
+}
+
+
+
+const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
+
     const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
     const [customerImage, setcustomerImage] = useState();
-    const [customerFactors, setCustomeractors] = useState([]);
+    const [customerFactors, setCustomeractors] = useState<CustomerFactor[]>([]);
     const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
     const paymentCollectionRef = collection(db, Collections.Payments);
-    const [allCustomerPayments, setAllCustomerPayments] = useState([]);
+    const [allCustomerPayments, setAllCustomerPayments] = useState<CustomerPayment[]>([]);
     const [totalAmountOfCustomerPayments, settotalAmountOfCustomerPayments] = useState(0)
     const [totalAmountOfCustomerFactors, settotalAmountOfCustomerFactors] = useState(0)
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [saved, setsaved] = useState(false)
-    const [visitor, setvisitor] = useState()
+    const [visitor, setvisitor] = useState<Employee>()
 
     // this is for tracking all user payments
-    const [userPayment, setUserPayment] = useState({
+    const [userPayment, setUserPayment] = useState<CustomerPayment>({
+        id: '',
         amount: 0,
         createdDate: new Date(),
         by: authentication.email,
         saleId: factor?.id,
         customerId: customerForSaleFactor?.id,
-        date: new Date()
+        date: new Date(),
+        checkNumber: Math.random() * 1000
     })
 
     const [showAddNewPayment, setShowAddNewPayment] = useState(false);
-    const [customerFactor, setcustomerFactor] = useState(() => ({
-        productsInFactor: [{ ...productForSale }],
+    const [customerFactor, setcustomerFactor] = useState<CustomerFactor>(() => ({
+        id: '',
+        productsInFactor: [],
         customer: customerForSaleFactor,
-        payments: [],
         createdDate: new Date(),
         indexNumber: 0,
         type: FactorType.STANDARD_FACTOR,
         by: authentication.email,
+        paidAmount: 0,
+        totalAll: 0,
+        visitorAccount: null
     }))
 
     useEffect(() => {
         settotalAmountOfCustomerPayments(totalAmountOfAllCustomerPayments());
         settotalAmountOfCustomerFactors(totalAmountOfAllFactors());
+        if (!customerForSaleFactor) {
+            nav("/sales")
+        }
     }, [allCustomerPayments])
 
 
@@ -101,14 +124,23 @@ function AddSaleFactor({ updateMode }) {
     }, [])
 
     useEffect(() => {
-        getUserImage(customerForSaleFactor.email).then(res => setcustomerImage(res))
+        getUserImage(customerForSaleFactor?.email).then(res => setcustomerImage(res))
             .catch(err => setcustomerImage(err))
-        getProducts();
-        getCustomerFactors();
-        getAllCustomerPayments()
+        getProducts()
+            .then(res => {
+                setProducts(res)
+            });
+
+        getCustomerFactorsForThisComponent();
+        getAllCustomerPayments(customerForSaleFactor.id)
+            .then(res => {
+                setAllCustomerPayments(res)
+            })
+
         getEmployeeById(customerForSaleFactor.visitor)
             .then(res => {
-                setvisitor(res)
+                if (res)
+                    setvisitor(res)
             })
             .catch(err => {
                 console.log(err);
@@ -117,73 +149,41 @@ function AddSaleFactor({ updateMode }) {
     }, [])
     console.log(customerFactor);
 
-    const checkIfProductIsInList = (productId) => {
+
+
+    const checkIfProductIsInList = (productId: string) => {
         return customerFactor.productsInFactor.some(item => item.productId == productId)
     }
 
 
-    const getCustomerFactors = async () => {
-        const q = query(
-            salesCollectionRef,
-            where("customer.id", "==", customerForSaleFactor.id),
-        );
-
-        try {
-            const querySnapshot = await getDocs(q);
-            // First map to an array, then filter and sort
-            let items = querySnapshot.docs
-                .map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
-                .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()); // Sort by date
-
-            if (updateMode) {
-                items = items.filter(doc => doc.id !== factor?.id);
-            }
-            // Try to set all the amount in a container
-            setCustomeractors(items);
-
-        } catch (error) {
-            console.error("Error getting documents: ", error);
-        }
-    };
 
 
-
-    const getAllCustomerPayments = async () => {
-        const q = query(
-            paymentCollectionRef,
-            where("customerId", "==", customerForSaleFactor.id),
-        );
-
-        try {
-            const querySnapshot = await getDocs(q);
-
-            // First map to an array, then filter and sort
-            let items = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) // Map to data with id
-
-            // Try to set all the amount in a container
-            setAllCustomerPayments(items);
-
-            // if this is update mode then extract the payment of this factor into sperate list
-            if (updateMode) {
-                const paymentOfThisFactor = items.filter(item => item.saleId == factor?.id);
-                if (paymentOfThisFactor.length > 0)
-                    setUserPayment(paymentOfThisFactor[0]);
-            }
-
-        } catch (error) {
-            console.error("Error getting documents: ", error);
-        }
-    };
-
-    const getProducts = async () => {
-        const querySnapshot = await getDocs(productCollectionRef);
-        const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-        setProducts(items);
+    const getCustomerFactorsForThisComponent = async () => {
+        getCustomerFactors(customerForSaleFactor.id)
+            .then(res => {
+                let items = res;
+                if (updateMode) {
+                    items = items.filter(fac => fac.id != customerFactor.id);
+                }
+                setCustomeractors(items);
+            })
     }
+
 
     const addNewProdcut = () => {
         const tempArr = [...customerFactor.productsInFactor];
-        tempArr.push(productForSale);
+        tempArr.push({
+            discount: {
+                type: 'percent',
+                value: 0
+            },
+            englishName: '',
+            name: '',
+            pricePer: 0,
+            productId: '',
+            total: 0,
+            totalPrice: 0
+        });
         setcustomerFactor({
             ...customerFactor,
             productsInFactor: tempArr
@@ -191,21 +191,23 @@ function AddSaleFactor({ updateMode }) {
     }
 
 
-    const handleSelectProduct = (e, index) => {
+    const handleSelectProduct = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
         const value = e.target.value
         const selectedProduct = products.find(item => item.id == value)
         console.log(selectedProduct);
-        customerFactor.productsInFactor[index] = {
-            productId: selectedProduct.id,
-            name: selectedProduct.name,
-            englishName: selectedProduct.englishName,
-            total: 1,
-            discount: {
-                value: 0,
-                type: 'percent'
-            },
-            pricePer: selectedProduct.price,
-            totalPrice: selectedProduct.price,
+        if (selectedProduct) {
+            customerFactor.productsInFactor[index] = {
+                productId: selectedProduct.id,
+                name: selectedProduct.name,
+                englishName: selectedProduct.englishName,
+                total: 1,
+                discount: {
+                    value: 0,
+                    type: 'percent'
+                },
+                pricePer: selectedProduct.price,
+                totalPrice: selectedProduct.price,
+            }
         }
         setcustomerFactor({
             ...customerFactor,
@@ -213,10 +215,10 @@ function AddSaleFactor({ updateMode }) {
         })
     }
 
-    const handleChangeTotalProducts = (e, index) => {
+    const handleChangeTotalProducts = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
 
-        pr.total = e.target.value;
+        pr.total = Number(e.target.value);
         pr.totalPrice = caculateTotalPriceOfProduct(pr);
 
         customerFactor.productsInFactor[index] = pr;
@@ -227,10 +229,10 @@ function AddSaleFactor({ updateMode }) {
         })
     }
 
-    const handleChangeProductPrice = (e, index) => {
+    const handleChangeProductPrice = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
 
-        pr.pricePer = e.target.value;
+        pr.pricePer = Number(e.target.value);
         pr.totalPrice = caculateTotalPriceOfProduct(pr);
 
         customerFactor.productsInFactor[index] = pr;
@@ -241,7 +243,7 @@ function AddSaleFactor({ updateMode }) {
 
     }
 
-    const handleChangeProductDiscount = (e, index) => {
+    const handleChangeProductDiscount = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
 
         console.log(e.target.value);
@@ -254,7 +256,7 @@ function AddSaleFactor({ updateMode }) {
         })
     }
 
-    const handleChangeProductDiscountType = (e, index) => {
+    const handleChangeProductDiscountType = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
         pr.discount.type = e.target.value;
         pr.totalPrice = caculateTotalPriceOfProduct(pr);
@@ -267,7 +269,7 @@ function AddSaleFactor({ updateMode }) {
         console.log(pr);
     }
 
-    const caculateTotalPriceOfProduct = (product) => {
+    const caculateTotalPriceOfProduct = (product: ProductForSale) => {
         let discount = product.discount.value;
         if (product.discount.type == 'percent') {
             discount = (discount * product.pricePer) / 100;
@@ -278,7 +280,7 @@ function AddSaleFactor({ updateMode }) {
         return product.total * (product.pricePer - discount);
     }
 
-    const handleDeleteProduct = (index) => {
+    const handleDeleteProduct = (index: number) => {
         const temp = [...customerFactor.productsInFactor];
         temp.splice(index, 1);
         setcustomerFactor({
@@ -313,7 +315,7 @@ function AddSaleFactor({ updateMode }) {
     const totalAmountOfAllFactors = () => {
         // check if incomplete factors are fetched
         if (!customerFactors) {
-            getCustomerFactors();
+            getCustomerFactorsForThisComponent();
         }
         let totalRemainedOfAllFactor = 0;
         customerFactors?.filter(item => item.createdDate < customerFactor.createdDate)
@@ -327,10 +329,6 @@ function AddSaleFactor({ updateMode }) {
 
     // this func is going to calculate the remained value of previous factors
     const totalAmountOfAllCustomerPayments = () => {
-        // check if incomplete factors are fetched
-        if (!allCustomerPayments) {
-            getAllCustomerPayments();
-        }
         let totalAmountOfAllPayments = 0;
         allCustomerPayments
             .filter(item => item.createdDate < customerFactor.createdDate)
@@ -341,7 +339,7 @@ function AddSaleFactor({ updateMode }) {
     }
 
 
-    const getTotalPriceOfFactor = (fac) => {
+    const getTotalPriceOfFactor = (fac: CustomerFactor) => {
         let totalPriceOfFac = 0
         fac.productsInFactor?.forEach(item => {
             totalPriceOfFac += Number(item.totalPrice)
@@ -361,7 +359,7 @@ function AddSaleFactor({ updateMode }) {
             ...userPayment,
             amount: 0
         })
-        customerFactor({ ...customerFactor, paidAmount: 0 })
+        setcustomerFactor({ ...customerFactor, paidAmount: 0 })
         setShowAddNewPayment(false)
 
     }
@@ -379,105 +377,117 @@ function AddSaleFactor({ updateMode }) {
     }
 
 
-    const snedCustomerFactorToAPI = async () => {
+    const sendCustomerFactorToAPI = async () => {
         if (updateMode) {
             toast.error('youAreNotAllowedToChangeTheFactor');
             return;
         }
 
-        if (customerFactor.productsInFactor.length == 0 ||
-            customerFactor.productsInFactor[0].total == 0 ||
-            customerFactor.productsInFactor.some(item => item.name.trim().length == 0)
+        if (customerFactor.productsInFactor.length === 0 ||
+            customerFactor.productsInFactor[0].total === 0 ||
+            customerFactor.productsInFactor.some(item => item.name.trim().length === 0)
         ) {
-            toast.error(t('products') + " " + t('notEmptyMsg'))
-            return
+            toast.error(t('products') + " " + t('notEmptyMsg'));
+            return;
         }
 
         dispatch({
             type: actionTypes.SET_SMALL_LOADING,
             payload: true
-        })
+        });
 
         try {
-
             let visitorAmount = 0;
-            if (visitor && visitor.visitorContractType == VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
+            if (visitor && visitor.visitorContractType === VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
                 visitorAmount = getTotalProductsOfFactor() * visitor.visitorAmount;
-            } else if (visitor && visitor.visitorContractType == VisitorContractType.PERCENT) {
+            } else if (visitor && visitor.visitorContractType === VisitorContractType.PERCENT) {
                 visitorAmount = (totalAll() * Number(visitor?.visitorAmount) / 100);
             }
-            console.log('visitor: ', visitor);
-            console.log('visitor_contract-type:', visitor?.visitorContractType);
-            console.log('total-product: ', getTotalProductsOfFactor());
-            console.log('visitor amount: ', visitorAmount);
 
-            const factorDoc = await addDoc(salesCollectionRef,
-                {
-                    ...customerFactor,
-                    paidAmount: userPayment.amount,
-                    totalAll: totalAll(),
-                    visitorAccount: visitor ? {
-                        visitorId: visitor?.id,
-                        VisitorContractType: visitor?.visitorContractType,
-                        visitorContractAmount: visitor?.visitorAmount,
-                        visitorAmount: visitorAmount,
-                    } : null
+            const visitorAccount = visitor && visitor.visitorContractType ? {
+                visitorId: visitor?.id ?? null,
+                VisitorContractType: visitor?.visitorContractType ?? null,
+                visitorContractAmount: visitor?.visitorAmount ?? null,
+                visitorAmount: visitorAmount ?? null
+            } : undefined;
+
+            const factorData = {
+                ...customerFactor,
+                paidAmount: userPayment.amount,
+                totalAll: totalAll(),
+                ...(visitorAccount ? { visitorAccount } : {}) // Conditionally include visitorAccount
+            };
+
+            // Using transaction to add the first document
+            const factorDocRef = doc(collection(db, 'sales')); // Assuming you are using 'sales' collection
+            await runTransaction(db, async (transaction) => {
+                transaction.set(factorDocRef, factorData); // Set the factor data in the transaction
+
+                if (userPayment.amount > 0) {
+                    console.log('sending payment doc: ', userPayment.amount);
+                    const paymentDocRef = doc(collection(db, 'payments')); // Assuming you are using 'payments' collection
+                    transaction.set(paymentDocRef, { ...userPayment, saleId: factorDocRef.id });
                 }
-            );
-            console.log(factorDoc);
-            if (userPayment.amount > 0) {
-                console.log('sending payment doc: ', userPayment.amount);
-                addDoc(paymentCollectionRef, { ...userPayment, saleId: factorDoc.id });
-            }
+            });
+
+            // Call the update function, which will also use a transaction
+            await updateMultipleDocuments(customerFactor.productsInFactor);
+
             toast.success(t('successfullyAdded'));
 
-            setsaved(true)
+            setsaved(true);
             setcustomerFactor({
                 ...customerFactor,
                 paidAmount: userPayment.amount,
                 totalAll: totalAll(),
                 visitorAccount: visitor ? {
-                    visitorId: visitor?.id,
-                    VisitorContractType: visitor?.visitorContractType,
-                    visitorContractAmount: visitor?.visitorAmount,
-                    visitorAmount: visitorAmount,
+                    visitorId: visitor?.id ?? null,
+                    VisitorContractType: visitor?.visitorContractType ?? null,
+                    visitorContractAmount: visitor?.visitorAmount ?? null,
+                    visitorAmount: visitorAmount ?? null
                 } : null
-            })
+            });
 
-        } catch (err) {
-            toast.error(err)
+        } catch (err: any) {
+            console.error('Error in API call: ', err);
+            toast.error(err.message || 'An error occurred');
         } finally {
             dispatch({
                 type: actionTypes.SET_SMALL_LOADING,
                 payload: false
-            })
+            });
+            console.log('loading finished');
+        }
+    };
+
+    async function updateMultipleDocuments(productsInFactor: ProductForSale[]) {
+        const batch = writeBatch(db); // Create a batch
+
+        // Loop through each document update
+        productsInFactor.forEach(pr => {
+            const docRef = doc(db, Collections.Products, pr.productId); // Get the document reference
+            const targetProduct = products.find(item => item.id === pr.productId);
+            if (!targetProduct) return;
+            batch.update(docRef, { inventory: targetProduct?.inventory - pr.total }); // Update inventory
+        });
+
+        // Commit the batch
+        try {
+            await batch.commit();
+            console.log("Batch update successfully committed!");
+        } catch (error) {
+            console.error("Error committing batch update: ", error);
+            throw error; // Rethrow the error to handle rollback in sendCustomerFactorToAPI
         }
     }
 
 
-    // async function updateMultipleDocuments(docUpdates) {
-    //     const batch = writeBatch(db); // Create a batch
 
-    //     // Loop through each document update
-    //     incompletedFactors.forEach(update => {
-    //         const docRef = doc(db, Collections.Sales, update.id); // Get the document reference
-    //         batch.update(docRef, update); // Add the update operation to the batch
-    //     });
+    if (!customerForSaleFactor) {
+        nav(-1)
+        return;
+    }
 
-    //     // Commit the batch
-    //     try {
-    //         await batch.commit();
-    //         console.log("Batch update successfully committed!");
-    //     } catch (error) {
-    //         console.error("Error committing batch update: ", error);
-    //     }
-    // }
-
-    useEffect(() => {
-        if (!customerForSaleFactor) {
-            nav(-1)
-        }
-    }, [])
 
 
     console.log(customerFactor);
@@ -526,7 +536,7 @@ function AddSaleFactor({ updateMode }) {
 
                 <div
                     className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
-                    <DisplayLogo imgURL={customerImage} />
+                    <DisplayLogo imgURL={customerImage} alt={customerForSaleFactor?.name} />
                     <div className='display_flex'>
                         <span className='bold'>{t('name')}:</span>
                         <span className='info_value'> {customerForSaleFactor?.name}</span>
@@ -540,14 +550,16 @@ function AddSaleFactor({ updateMode }) {
 
                         <span className='bold'>{t('createdDate')}:</span>
                         <span className=' short_date'>
-                            {<CustomDatePicker value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)} onChange={e => {
-                                const date = jalaliToGregorian(e.year, e.month.number, e.day)
-                                const gDate = new Date(date);
-                                setcustomerFactor({
-                                    ...customerFactor,
-                                    createdDate: gDate
-                                })
-                            }} />}
+                            {<CustomDatePicker
+                                value={customerFactor?.createdDate instanceof Timestamp ? customerFactor?.createdDate?.toDate() : new Date(customerFactor?.createdDate)}
+                                onChange={(e: any) => {
+                                    const date = jalaliToGregorian(e.year, e.month.number, e.day).join('/')
+                                    const gDate = new Date(date);
+                                    setcustomerFactor({
+                                        ...customerFactor,
+                                        createdDate: gDate
+                                    })
+                                }} />}
                         </span>
                     </div>
 
@@ -580,7 +592,7 @@ function AddSaleFactor({ updateMode }) {
                                         <td>{index + 1}</td>
                                         <td>
                                             <select name="products" id="" onChange={(e) => handleSelectProduct(e, index)} defaultValue={prInFactor.productId}>
-                                                <option value={null}>
+                                                <option value={undefined}>
                                                     {t("chooseTheProduct")}
                                                 </option>
                                                 {products.map(pr => {
@@ -668,7 +680,7 @@ function AddSaleFactor({ updateMode }) {
                                 {!updateMode && <span>
                                     <Button
                                         text={t('delete')}
-                                        type={'plusBtn'}
+                                        btnType={'plusBtn'}
                                         id={'delete_payment'}
                                         onClick={deleteUserPayment}
                                     />
@@ -685,13 +697,13 @@ function AddSaleFactor({ updateMode }) {
                                 <span>
                                     <Button
                                         text={t('save')}
-                                        type={'plusBtn'}
+                                        btnType={'plusBtn'}
                                         id={'add_new_payment'}
                                         onClick={saveUserPayment}
                                     />
                                     <Button
                                         text={t('cancel')}
-                                        type={'crossBtn'}
+                                        btnType={'crossBtn'}
                                         id={'cancel_new_payment'}
                                         onClick={() => {
                                             setUserPayment({
@@ -709,7 +721,7 @@ function AddSaleFactor({ updateMode }) {
                             <Button
                                 icon={ICONS.plus}
                                 text={t('payment')}
-                                type={'plusBtn'}
+                                btnType={'plusBtn'}
                                 id={'add_new_payment'}
                                 onClick={() => setShowAddNewPayment(true)}
                             />
@@ -746,9 +758,9 @@ function AddSaleFactor({ updateMode }) {
                 <div className='margin_top_20 margin_bottom_10 display_flex justify_content_center'>
                     <Button
                         text={t('save')}
-                        type={'plusBtn'}
+                        btnType={'plusBtn'}
                         id={'save_customer_factor'}
-                        onClick={snedCustomerFactorToAPI}
+                        onClick={sendCustomerFactorToAPI}
                     />
                 </div>
 

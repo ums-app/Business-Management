@@ -1,4 +1,4 @@
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { useStateValue } from '../../../../context/StateProvider';
 import { t } from 'i18next';
@@ -9,10 +9,10 @@ import { actionTypes } from '../../../../context/reducer';
 import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { getAllCustomerPayments, getCustomerFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools';
+import { getAllCustomerPayments, getCustomerFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools.ts';
 import Button from '../../../UI/Button/Button';
 import Modal from '../../../UI/modal/Modal';
-import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
+import { jalaliToGregorian } from 'shamsi-date-converter';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { toast } from 'react-toastify';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
@@ -121,10 +121,30 @@ function CustomerPayments() {
 
 
     const deleteCustomerPayment = async (id, index) => {
-        console.log(id, index);
+        dispatch({
+            type: actionTypes.SET_GLOBAL_LOADING,
+            payload: { value: true },
+        });
+        dispatch({
+            type: actionTypes.HIDE_ASKING_MODAL,
+        });
 
+        const paymentDoc = doc(db, Collections.Payments, id);
 
-
+        try {
+            await deleteDoc(paymentDoc)
+            const temp = [...payments];
+            temp.splice(index, 1);
+            setPayments(temp);
+            toast.success(t('successfullyDeleted'));
+        } catch (err) {
+            console.log(err);
+        } finally {
+            dispatch({
+                type: actionTypes.SET_GLOBAL_LOADING,
+                payload: { value: false },
+            });
+        }
     }
 
     if (!payments) {

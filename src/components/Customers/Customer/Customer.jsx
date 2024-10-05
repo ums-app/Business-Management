@@ -19,7 +19,7 @@ import NotFound from '../../../pages/NotFound/NotFound';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
 import Collections from '../../../constants/Collections';
-import { getUserImage } from '../../../Utils/FirebaseTools';
+import { getUserImage } from '../../../Utils/FirebaseTools.ts';
 import DisplayLogo from "../../UI/DisplayLogo/DisplayLogo"
 import CustomerPayments from './CsutomerPayments/CustomerPayments';
 import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';

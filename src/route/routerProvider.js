@@ -7,7 +7,7 @@ import Customer from "../components/Customers/Customer/Customer";
 import Product from "../components/Products/Product/Product";
 import AddProduct from "../components/Products/AddProduct/AddProducts";
 import AddPurchaseProducts from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts";
-import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor";
+import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor.tsx";
 import AddSaleFactorForUnknowCustomer from "../components/Sales/AddSaleFactor/AddSaleFactorForUnknowCustomer";
 import { FactorType } from "../constants/FactorStatus";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
