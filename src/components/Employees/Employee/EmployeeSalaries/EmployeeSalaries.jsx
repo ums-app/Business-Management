@@ -350,7 +350,10 @@ function EmployeeSalaries({ data, setData }) {
                             <tr>
                                 <td>{t('currentSalary')}:</td>
                                 <td>
-                                    {data.salary}
+                                    {data?.salaryHistory?.length > 0 ?
+                                        data.salaryHistory[data?.salaryHistory?.length - 1].amount
+                                        :
+                                        data.salaryHistory}
                                 </td>
                             </tr>
                             <tr>
