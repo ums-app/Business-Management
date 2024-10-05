@@ -209,6 +209,11 @@ input {
   z-index: 1000 !important;
 }
 
+.word_break_no {
+  word-break: keep-all;
+  width: -webkit-fill-available;
+}
+
 .padding_10 {
   padding: 10px;
 }

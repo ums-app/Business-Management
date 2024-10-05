@@ -206,7 +206,7 @@ export const totalAmountOfAllCustomerPayments = (allCustomerPayments) => {
         totalAmountOfAllPayments += Number(py.amount);
     })
 
-    console.log('totalpaymentamount:', totalAmountOfAllPayments);
+    // console.log('totalpaymentamount:', totalAmountOfAllPayments);
     return totalAmountOfAllPayments;
 }
 
@@ -218,7 +218,7 @@ export const totalAmountOfAllFactors = (customerFactors) => {
     }
     let totalRemainedOfAllFactor = 0;
     customerFactors?.forEach(fac => {
-        console.log((fac));
+        // console.log((fac));
         totalRemainedOfAllFactor += getTotalPriceOfFactor(fac);
     })
     return totalRemainedOfAllFactor;
@@ -235,7 +235,7 @@ export const getAllPayments = async () => {
 
         return items;
     } catch (error) {
-        console.error("Error getting documents: ", error);
+        // console.error("Error getting documents: ", error);
         return []
     }
 };
@@ -306,12 +306,14 @@ export const getCustomerFactors = async (customerId) => {
 
 export const getTotalPriceOfFactor = (fac) => {
     let totalPriceOfFac = 0
-    fac.productsInFactor?.forEach(item => {
-        console.log("totalprice of fac: " + fac.id, totalPriceOfFac);
-        totalPriceOfFac += Number(item.totalPrice)
-    })
+    if (fac) {
+        fac?.productsInFactor?.forEach(item => {
+            // console.log("totalprice of fac: " + fac.id, totalPriceOfFac);
+            totalPriceOfFac += Number(item.totalPrice)
+        })
 
-    console.log('factor:' + fac.id, totalPriceOfFac);
+    }
+
     return totalPriceOfFac;
 }
 

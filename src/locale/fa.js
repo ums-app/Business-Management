@@ -379,6 +379,13 @@ const fa = {
         tableSalaryChangesOf: 'جدول تغییرات معاش',
         currentSalary: 'معاش فعلی',
         previousSalary: 'معاش قبلی',
+        listBy: "لیست کردن بر اساس",
+        debtorCustomers: 'مشتریان بدهکار',
+        creditorCustomers: 'مشتریان طلبکار',
+        settled: 'تسویه شده',
+
+
+
 
 
 

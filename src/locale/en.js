@@ -357,7 +357,11 @@ const en = {
         indexNumber: 'Serial Number',
         purpose: 'Purpose',
         currentSalary: "Current Salary",
-        tableSalaryChangesOf: "Salary Changes Table of"
+        tableSalaryChangesOf: "Salary Changes Table of",
+        listBy: "List By",
+        debtorCustomers: 'Debtor Customers',
+        creditorCustomers: 'Creditor Customers',
+        settled: 'Settled',
 
 
 
