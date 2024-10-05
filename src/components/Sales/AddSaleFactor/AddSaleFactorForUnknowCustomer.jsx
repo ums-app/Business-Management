@@ -18,6 +18,8 @@ import Modal from '../../UI/modal/Modal';
 import Menu from "../../UI/Menu/Menu"
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { FactorType } from '../../../constants/FactorStatus';
+import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 
 
 export const productForSale = {
@@ -313,6 +315,12 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
         }
     }
 
+    if (!customerFactor) {
+        return <LoadingTemplateContainer>
+            <ShotLoadingTemplate />
+        </LoadingTemplateContainer>
+    }
+
 
 
     return (
@@ -402,7 +410,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                     <div className='display_flex align_items_center'>
                         <span className='bold'>{t('indexNumber')}:</span>
                         <span className=''>
-                            {customerFactor.indexNumber}
+                            {customerFactor?.indexNumber}
                         </span>
                     </div>
                 </div>

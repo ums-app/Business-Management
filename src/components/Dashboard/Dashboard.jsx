@@ -3,7 +3,7 @@ import React from 'react'
 
 function Dashboard() {
     return (
-        <div>
+        <div className='fade_in'>
 
             <div className='input margin_top_20 border_radius_8'>
                 <p className='title_2 bold'>{t('statistics')}</p>

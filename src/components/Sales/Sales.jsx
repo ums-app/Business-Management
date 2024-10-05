@@ -413,7 +413,7 @@ function Sales() {
     }
 
     return (
-        <div>
+        <div className='fade_in'>
             <Button
                 text={t('add') + " " + t('factor') + " " + t('sale')}
                 // onClick={() => nav("/customers")}
@@ -530,13 +530,6 @@ function Sales() {
                                 return <tr
                                     className=" cursor_pointer hover"
                                     onClick={() => {
-                                        if (factor.type == FactorType.SUNDRY_FACTOR) {
-                                            nav('/sales/' + FactorType.SUNDRY_FACTOR + '/' + factor.id);
-                                            return;
-                                        }
-                                        nav('/sales/' + factor.id);
-                                        console.log('nav');
-
                                         dispatch({
                                             type: actionTypes.SET_FACTOR,
                                             payload: factor
@@ -546,7 +539,12 @@ function Sales() {
                                             type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
                                             payload: factor.customer
                                         });
-
+                                        if (factor.type == FactorType.SUNDRY_FACTOR) {
+                                            nav('/sales/' + FactorType.SUNDRY_FACTOR + '/' + factor.id);
+                                            return;
+                                        }
+                                        nav('/sales/' + factor.id);
+                                        console.log('nav');
                                     }}
                                     key={index}
                                 >

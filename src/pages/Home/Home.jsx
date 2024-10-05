@@ -45,7 +45,7 @@ const Home = () => {
   }
 
   return (
-    <div className="home">
+    <div className="home fade_in">
       {/* Main Show Slider */}
       {/* End of Main Show Slider */}
 
