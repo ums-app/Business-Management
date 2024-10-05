@@ -415,20 +415,27 @@ function EmployeeSalaries({ data, setData }) {
                 <table className='custom_table full_width' style={{ background: 'transparent' }} >
                     <thead style={{ background: 'orange' }}>
                         <tr>
-                            <th colSpan={3}>{t('salaryTableOf')} {data.name} {data.lastName}</th>
+                            <th colSpan={4}>{t('salaryTableOf')} {data.name} {data.lastName}</th>
                         </tr>
                         <tr>
-                            <th>{t('number')}</th>
-                            <th>{t('date')}</th>
-                            <th>{t('salary')}</th>
+                            <th rowSpan={2}>{t('number')}</th>
+                            <th colSpan={2}>{t('date')}</th>
+                            <th rowSpan={2}>{t('salary')}</th>
                             {/* <th></th> */}
                         </tr>
+
+                        <tr>
+                            <th>{t('from')}</th>
+                            <th>{t('to')}</th>
+                        </tr>
+
                     </thead>
                     <tbody>
                         {monthlySalaries.map((item, index) => {
                             return <tr >
                                 <td>{index + 1}</td>
-                                <td>{item.persianDate} - {item.persianEndDate}</td>
+                                <td>{item.persianDate}</td>
+                                <td>{item.persianEndDate}</td>
                                 <td>{item.salary}</td>
                             </tr>
                         })}

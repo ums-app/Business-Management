@@ -393,9 +393,8 @@ function CustomersManagment() {
                                 <th>{t('image')}</th>
                                 <th>{t('name')}</th>
                                 <th>{t('lastName')}</th>
-                                <th>{t('name')} {t('organization')}</th>
-                                <th>{t('phoneNumber')}</th>
                                 <th>{t('location')}</th>
+                                <th>{t('phoneNumber')}</th>
                                 <th>{t('visitor')}</th>
                             </tr>
                         </thead>
@@ -417,9 +416,8 @@ function CustomersManagment() {
                                     </td>
                                     <td>{emp.name}</td>
                                     <td>{emp.lastName}</td>
-                                    <td>{emp.organizationName} </td>
-                                    <td>{emp.phoneNumber}</td>
                                     <td>{emp.location}</td>
+                                    <td>{emp.phoneNumber}</td>
                                     <td>{visitor?.name} {visitor?.lastName}</td>
                                 </tr>
                             })
