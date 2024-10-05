@@ -403,10 +403,10 @@ function AddSaleFactor({ updateMode }) {
             if (visitor && visitor.visitorContractType == VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
                 visitorAmount = getTotalProductsOfFactor() * visitor.visitorAmount;
             } else if (visitor && visitor.visitorContractType == VisitorContractType.PERCENT) {
-                visitorAmount = (totalAll() * Number(visitor?.salesPercent) / 100);
+                visitorAmount = (totalAll() * Number(visitor?.visitorAmount) / 100);
             }
             console.log('visitor: ', visitor);
-            console.log('visitor_contract-type:', visitor.visitorContractType);
+            console.log('visitor_contract-type:', visitor?.visitorContractType);
             console.log('total-product: ', getTotalProductsOfFactor());
             console.log('visitor amount: ', visitorAmount);
 
