@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { getAllCustomerPayments, getAllPayments, getCustomerFactors, getCustomers, getFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../Utils/FirebaseTools.ts';
+import { getAllCustomerPayments, getAllPayments, getCustomerFactors, getCustomers, getFactors, getStandardFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../Utils/FirebaseTools.ts';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 import { t } from 'i18next';
 import { gregorianToJalali } from 'shamsi-date-converter';
@@ -39,7 +39,7 @@ function ShortListedCustomers() {
             setpayments(res)
         })
 
-        getFactors().then(res => {
+        getStandardFactors().then(res => {
             setFactors(res)
         })
 
@@ -66,6 +66,9 @@ function ShortListedCustomers() {
         customers?.map(customer => {
             const pays = payments.filter(item => item.customerId == customer.id)
                 .sort((a, b) => b.createdDate - a.createdDate);
+
+            console.log(factors);
+
 
             const facs = factors.filter(item => item?.customer.id == customer.id)
                 .sort((a, b) => b.createdDate - a.createdDate);

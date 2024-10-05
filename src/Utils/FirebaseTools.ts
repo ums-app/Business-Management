@@ -5,6 +5,7 @@ import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product } from "../Types/Types";
 import { Timestamp } from "firebase/firestore"; // Make sure to import Timestamp
+import { FactorType } from "../constants/FactorStatus";
 
 
 
@@ -375,6 +376,41 @@ export const getFactors = async (): Promise<CustomerFactor[]> => {
         return []
     }
 }
+
+export const getStandardFactors = async (): Promise<CustomerFactor[]> => {
+
+    try {
+        const q = query(
+            salesCollectionRef,
+            where("type", "==", FactorType.STANDARD_FACTOR),
+        );
+
+        const querySnapshot = await getDocs(q);
+        let items: CustomerFactor[] = querySnapshot.docs
+            .map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    productsInFactor: data.productsInFactor,
+                    customer: data.customer,
+                    createdDate: data.createdDate,
+                    indexNumber: data.indexNumber,
+                    type: data.type,
+                    by: data.by,
+                    paidAmount: data.paidAmount,
+                    visitorAccount: data.visitorAccount,
+                    totalAll: data.totalAll
+                }
+            }) // Map to data with id
+
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+}
+
 
 
 export const getCustomerFactors = async (customerId: string): Promise<CustomerFactor[]> => {
