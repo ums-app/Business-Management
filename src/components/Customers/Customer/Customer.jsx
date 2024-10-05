@@ -59,7 +59,7 @@ function Customer() {
                 if (data.exists()) {
                     const url = await getUserImage(data.data().email)
                     setimageURL(url)
-                    setCustomer(data.data())
+                    setCustomer({ ...data.data(), id: data.id })
                 }
             } catch (err) {
                 console.log(err);

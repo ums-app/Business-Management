@@ -64,6 +64,7 @@ function EmployeeFee() {
 
 
     const calculateWithdrawableAmount = () => {
+
         return (totalCustomersPaid * totalShareOfEmployee) / totalAmountOfAllFactors;
     }
 
@@ -78,10 +79,15 @@ function EmployeeFee() {
         if (factors) {
             factors.forEach(item => {
                 total += item.totalAll;
-                totalShareOfEmployee += item.visitorAccount.visitorAmount;
+                console.log("factor: ", item);
+                totalShareOfEmployee += item?.visitorAccount?.visitorAmount;
             })
         }
+        console.log('totalamount ofAllFactor: ', total);
+        console.log('total share of employee: ', totalShareOfEmployee);
+
         setTotalAmountOfAllFactors(total);
+
         setTotalShareOfEmployee(totalShareOfEmployee);
 
     }
@@ -91,6 +97,9 @@ function EmployeeFee() {
             <ShotLoadingTemplate />
         </LoadingTemplateContainer>
     }
+
+
+    console.log("totalshared ", totalShareOfEmployee);
 
 
     return (
