@@ -297,7 +297,8 @@ function AddSaleFactor({ updateMode }) {
 
     const getTotalProductsOfFactor = () => {
         let total = 0;
-        customerFactor.productsInFactor.forEach(item => total += item.total)
+        customerFactor.productsInFactor.forEach(item => total += Number(item.total + ''))
+
         return total;
     }
 

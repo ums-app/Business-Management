@@ -16,7 +16,7 @@ function EmployeeFee() {
     const [totalShareOfEmployee, setTotalShareOfEmployee] = useState(0)
     const [totalCustomersPaid, setTotalCustomersPaid] = useState(0)
     const [loading, setLoading] = useState(false)
-    const [totalEmployeePaidAmount, settotalEmployeePaidAmount] = useState();
+    const [totalEmployeePaidAmount, settotalEmployeePaidAmount] = useState(0);
 
 
     useEffect(() => {
@@ -64,7 +64,8 @@ function EmployeeFee() {
 
 
     const calculateWithdrawableAmount = () => {
-
+        // console.log('totalCusPaid:', totalCustomersPaid, ' totalshareOdEMp: ', totalShareOfEmployee, " totalAmountOfALLFac: ", totalAmountOfAllFactors)
+        if (totalAmountOfAllFactors == 0) return 0
         return (totalCustomersPaid * totalShareOfEmployee) / totalAmountOfAllFactors;
     }
 
@@ -101,6 +102,10 @@ function EmployeeFee() {
 
     console.log("totalshared ", totalShareOfEmployee);
 
+    console.log(calculateWithdrawableAmount(), totalEmployeePaidAmount);
+
+
+    console.log(calculateWithdrawableAmount() - totalEmployeePaidAmount);
 
     return (
         <div>
