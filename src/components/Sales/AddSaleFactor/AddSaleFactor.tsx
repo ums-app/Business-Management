@@ -633,7 +633,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                                             <Button
                                                 icon={ICONS.trash}
                                                 onClick={() => handleDeleteProduct(index)}
-                                                type={'crossBtn'}
+                                                btnType={'crossBtn'}
                                                 id={'delete_row'}
                                             />
                                             <Tooltip
@@ -651,7 +651,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                             {customerFactor.productsInFactor.length < products.length && <Button
                                 icon={ICONS.plus}
                                 onClick={addNewProdcut}
-                                type={'plusBtn'}
+                                btnType={'plusBtn'}
                                 id={'add_new_row'}
                             />}
                             <Tooltip
