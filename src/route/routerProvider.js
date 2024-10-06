@@ -10,6 +10,7 @@ import AddPurchaseProducts from "../components/PurchaseProducts/AddPurchaseProdu
 import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor.tsx";
 import AddSaleFactorForUnknowCustomer from "../components/Sales/AddSaleFactor/AddSaleFactorForUnknowCustomer";
 import { FactorType } from "../constants/FactorStatus";
+import Depot from "../components/Depot/Depot.tsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -93,6 +94,10 @@ const browserRouter = createBrowserRouter([
       {
         path: "/consumptions",
         element: <Consumptions />,
+      },
+      {
+        path: "/depot",
+        element: <Depot />,
       },
       {
         path: "/reports",
