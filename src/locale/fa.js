@@ -387,7 +387,11 @@ const fa = {
         additionalCosts: "مصارف اضافی",
         summarize: 'جمع بندی',
         purchaseFactor: "فاکتور خرید",
-        to: 'تا'
+        to: 'تا',
+        retailConsumptions: 'مصارف چکنه',
+        majorConsumptions: 'مصارف عمده',
+        withdrawals: 'برداشت ها',
+        constantConsumptions: 'مصارف ثابت',
 
 
 

@@ -366,7 +366,12 @@ const en = {
         additionalCosts: "Additional Costs",
         summarize: 'Summarize',
         purchaseFactor: 'Purchase Factor',
-        to: 'To'
+        to: 'To',
+        retailConsumptions: 'Retail Consumptions',
+        majorConsumptions: 'Major Consumptions',
+        withdrawals: 'Withdrawals',
+        constantConsumptions: 'Constant Consumptions',
+
 
 
 
