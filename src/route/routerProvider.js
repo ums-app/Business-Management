@@ -85,7 +85,7 @@ const browserRouter = createBrowserRouter([
         element: <AddPurchaseProducts />,
       },
       {
-        path: "/purchase-products/:purchaseProductId/update",
+        path: "/purchase-products/:purchaseProductId",
         element: <AddPurchaseProducts updateMode={true} />,
       },
 

@@ -86,7 +86,8 @@ export const actionTypes = {
   SET_SMALL_LOADING: "SET_SMALL_LOADING",
   COLLAPSE_NAVBAR: 'COLLAPSE_NAVBAR',
   ADD_CUSTOMER_TO_SALE_FACTOR: 'ADD_CUSTOMER_TO_SALE_FACTOR',
-  SET_FACTOR: 'SET_FACTOR'
+  SET_FACTOR: 'SET_FACTOR',
+  ADD_PURCHASE_FACTOR: "ADD_PURCHASE_FACTOR"
 };
 
 const reducer = (state, action) => {
@@ -107,6 +108,13 @@ const reducer = (state, action) => {
         ...state,
         customerForSaleFactor: action.payload
       }
+
+    case actionTypes.ADD_PURCHASE_FACTOR:
+      return {
+        ...state,
+        PurchaseFactor: action.payload
+      }
+
 
     case actionTypes.SET_AUTHENTICATION:
       return {

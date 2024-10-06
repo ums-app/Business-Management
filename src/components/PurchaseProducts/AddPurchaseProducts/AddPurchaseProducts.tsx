@@ -2,8 +2,8 @@ import { t } from 'i18next';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../UI/Button/Button';
-import { Product } from '../../../Types/Types';
-import { collection, doc, getCountFromServer, Timestamp, writeBatch } from 'firebase/firestore';
+import { Product, UpdateModeProps } from '../../../Types/Types';
+import { collection, doc, getCountFromServer, runTransaction, Timestamp, writeBatch } from 'firebase/firestore';
 import ICONS from '../../../constants/Icons';
 import { getProducts } from '../../../Utils/FirebaseTools';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
@@ -11,6 +11,9 @@ import { jalaliToGregorian } from 'shamsi-date-converter';
 import Collections from '../../../constants/Collections';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
+import { useStateValue } from '../../../context/StateProvider';
+import { actionTypes } from '../../../context/reducer';
+import Menu from '../../UI/Menu/Menu';
 
 
 export interface PurchasedProduct {
@@ -29,13 +32,15 @@ export interface PurchaseFactor {
     totalProducts: number;
     totalAmount: number;
     indexNumber: number,
+    totalPackage: number,
     createdDate: Timestamp | Date
 }
 
 
-const AddPurchaseProducts: React.FC = () => {
+const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
     const nav = useNavigate();
-    const [purchaseFactor, setPurchaseFactor] = useState<PurchaseFactor>({
+    const [{ PurchaseFactor }, dispatch] = useStateValue()
+    const [purchaseFactor, setPurchaseFactor] = useState<PurchaseFactor>(updateMode ? PurchaseFactor : {
         products: [{
             productName: '',
             productId: '',
@@ -50,10 +55,13 @@ const AddPurchaseProducts: React.FC = () => {
         createdDate: new Date(),
         indexNumber: 0,
         totalAmount: 0,
-        totalProducts: 0
+        totalProducts: 0,
+        totalPackage: 0
     });
     const [products, setproducts] = useState<Product[]>([])
     const purchasedProductCollectionRef = collection(db, Collections.Purchases);
+
+    const [saved, setsaved] = useState(false)
 
     useEffect(() => {
         getProducts().then(res => {
@@ -69,8 +77,13 @@ const AddPurchaseProducts: React.FC = () => {
         }
 
         getTotalNumberOfFactors();
+        if (updateMode) {
+            setPurchaseFactor(PurchaseFactor)
+        }
 
     }, [])
+
+
 
 
     const addNewRow = () => {
@@ -212,6 +225,7 @@ const AddPurchaseProducts: React.FC = () => {
         })
 
     }
+
     const handleTotalEachRow = (product: PurchasedProduct): number => {
         return product.additionalCosts + product.customsCosts + (product.pricePer * product.totalNumber);
     }
@@ -240,6 +254,8 @@ const AddPurchaseProducts: React.FC = () => {
 
     }
 
+    const checkIfProductIsInList = (productId: string): boolean => purchaseFactor.products.some(item => item.productId == productId);
+
     const sendDateToAPI = async () => {
         // do some check
         if (purchaseFactor.products.length == 0)
@@ -254,14 +270,49 @@ const AddPurchaseProducts: React.FC = () => {
             return;
         }
 
-        dispatch({
-            type: actionTypes.SET_SMALL_LOADING,
-            payload: true
-        });
+        // dispatch({
+        //     type: actionTypes.SET_SMALL_LOADING,
+        //     payload: true
+        // });
+        const totalAmount = summarize('totalAll')
+        const totalProduct = summarize('totalProduct')
+        const totalPackage = summarize('package')
+
+        const factorTemp = {
+            ...purchaseFactor,
+            totalAmount: totalAmount,
+            totalProducts: totalProduct,
+            totalPackage: totalPackage
+        }
+
+        setPurchaseFactor(factorTemp)
+
+        try {
+
+            // Using transaction to add the first document
+            const factorDocRef = doc(collection(db, Collections.Purchases)); // Assuming you are using 'sales' collection
+            await runTransaction(db, async (transaction) => {
+                transaction.set(factorDocRef, factorTemp); // Set the factor data in the transaction
+            });
+
+            // Call the update function, which will also use a transaction
+            await updateMultipleDocuments(purchaseFactor.products);
+
+            toast.success(t('successfullyAdded'));
+
+            setsaved(true);
 
 
-
-
+        } catch (err: any) {
+            console.error('Error in API call: ', err);
+            toast.error(err.message || 'An error occurred');
+        } finally {
+            dispatch({
+                type: actionTypes.SET_SMALL_LOADING,
+                payload: false
+            });
+            console.log('loading finished');
+        }
     }
 
     async function updateMultipleDocuments(productsInFactor: PurchasedProduct[]) {
@@ -285,125 +336,162 @@ const AddPurchaseProducts: React.FC = () => {
         }
     }
 
+    const deletePurchaseFactor = () => {
+
+    }
+
 
     return (
         <div className='full_width fade_in'>
-            <Button
-                text={t('back')}
-                onClick={() => nav(-1)}
-            />
-            <h1 className='title'>{t('add')}  {t('purchaseFactor')}</h1>
+
             <div className='display_flex justify_content_space_between'>
-                <div className='display_flex align_items_center'>
 
-                    <span className='bold'>{t('createdDate')}:</span>
-                    <span className=' short_date'>
-                        {<CustomDatePicker
-                            value={purchaseFactor?.createdDate instanceof Timestamp ? purchaseFactor?.createdDate?.toDate() : new Date(purchaseFactor?.createdDate)}
-                            onChange={(e: any) => {
-                                const date = jalaliToGregorian(e.year, e.month.number, e.day).join('/')
-                                const gDate = new Date(date);
-                                setPurchaseFactor({
-                                    ...purchaseFactor,
-                                    createdDate: gDate
-                                })
-                            }} />}
-                    </span>
-                </div>
+                {/* settings Menu */}
+                <Menu >
+                    {/* {(updateMode || saved) && <Button
+                        icon={ICONS.printer}
+                        text={t('readyForPrint')}
+                        onClick={() => setshowPrintModal(true)}
+                    />} */}
+                    <Button
+                        icon={ICONS.trash}
+                        text={t("delete")}
+                        onClick={() =>
 
-                <div className='display_flex align_items_center'>
-                    <span className='bold'>{t('indexNumber')}: </span>
-                    <span className=''>
-                        {purchaseFactor.indexNumber}
-                    </span>
-                </div>
+                            toast.error('notImplementedYet')
+                        }
+                    />
+                </Menu>
+
+                <Button
+                    text={t('back')}
+                    onClick={() => nav(-1)}
+                />
             </div>
-
-            <table className='custom_table full_width'>
-                <thead>
-                    <tr>
-                        <th>{t('number')}</th>
-                        <th>{t("name")}</th>
-                        <th>{t("total")} {t('package')}</th>
-                        <th>{t('total')}</th>
-                        <th>{t('pricePer')}</th>
-                        <th>{t('customsFees')}</th>
-                        <th>{t('additionalCosts')}</th>
-                        <th>{t("totalAll")}</th>
-                        <th>{t("actions")}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {purchaseFactor?.products.map((item, index) => {
-                        return (
-                            <tr>
-                                <td>{index + 1}</td>
-                                <td>
-                                    <select name="" id=""
-                                        onChange={(e) => handleProductChange(e, index)}
-                                    >
-                                        <option value={undefined}>{t("chooseTheProduct")}</option>
-                                        {products.map(pr => {
-                                            return <option value={pr.id}>{pr.name}</option>
-                                        })}
-                                    </select>
-                                </td>
-                                <td><input type="number" name="" style={{ width: '100px' }} value={item.totalPackage} onChange={e => handleChangeTotalPackage(e, index)} /></td>
-                                <td><input type="number" name="" style={{ width: '100px' }} value={item.totalNumber} onChange={e => handleChangeTotalNumber(e, index)} /></td>
-                                <td><input type="number" name="" style={{ width: '100px' }} value={item.pricePer} onChange={e => handleChangePricePer(e, index)} /></td>
-                                <td><input type="number" name="" style={{ width: '100px' }} value={item.customsCosts} onChange={e => handleChangeCustomsCosts(e, index)} /></td>
-                                <td><input type="number" name="" style={{ width: '100px' }} value={item.additionalCosts} onChange={e => handleChangeAdditionalCosts(e, index)} /></td>
-                                <td>{item.total}</td>
-                                <td>
-                                    <Button
-                                        icon={ICONS.trash}
-                                        onClick={() => removeRow(index)}
-                                    />
-                                </td>
-                            </tr>
-                        )
-                    })}
+            <div className='position_relative'>
+                {(updateMode || saved) && <div className='lock_page'></div>}
 
 
+                <h1 className='title'>{t('add')}  {t('purchaseFactor')}</h1>
+                <div className='display_flex justify_content_space_between'>
+                    <div className='display_flex align_items_center'>
 
-                </tbody>
+                        <span className='bold'>{t('createdDate')}:</span>
+                        <span className=' short_date'>
+                            {<CustomDatePicker
+                                value={purchaseFactor?.createdDate instanceof Timestamp ? purchaseFactor?.createdDate?.toDate() : new Date(purchaseFactor?.createdDate)}
+                                onChange={(e: any) => {
+                                    const date = jalaliToGregorian(e.year, e.month.number, e.day).join('/')
+                                    const gDate = new Date(date);
+                                    setPurchaseFactor({
+                                        ...purchaseFactor,
+                                        createdDate: gDate
+                                    })
+                                }} />}
+                        </span>
+                    </div>
+
+                    <div className='display_flex align_items_center'>
+                        <span className='bold'>{t('indexNumber')}: </span>
+                        <span className=''>
+                            {purchaseFactor.indexNumber}
+                        </span>
+                    </div>
+                </div>
+
+                <table className='custom_table full_width'>
+                    <thead>
+                        <tr>
+                            <th>{t('number')}</th>
+                            <th>{t("name")}</th>
+                            <th>{t("total")} {t('package')}</th>
+                            <th>{t('total')}</th>
+                            <th>{t('pricePer')}</th>
+                            <th>{t('customsFees')}</th>
+                            <th>{t('additionalCosts')}</th>
+                            <th>{t("totalAll")}</th>
+                            <th>{t("actions")}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {purchaseFactor?.products.map((item, index) => {
+                            return (
+                                <tr>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                        <select name="" id=""
+                                            onChange={(e) => handleProductChange(e, index)}
+                                        >
+                                            <option value={undefined}>{t("chooseTheProduct")}</option>
+                                            {products.map(pr => {
+                                                return <option
+                                                    selected={item.productId == pr.id} style={{ width: 'max-content' }}
+                                                    disabled={checkIfProductIsInList(pr.id)}
+                                                    value={pr.id}
+                                                >
+                                                    {pr.name}
+                                                </option>
+                                            })}
+                                        </select>
+                                    </td>
+                                    <td><input type="number" name="" style={{ width: '100px' }} value={item.totalPackage} onChange={e => handleChangeTotalPackage(e, index)} /></td>
+                                    <td><input type="number" name="" style={{ width: '100px' }} value={item.totalNumber} onChange={e => handleChangeTotalNumber(e, index)} /></td>
+                                    <td><input type="number" name="" style={{ width: '100px' }} value={item.pricePer} onChange={e => handleChangePricePer(e, index)} /></td>
+                                    <td><input type="number" name="" style={{ width: '100px' }} value={item.customsCosts} onChange={e => handleChangeCustomsCosts(e, index)} /></td>
+                                    <td><input type="number" name="" style={{ width: '100px' }} value={item.additionalCosts} onChange={e => handleChangeAdditionalCosts(e, index)} /></td>
+                                    <td>{item.total}</td>
+                                    <td>
+                                        <Button
+                                            icon={ICONS.trash}
+                                            onClick={() => removeRow(index)}
+                                        />
+                                    </td>
+                                </tr>
+                            )
+                        })}
+
+
+
+                    </tbody>
+                    <Button
+                        icon={ICONS.plus}
+                        btnType=' margin_top_10'
+                        onClick={addNewRow}
+                    />
+                </table>
+
+
+                <table className='custom_table full_width margin_top_20'>
+                    <thead style={{ background: 'orange' }}>
+                        <tr>
+                            <th colSpan={5}>{t('summarize')}</th>
+                        </tr>
+                        <tr>
+                            <td>{t("total")} {t('package')}</td>
+                            <td>{t('total')}</td>
+                            <td>{t('customsFees')}</td>
+                            <td>{t('additionalCosts')}</td>
+                            <td>{t("totalAll")}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td> {summarize('package')}</td>
+                            <td>{summarize('totalProduct')}</td>
+                            <td>{summarize('customsFees')}</td>
+                            <td>{summarize('additionalCosts')}</td>
+                            <td>{summarize('totalAll')}</td>
+                        </tr>
+                    </tbody>
+                </table>
                 <Button
                     icon={ICONS.plus}
                     btnType=' margin_top_10'
-                    onClick={addNewRow}
+                    onClick={sendDateToAPI}
+                    text={t('save')}
                 />
-            </table>
 
-
-            <table className='custom_table full_width margin_top_20'>
-                <thead style={{ background: 'orange' }}>
-                    <tr>
-                        <th colSpan={5}>{t('summarize')}</th>
-                    </tr>
-                    <tr>
-                        <td>{t("total")} {t('package')}</td>
-                        <td>{t('total')}</td>
-                        <td>{t('customsFees')}</td>
-                        <td>{t('additionalCosts')}</td>
-                        <td>{t("totalAll")}</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td> {summarize('package')}</td>
-                        <td>{summarize('totalProduct')}</td>
-                        <td>{summarize('customsFees')}</td>
-                        <td>{summarize('additionalCosts')}</td>
-                        <td>{summarize('totalAll')}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <Button
-                icon={ICONS.plus}
-                btnType=' margin_top_10'
-                onClick={sendDateToAPI}
-                text={t('save')}
-            />
+            </div>
 
 
         </div>
