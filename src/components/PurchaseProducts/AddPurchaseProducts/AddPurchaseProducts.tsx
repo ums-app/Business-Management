@@ -10,6 +10,7 @@ import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { jalaliToGregorian } from 'shamsi-date-converter';
 import Collections from '../../../constants/Collections';
 import { db } from '../../../constants/FirebaseConfig';
+import { toast } from 'react-toastify';
 
 
 export interface PurchasedProduct {
@@ -240,6 +241,24 @@ const AddPurchaseProducts: React.FC = () => {
     }
 
     const sendDateToAPI = async () => {
+        // do some check
+        if (purchaseFactor.products.length == 0)
+            toast.error('')
+
+
+        if (purchaseFactor.products.length === 0 ||
+            purchaseFactor.products.some(item => item.totalNumber === 0) ||
+            purchaseFactor.products.some(item => item.productName.trim().length === 0)
+        ) {
+            toast.error(t('products') + " " + t('notEmptyMsg'));
+            return;
+        }
+
+        dispatch({
+            type: actionTypes.SET_SMALL_LOADING,
+            payload: true
+        });
+
 
 
 
@@ -303,15 +322,15 @@ const AddPurchaseProducts: React.FC = () => {
             <table className='custom_table full_width'>
                 <thead>
                     <tr>
-                        <td>{t('number')}</td>
-                        <td>{t("name")}</td>
-                        <td>{t("total")} {t('package')}</td>
-                        <td>{t('total')}</td>
-                        <td>{t('pricePer')}</td>
-                        <td>{t('customsFees')}</td>
-                        <td>{t('additionalCosts')}</td>
-                        <td>{t("totalAll")}</td>
-                        <td>{t("actions")}</td>
+                        <th>{t('number')}</th>
+                        <th>{t("name")}</th>
+                        <th>{t("total")} {t('package')}</th>
+                        <th>{t('total')}</th>
+                        <th>{t('pricePer')}</th>
+                        <th>{t('customsFees')}</th>
+                        <th>{t('additionalCosts')}</th>
+                        <th>{t("totalAll")}</th>
+                        <th>{t("actions")}</th>
                     </tr>
                 </thead>
                 <tbody>

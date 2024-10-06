@@ -365,7 +365,8 @@ const en = {
         customsFees: "Customs Fees",
         additionalCosts: "Additional Costs",
         summarize: 'Summarize',
-        purchaseFactor: 'Purchase Factor'
+        purchaseFactor: 'Purchase Factor',
+        to: 'To'
 
 
 

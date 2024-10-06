@@ -387,6 +387,7 @@ const fa = {
         additionalCosts: "مصارف اضافی",
         summarize: 'جمع بندی',
         purchaseFactor: "فاکتور خرید",
+        to: 'تا'
 
 
 
