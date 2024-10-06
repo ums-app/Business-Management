@@ -385,6 +385,9 @@ const fa = {
         settled: 'تسویه شده',
         customsFees: "مصارف گمرکی",
         additionalCosts: "مصارف اضافی",
+        summarize: 'جمع بندی',
+        purchaseFactor: "فاکتور خرید",
+
 
 
 

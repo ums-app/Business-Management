@@ -2,9 +2,8 @@ import { t } from 'i18next';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../UI/Button/Button';
-import { Product, ProductForSale, UpdateModeProps } from '../../../Types/Types';
-import { productForSale } from '../../Sales/AddSaleFactor/AddSaleFactorForUnknowCustomer';
-import { collection, getCountFromServer, Timestamp } from 'firebase/firestore';
+import { Product } from '../../../Types/Types';
+import { collection, doc, getCountFromServer, Timestamp, writeBatch } from 'firebase/firestore';
 import ICONS from '../../../constants/Icons';
 import { getProducts } from '../../../Utils/FirebaseTools';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
@@ -36,13 +35,22 @@ export interface PurchaseFactor {
 const AddPurchaseProducts: React.FC = () => {
     const nav = useNavigate();
     const [purchaseFactor, setPurchaseFactor] = useState<PurchaseFactor>({
-        products: [],
+        products: [{
+            productName: '',
+            productId: '',
+            customsCosts: 0,
+            total: 0,
+            additionalCosts: 0,
+            totalPackage: 0,
+            totalNumber: 0,
+            pricePer: 0
+
+        }],
         createdDate: new Date(),
         indexNumber: 0,
         totalAmount: 0,
         totalProducts: 0
     });
-    const [showNewRow, setshowNewRow] = useState(false)
     const [products, setproducts] = useState<Product[]>([])
     const purchasedProductCollectionRef = collection(db, Collections.Purchases);
 
@@ -61,9 +69,7 @@ const AddPurchaseProducts: React.FC = () => {
 
         getTotalNumberOfFactors();
 
-
     }, [])
-
 
 
     const addNewRow = () => {
@@ -209,14 +215,65 @@ const AddPurchaseProducts: React.FC = () => {
         return product.additionalCosts + product.customsCosts + (product.pricePer * product.totalNumber);
     }
 
+    const summarize = (type: string): number => {
+        let total = 0
+        switch (type) {
+            case 'package':
+                purchaseFactor.products.forEach(item => total += item.totalPackage)
+                return total;
+            case 'totalProduct':
+                purchaseFactor.products.forEach(item => total += item.totalNumber)
+                return total;
+            case 'customsFees':
+                purchaseFactor.products.forEach(item => total += item.customsCosts)
+                return total;
+            case 'additionalCosts':
+                purchaseFactor.products.forEach(item => total += item.additionalCosts)
+                return total;
+            case 'totalAll':
+                purchaseFactor.products.forEach(item => total += item.total)
+                return total;
+            default:
+                return 0
+        }
+
+    }
+
+    const sendDateToAPI = async () => {
+
+
+
+    }
+
+    async function updateMultipleDocuments(productsInFactor: PurchasedProduct[]) {
+        const batch = writeBatch(db); // Create a batch
+
+        // Loop through each document update
+        productsInFactor.forEach(pr => {
+            const docRef = doc(db, Collections.Products, pr.productId); // Get the document reference
+            const targetProduct = products.find(item => item.id === pr.productId);
+            if (!targetProduct) return;
+            batch.update(docRef, { inventory: targetProduct?.inventory + pr.totalNumber }); // Update inventory
+        });
+
+        // Commit the batch
+        try {
+            await batch.commit();
+            console.log("Batch update successfully committed!");
+        } catch (error) {
+            console.error("Error committing batch update: ", error);
+            throw error; // Rethrow the error to handle rollback in sendCustomerFactorToAPI
+        }
+    }
+
 
     return (
-        <div className='full_width'>
+        <div className='full_width fade_in'>
             <Button
                 text={t('back')}
                 onClick={() => nav(-1)}
             />
-            <h1 className='title'>{t('add')}  {t('purchase')}</h1>
+            <h1 className='title'>{t('add')}  {t('purchaseFactor')}</h1>
             <div className='display_flex justify_content_space_between'>
                 <div className='display_flex align_items_center'>
 
@@ -293,10 +350,42 @@ const AddPurchaseProducts: React.FC = () => {
                 </tbody>
                 <Button
                     icon={ICONS.plus}
-
+                    btnType=' margin_top_10'
                     onClick={addNewRow}
                 />
             </table>
+
+
+            <table className='custom_table full_width margin_top_20'>
+                <thead style={{ background: 'orange' }}>
+                    <tr>
+                        <th colSpan={5}>{t('summarize')}</th>
+                    </tr>
+                    <tr>
+                        <td>{t("total")} {t('package')}</td>
+                        <td>{t('total')}</td>
+                        <td>{t('customsFees')}</td>
+                        <td>{t('additionalCosts')}</td>
+                        <td>{t("totalAll")}</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td> {summarize('package')}</td>
+                        <td>{summarize('totalProduct')}</td>
+                        <td>{summarize('customsFees')}</td>
+                        <td>{summarize('additionalCosts')}</td>
+                        <td>{summarize('totalAll')}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <Button
+                icon={ICONS.plus}
+                btnType=' margin_top_10'
+                onClick={sendDateToAPI}
+                text={t('save')}
+            />
+
 
         </div>
     )

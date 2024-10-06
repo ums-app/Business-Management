@@ -364,6 +364,8 @@ const en = {
         settled: 'Settled',
         customsFees: "Customs Fees",
         additionalCosts: "Additional Costs",
+        summarize: 'Summarize',
+        purchaseFactor: 'Purchase Factor'
 
 
 

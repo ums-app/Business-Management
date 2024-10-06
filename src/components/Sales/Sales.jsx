@@ -405,7 +405,10 @@ function Sales() {
     if (!factors) {
         return (
             <LoadingTemplateContainer>
-                <ButtonLoadingTemplate />
+                <div className='display_flex'>
+                    <ButtonLoadingTemplate />
+                    <ButtonLoadingTemplate />
+                </div>
                 <HeadingMenuTemplate />
                 <ShotLoadingTemplate />
             </LoadingTemplateContainer>
