@@ -422,8 +422,9 @@ function CustomersManagment() {
                                 </tr>
                             })
                             }
-
-
+                            {customers?.length == 0 && <tr>
+                                <td colSpan={6}>{t('notExist')}</td>
+                            </tr>}
                         </tbody>
                     </table>
                 }

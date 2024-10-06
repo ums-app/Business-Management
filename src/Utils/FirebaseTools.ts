@@ -4,7 +4,6 @@ import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product } from "../Types/Types";
-import { Timestamp } from "firebase/firestore"; // Make sure to import Timestamp
 import { FactorType } from "../constants/FactorStatus";
 
 
@@ -78,8 +77,6 @@ export const getProducts = async (): Promise<Product[]> => {
 }
 
 
-
-
 //  ========================== employee service ==================================
 
 
@@ -119,7 +116,7 @@ export const getAllEmployeePayments = async (employeeId: string): Promise<Employ
     const q = query(
         employeePaymentsCollectionRef,
         where("employeeId", "==", employeeId),
-        orderBy("createdDate", "asc")
+        orderBy("date", "asc")
     );
 
     try {
@@ -139,7 +136,6 @@ export const getAllEmployeePayments = async (employeeId: string): Promise<Employ
                     id: doc.id
                 }
             })
-            .sort((a, b) => b.createdDate - a.createdDate);// Map to data with id
 
         console.log(items);
 
@@ -462,8 +458,6 @@ export const getTotalPriceOfFactor = (fac: CustomerFactor): number => {
 
     return totalPriceOfFac;
 }
-
-
 
 
 

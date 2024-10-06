@@ -16,9 +16,8 @@ import print from '../../../../constants/PrintCssStyles';
 import { getAllEmployeePayments } from '../../../../Utils/FirebaseTools.ts';
 import { EmployeePaymentType } from '../../../../constants/Others';
 import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
-import DatePicker from 'react-multi-date-picker';
 import Modal from '../../../UI/modal/Modal';
-import { collection, doc, Timestamp, updateDoc } from 'firebase/firestore';
+import { doc, Timestamp, updateDoc } from 'firebase/firestore';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
 import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
@@ -434,14 +433,19 @@ function EmployeeSalaries({ data, setData }) {
 
                     </thead>
                     <tbody>
-                        {monthlySalaries.map((item, index) => {
-                            return <tr >
-                                <td>{index + 1}</td>
-                                <td>{item.persianDate}</td>
-                                <td>{item.persianEndDate}</td>
-                                <td>{item.salary}</td>
-                            </tr>
-                        })}
+                        {monthlySalaries
+                            .map((item, index) => {
+                                return <tr >
+                                    <td>{index + 1}</td>
+                                    <td>{item.persianDate}</td>
+                                    <td>{item.persianEndDate}</td>
+                                    <td>{item.salary}</td>
+                                </tr>
+                            })}
+
+                        {monthlySalaries?.length == 0 && <tr>
+                            <td colSpan={6}>{t('notExist')}</td>
+                        </tr>}
                     </tbody>
                 </table>
             </div>

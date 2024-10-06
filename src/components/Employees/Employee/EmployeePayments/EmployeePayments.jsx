@@ -36,21 +36,6 @@ function EmployeePayments() {
         type: EmployeePaymentType.SALARY
     })
 
-    // const [totalPayments, settotalPayments] = useState(0)
-    // const [totalFactors, settotalFactors] = useState(0)
-
-    useEffect(() => {
-        getAllEmployeePayments(employeeId)
-            .then(res => {
-                console.log(res);
-                setPayments(res)
-            })
-
-    }, [])
-
-
-
-
 
     useEffect(() => {
         getAllEmployeePayments(employeeId).then(res => {
@@ -309,7 +294,7 @@ function EmployeePayments() {
                                 key={pay.id}
                             >
                                 <td>{index + 1}</td>
-                                <td>{formatFirebaseDates(pay.createdDate)}</td>
+                                <td>{formatFirebaseDates(pay.date)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>
                                 <td>{pay.type == EmployeePaymentType.SALARY ? t('salary') : t('sales')}</td>
