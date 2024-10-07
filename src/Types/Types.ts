@@ -133,7 +133,6 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     loading?: boolean; // Optional: default value can be 'false'
     isLock?: boolean; // Optional: default value can be 'false'
     isConfirmed?: boolean; // Optional: default value can be 'false'
-    props: Record<string, any>
 }
 
 export interface AuthenticationType {

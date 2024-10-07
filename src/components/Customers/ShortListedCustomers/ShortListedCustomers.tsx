@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { getAllCustomerPayments, getAllPayments, getCustomerFactors, getCustomers, getFactors, getStandardFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../Utils/FirebaseTools.ts';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils.js';
 import { t } from 'i18next';
@@ -22,14 +22,27 @@ const filters = {
     Settled: 'settled'
 }
 
+
+interface FilteredCustomer {
+    name: string,
+    lastName: string,
+    customerLocation: string,
+    customerPhoneNumber: string,
+    lastPurchaseDate: string,
+    lastPurchaseAmount: number,
+    lastPaymentDate: string,
+    lastPaymentAmount: number,
+    remainedAmount: number
+}
+
 const ShortListedCustomers: React.FC = () => {
     const [, dispatch] = useStateValue()
     const [customers, setCustomers] = useState<CustomerForSaleFactor[]>();
     const [payments, setpayments] = useState<CustomerPayment[]>([]);
     const [factors, setFactors] = useState<CustomerFactor[]>([]);
-    const [shortListOfCustomers, setshortListOfCustomers] = useState<CustomerForSaleFactor[]>([]);
+    const [shortListOfCustomers, setshortListOfCustomers] = useState<FilteredCustomer[]>([]);
     const [loading, setLoading] = useState(false)
-    let shortListRef = useRef();
+    let shortListRef: HTMLDivElement | null = null;
     const [filter, setFilter] = useState<string>()
     useEffect(() => {
         getCustomers().then(res => {
@@ -63,23 +76,21 @@ const ShortListedCustomers: React.FC = () => {
 
     const shortListTheCustomer = (filter: string) => {
         setLoading(true)
-        const list = [];
+        const list: FilteredCustomer[] = [];
         customers?.map(customer => {
-            const pays = payments.filter(item => item.customerId == customer.id)
-                .sort((a, b) => b.createdDate - a.createdDate);
-
-            console.log(factors);
+            const pays: CustomerPayment[] = payments.filter(item => item.customerId == customer.id);
 
 
-            const facs = factors.filter(item => item?.customer.id == customer.id)
-                .sort((a, b) => b.createdDate - a.createdDate);
-            ;
+            const facs = factors.filter(item => item?.customer.id == customer.id);
+
             const totalPayments = totalAmountOfAllCustomerPayments(pays);
 
             const totalAmountOfFactors = totalAmountOfAllFactors(facs);
             const remained = totalAmountOfFactors - totalPayments;
             // console.log('name: ', customer.name, pays);
             // console.log('name: ', customer.name + " " + customer.lastName, 'totalPayments: ', totalPayments, 'totalamountofFactors: ', totalAmountOfFactors, 'remained: ', remained);
+
+
             const customerOBJ = {
                 name: customer.name,
                 lastName: customer.lastName,
@@ -91,6 +102,7 @@ const ShortListedCustomers: React.FC = () => {
                 lastPaymentAmount: pays[0]?.amount && pays[0]?.amount,
                 remainedAmount: remained
             }
+            console.log(customer, customerOBJ);
 
             if (filter == filters.DebtorCustomers && remained > 0) {
                 console.log('if ', filter + ' == ' + filters.DebtorCustomers);
@@ -186,7 +198,7 @@ const ShortListedCustomers: React.FC = () => {
                                 <th rowSpan={2}>{t('phoneNumber')}</th>
                                 <th colSpan={2}>{t('lastPayment')}</th>
                                 <th rowSpan={2}>{t('remainedAmount')}</th>
-                                <th th rowSpan={2} > {t('currentAmount')}</th>
+                                <th rowSpan={2} > {t('currentAmount')}</th>
                             </tr>
                             <tr style={{ backgroundColor: '#f744e2' }}>
                                 <th>{t('name')}</th>

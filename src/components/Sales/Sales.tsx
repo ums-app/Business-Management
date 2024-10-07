@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { t } from 'i18next'
 import Button from '../UI/Button/Button'
-import { toast } from 'react-toastify'
 import { db } from '../../constants/FirebaseConfig';
 import { collection, DocumentData, endBefore, getCountFromServer, getDocs, limit, limitToLast, orderBy, query, QueryConstraint, QueryFieldFilterConstraint, QueryLimitConstraint, QueryOrderByConstraint, startAfter, where } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom'
@@ -12,7 +11,6 @@ import ButtonLoadingTemplate from "../UI/LoadingTemplate/ButtonLoadingTemplate"
 import Collections from '../../constants/Collections';
 import Modal from '../UI/modal/Modal';
 import SelectCustomer from './AddSaleFactor/SelectCustomer/SelectCustomer';
-import { gregorianToJalali } from 'shamsi-date-converter';
 import { actionTypes } from '../../context/reducer';
 import { useStateValue } from '../../context/StateProvider';
 import { Tooltip } from 'react-tooltip';
@@ -20,7 +18,7 @@ import Pagination from '../UI/Pagination/Pagination';
 import { pageSizes } from '../../constants/Others';
 import ICONS from '../../constants/Icons';
 import { FactorType } from '../../constants/FactorStatus';
-import { CustomerFactor, Product, ProductForSale, Suggestion } from '../../Types/Types';
+import { CustomerFactor, ProductForSale, Suggestion } from '../../Types/Types';
 import { mapDocToCustomerFactor } from '../../Utils/Mapper';
 import { formatFirebaseDates } from '../../Utils/DateTimeUtils';
 
@@ -28,14 +26,9 @@ import { formatFirebaseDates } from '../../Utils/DateTimeUtils';
 
 const Sales: React.FC = () => {
     const nav = useNavigate();
-    const [globalState, dispatch] = useStateValue()
-    const [sales, setSales] = useState();
+    const [, dispatch] = useStateValue()
     const salesCollectionRef = collection(db, Collections.Sales);
     const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false)
-
-
-    console.log(globalState);
-
     const [factors, setFactors] = useState<CustomerFactor[]>()
 
     const [pageSize, setPageSize] = useState<number>(pageSizes[0])
@@ -180,7 +173,7 @@ const Sales: React.FC = () => {
 
         try {
             // Dynamically build the query based on search conditions
-            let queryConstraints = [orderBy("createdDate", "desc"), limit(pageSize)];
+            let queryConstraints: QueryConstraint[] = [orderBy("createdDate", "desc"), limit(pageSize)];
 
             if (searchValue.length > 0) {
                 queryConstraints.unshift(where('indexNumber', '==', Number(searchValue)));
@@ -201,10 +194,7 @@ const Sales: React.FC = () => {
                 return;
             }
 
-            const customerData = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-            }));
+            const customerData = querySnapshot.docs.map(doc => mapDocToCustomerFactor(doc));
 
             setFactors(customerData);
 
@@ -417,7 +407,7 @@ const Sales: React.FC = () => {
                 text={t('add') + " " + t('sundryFactor')}
                 // onClick={() => nav("/customers")}
                 onClick={() => nav('add-custom')}
-                type={"margin_10"}
+                btnType={"margin_10"}
             />
             <Modal show={showSelectCustomerModal} modalClose={() => setShowSelectCustomerModal(false)}>
                 <SelectCustomer />

@@ -7,7 +7,7 @@ import { ButtonProps } from "../../../Types/Types";
 
 
 
-const Button: React.FC<ButtonProps> = ({ btnType = null, isLock = undefined, isConfirmed = null, type = null, title, onClick, text, loading = null, icon = null, props }) => {
+const Button: React.FC<ButtonProps> = ({ btnType = null, isLock = undefined, isConfirmed = null, type = 'button', title, onClick, text, loading = null, icon = null, }) => {
   return (
     <div className="btn_container">
       {isLock ? <span
@@ -22,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({ btnType = null, isLock = undefined, isC
         onClick={onClick}
         title={title}
         disabled={isLock}
-        {...props}
+        type={type}
       >
         <i className={"bi " + icon}></i>
         {text}

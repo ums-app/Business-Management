@@ -5,7 +5,7 @@ import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct } from "./Mapper";
+import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct } from "./Mapper";
 
 
 
@@ -161,7 +161,7 @@ export const getCustomers = async (): Promise<CustomerForSaleFactor[]> => {
         console.log('querysnapshot is empty: ', querySnapshot.empty);
 
         let items: any[] = querySnapshot.docs
-            .map(doc => mapDocToCustomerFactor(doc))
+            .map(doc => mapDocToCustomer(doc))
 
         return items;
 
