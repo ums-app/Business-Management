@@ -11,8 +11,9 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, manufactu
     const [{ authentication },] = useStateValue()
 
     const navToProductPage = () => {
-        if (authentication.userType != 'Customer' || !authentication.roles('ADMIN') || !authentication.roles('SUPER_ADMIN')) return
-        navigate(id)
+        if (authentication.roles.includes('ADMIN') || authentication.roles.includes('SUPER_ADMIN'))
+            navigate(id)
+
     }
 
 
@@ -30,7 +31,7 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, manufactu
                         {authentication.userType != 'Customer' ? <>
                             <tr className='after-discount margin_bottom_5'>
                                 <td><span className='bullet'>{t('price')} </span></td>
-                                <td>{price}  <sup>af</sup></td>
+                                <td>{price}  <sup>{t('af')}</sup></td>
                             </tr>
                             <tr className='after-discount margin_bottom_5'>
                                 <td><span className='bullet'>{t('inventory')}</span> </td>

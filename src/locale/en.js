@@ -372,7 +372,8 @@ const en = {
         withdrawals: 'Withdrawals',
         constantConsumptions: 'Constant Consumptions',
         present: 'Present',
-        nonExistent: 'Not Exist'
+        nonExistent: 'Not Exist',
+        af: 'Af'
 
 
 

@@ -393,7 +393,8 @@ const fa = {
         withdrawals: 'برداشت ها',
         constantConsumptions: 'مصارف ثابت',
         present: 'موجود',
-        nonExistent: 'ناموجود'
+        nonExistent: 'ناموجود',
+        af: 'افـ'
 
 
 
