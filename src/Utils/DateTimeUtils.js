@@ -113,6 +113,27 @@ export const formatFirebaseDates = (date) => {
   return jalaliDate
 }
 
+export const convertFirebaseDatesToDate = (date) => {
+  // Check if date is a Firestore Timestamp, and convert it to a JavaScript Date
+  if (date instanceof Timestamp) {
+    date = date.toDate();
+  } else if (typeof date === 'number') {
+    // If it's a timestamp (number), convert to Date
+    date = new Date(date);
+  } else if (typeof date === 'string') {
+    // Check if the string can be parsed into a valid date
+    const parsedDate = Date.parse(date);
+    if (!isNaN(parsedDate)) {
+      date = new Date(parsedDate);
+    } else {
+      date = null; // Handle invalid date strings
+    }
+  }
+  return date
+}
+
+
+
 
 
 

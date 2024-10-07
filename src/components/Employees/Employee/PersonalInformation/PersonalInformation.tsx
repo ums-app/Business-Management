@@ -12,27 +12,30 @@ import { useStateValue } from '../../../../context/StateProvider';
 import ICONS from '../../../../constants/Icons';
 import { VisitorContractType } from '../../../../constants/Others';
 import { formatDate, formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
+import { Employee } from '../../../../Types/Types';
+import { mapDocToEmployee } from '../../../../Utils/Mapper';
+import { getEmployeeById } from '../../../../Utils/FirebaseTools';
 
-function PersonalInformation() {
+const PersonalInformation: React.FC = () => {
     const [{ authentication }, dispatch] = useStateValue()
     const { employeeId } = useParams();
+    const [notFound, setnotFound] = useState<string>()
 
     const [showPassword, setshowPassword] = useState(false)
-    const [employee, setemployee] = useState();
+    const [employee, setemployee] = useState<Employee>();
     useEffect(() => {
-        const getData = async () => {
-            try {
-                const data = await getDoc(doc(db, Collections.Employees, employeeId));
-                if (data.exists()) {
-                    setemployee(data.data())
-                }
 
-            } catch (err) {
-                console.log(err);
-            }
-        }
+        if (employeeId)
+            getEmployeeById(employeeId).then(res => {
+                if (res)
+                    setemployee(res)
+                else
+                    setnotFound(t("notFound"))
 
-        getData();
+            }).catch(err => {
+                setnotFound(err)
+            })
+
 
     }, [employeeId])
 
@@ -90,7 +93,9 @@ function PersonalInformation() {
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('salary')} </span>
-                <span>{employee?.salaryHistory?.length > 0 ? employee.salaryHistory[employee?.salaryHistory?.length - 1].amount : employee.salaryHistory}</span>
+                <span>
+                    {employee.salaryHistory.length > 0 ? employee.salaryHistory[employee.salaryHistory.length - 1].amount : employee.salary}
+                </span>
             </div>
             {employee?.visitorContractType &&
                 <>

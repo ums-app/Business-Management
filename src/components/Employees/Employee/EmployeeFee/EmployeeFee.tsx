@@ -2,42 +2,44 @@ import { t } from 'i18next'
 import React, { useEffect, useState } from 'react'
 import { getAllEmployeePayments, getAllVisitorFactors, getCustomerPaymentByCustomerIds } from '../../../../Utils/FirebaseTools.ts';
 import { useParams } from 'react-router-dom';
-import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
-import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
-import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemplate';
-import { EmployeePaymentType } from '../../../../constants/Others';
-import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
+import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer.jsx';
+import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate.jsx';
+import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus.jsx';
+import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemplate.jsx';
+import { EmployeePaymentType } from '../../../../constants/Others.js';
+import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate.jsx';
+import { CustomerFactor } from '../../../../Types/Types.ts';
 
-function EmployeeFee() {
+const EmployeeFee: React.FC = () => {
     const { employeeId } = useParams()
-    const [allFactors, setallFactors] = useState();
-    const [totalAmountOfAllFactors, setTotalAmountOfAllFactors] = useState(0)
-    const [totalShareOfEmployee, setTotalShareOfEmployee] = useState(0)
-    const [totalCustomersPaid, setTotalCustomersPaid] = useState(0)
-    const [loading, setLoading] = useState(false)
-    const [totalEmployeePaidAmount, settotalEmployeePaidAmount] = useState(0);
+    const [allFactors, setallFactors] = useState<CustomerFactor[]>([]);
+    const [totalAmountOfAllFactors, setTotalAmountOfAllFactors] = useState<number>(0)
+    const [totalShareOfEmployee, setTotalShareOfEmployee] = useState<number>(0)
+    const [totalCustomersPaid, setTotalCustomersPaid] = useState<number>(0)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [totalEmployeePaidAmount, settotalEmployeePaidAmount] = useState<number>(0);
 
 
     useEffect(() => {
-        getAllVisitorFactors(employeeId)
-            .then(res => {
-                getTotalAmountOfFactors(res);
-                setallFactors(res)
+        if (employeeId) {
+            getAllVisitorFactors(employeeId)
+                .then(res => {
+                    getTotalAmountOfFactors(res);
+                    setallFactors(res)
 
-            }).catch(err => {
-                setallFactors([])
-            })
+                }).catch(err => {
+                    setallFactors([])
+                })
 
-        getAllEmployeePayments(employeeId)
-            .then(res => {
-                let total = 0;
-                res.filter(item => item.type == EmployeePaymentType.SALES)
-                    .forEach(item => total += item.amount)
+            getAllEmployeePayments(employeeId)
+                .then(res => {
+                    let total = 0;
+                    res.filter(item => item.type == EmployeePaymentType.SALES)
+                        .forEach(item => total += item.amount)
 
-                settotalEmployeePaidAmount(total);
-            })
-
+                    settotalEmployeePaidAmount(total);
+                })
+        }
 
 
     }, [])
@@ -45,8 +47,7 @@ function EmployeeFee() {
     useEffect(() => {
         if (allFactors) {
             setLoading(true);
-            let ids = new Set([...allFactors.map(item => item.customer.id)]);
-            ids = [...ids.values()];
+            let ids: string[] = new Set([...allFactors.map(item => item.customer.id)]).values().toArray();
 
             getCustomerPaymentByCustomerIds(ids)
                 .then(res => {
@@ -74,18 +75,18 @@ function EmployeeFee() {
 
     console.log(allFactors);
 
-    const getTotalAmountOfFactors = (factors) => {
+    const getTotalAmountOfFactors = (factors: CustomerFactor[]) => {
         let total = 0;
         let totalShareOfEmployee = 0
         if (factors) {
             factors.forEach(item => {
                 total += item.totalAll;
                 console.log("factor: ", item);
-                totalShareOfEmployee += item?.visitorAccount?.visitorAmount;
+                totalShareOfEmployee += item.visitorAccount ? item?.visitorAccount?.visitorAmount : 0;
             })
         }
-        console.log('totalamount ofAllFactor: ', total);
-        console.log('total share of employee: ', totalShareOfEmployee);
+        // console.log('totalamount ofAllFactor: ', total);
+        // console.log('total share of employee: ', totalShareOfEmployee);
 
         setTotalAmountOfAllFactors(total);
 
@@ -100,12 +101,12 @@ function EmployeeFee() {
     }
 
 
-    console.log("totalshared ", totalShareOfEmployee);
+    // console.log("totalshared ", totalShareOfEmployee);
 
-    console.log(calculateWithdrawableAmount(), totalEmployeePaidAmount);
+    // console.log(calculateWithdrawableAmount(), totalEmployeePaidAmount);
 
 
-    console.log(calculateWithdrawableAmount() - totalEmployeePaidAmount);
+    // console.log(calculateWithdrawableAmount() - totalEmployeePaidAmount);
 
     return (
         <div>
@@ -164,10 +165,6 @@ function EmployeeFee() {
                     </tbody>
                 </table>
             </div>
-
-
-
-
         </div>
     )
 }

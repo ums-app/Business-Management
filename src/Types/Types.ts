@@ -75,9 +75,14 @@ export interface Employee {
     phoneNumber: string;
     profileImage: string;
     salary: number
-    salaryHistory: []
+    salaryHistory: salaryHistory[]
     visitorAmount: number;
     visitorContractType: string;
+}
+
+export interface salaryHistory {
+    date: Timestamp | Date,
+    amount: number
 }
 
 

@@ -206,27 +206,11 @@ function CustomerProductPurchases({ data }) {
         setLoading(false)
     };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     if (!sales) {
         return <LoadingTemplateContainer>
             <ShotLoadingTemplate />
         </LoadingTemplateContainer>
     }
-
-    console.log(totalPages);
 
 
     return (
@@ -294,7 +278,6 @@ function CustomerProductPurchases({ data }) {
                     </thead>
                     <tbody>
                         {sales?.map((factor, index) => {
-                            console.log(factor.createdDate);
                             return <tr
                                 className=" cursor_pointer hover"
                                 onClick={() => {
@@ -322,6 +305,7 @@ function CustomerProductPurchases({ data }) {
                             </tr>
                         })
                         }
+                        {sales.length == 0 && <tr><td colSpan={8}>{t('notExist')}</td></tr>}
                     </tbody>
                 </table>
             </div>

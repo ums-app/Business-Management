@@ -76,9 +76,6 @@ export async function getEmployeeById(docId: string): Promise<Employee | null> {
     const docRef = doc(employeesCollectionRef, docId);
     const docSnap = await getDoc(docRef);
 
-    console.log(docSnap.exists);
-
-
     if (docSnap.exists()) {
         return mapDocToEmployee(docSnap);
     } else {
@@ -133,7 +130,7 @@ export async function getAllVisitorFactors(visitorId: string): Promise<CustomerF
 
 
 
-export const getCustomerPaymentByCustomerIds = async (customerIds: string): Promise<CustomerPayment[]> => {
+export const getCustomerPaymentByCustomerIds = async (customerIds: string[]): Promise<CustomerPayment[]> => {
     const q = query(
         paymentCollectionRef,
         where('customerId', 'in', customerIds),

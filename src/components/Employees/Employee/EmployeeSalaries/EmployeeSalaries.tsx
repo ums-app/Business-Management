@@ -1,38 +1,52 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { formatFirebaseDates, getMonthsBetweenDates } from '../../../../Utils/DateTimeUtils';
+import { convertFirebaseDatesToDate, formatFirebaseDates, getMonthsBetweenDates } from '../../../../Utils/DateTimeUtils.js';
 import { gregorianToJalali, jalaliToGregorian } from 'shamsi-date-converter';
-import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
-import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
+import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer.jsx';
+import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate.jsx';
 import { t } from 'i18next';
-import Menu from '../../../UI/Menu/Menu';
-import Button from '../../../UI/Button/Button';
-import ICONS from '../../../../constants/Icons';
+import Menu from '../../../UI/Menu/Menu.jsx';
+import Button from '../../../UI/Button/Button.tsx';
+import ICONS from '../../../../constants/Icons.js';
 import ReactToPrint from 'react-to-print';
-import { useStateValue } from '../../../../context/StateProvider';
-import { actionTypes } from '../../../../context/reducer';
-import print from '../../../../constants/PrintCssStyles';
+import { useStateValue } from '../../../../context/StateProvider.js';
+import { actionTypes } from '../../../../context/reducer.js';
+import print from '../../../../constants/PrintCssStyles.js';
 import { getAllEmployeePayments } from '../../../../Utils/FirebaseTools.ts';
-import { EmployeePaymentType } from '../../../../constants/Others';
-import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
-import Modal from '../../../UI/modal/Modal';
+import { EmployeePaymentType } from '../../../../constants/Others.js';
+import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate.jsx';
+import Modal from '../../../UI/modal/Modal.jsx';
 import { doc, Timestamp, updateDoc } from 'firebase/firestore';
-import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
-import { db } from '../../../../constants/FirebaseConfig';
-import Collections from '../../../../constants/Collections';
+import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker.jsx';
+import { db } from '../../../../constants/FirebaseConfig.js';
+import Collections from '../../../../constants/Collections.js';
 import { toast } from 'react-toastify';
+import { Employee, salaryHistory } from '../../../../Types/Types.ts';
 
-function EmployeeSalaries({ data, setData }) {
+interface EmployeeSalariesProps {
+    data: Employee;
+    setData: Function,
+}
+
+interface MonthlySalaries {
+    date: Date,
+    persianDate: string,
+    endDate: Date,
+    persianEndDate: string,
+    salary: number,
+}
+
+
+const EmployeeSalaries: React.FC<EmployeeSalariesProps> = ({ data, setData }) => {
     const { employeeId } = useParams()
-    const [employee, setEmployee] = useState(null);
-    const [monthlySalaries, setMonthlySalaries] = useState([]);
-    const [totalPayments, setTotalPayments] = useState();
-    const [totalSalaries, setTotalSalaries] = useState();
+    const [monthlySalaries, setMonthlySalaries] = useState<MonthlySalaries[]>([]);
+    const [totalPayments, setTotalPayments] = useState<number>();
+    const [totalSalaries, setTotalSalaries] = useState<number>();
     const [, dispatch] = useStateValue()
 
-    let salaryRef = useRef();
-    const [updateSalary, setupdateSalary] = useState({
+    let salaryRef: HTMLDivElement | null = null;
+    const [updateSalary, setupdateSalary] = useState<salaryHistory>({
         amount: 0,
         date: new Date()
     })
@@ -42,13 +56,14 @@ function EmployeeSalaries({ data, setData }) {
 
     useEffect(() => {
         calculateMonthlySalaries(data);
-        getAllEmployeePayments(employeeId)
-            .then(res => {
-                let total = 0;
-                res.filter(item => item.type == EmployeePaymentType.SALARY)
-                    .forEach(item => total += item.amount);
-                setTotalPayments(total)
-            })
+        if (employeeId)
+            getAllEmployeePayments(employeeId)
+                .then(res => {
+                    let total = 0;
+                    res.filter(item => item.type == EmployeePaymentType.SALARY)
+                        .forEach(item => total += item.amount);
+                    setTotalPayments(total)
+                })
 
     }, [employeeId]);
 
@@ -101,15 +116,16 @@ function EmployeeSalaries({ data, setData }) {
     // };
 
 
-    const calculateMonthlySalaries = (employee) => {
+    const calculateMonthlySalaries = (employee: Employee) => {
         console.log(employee);
 
         const currentDate = new Date();
-        let joinedDate = new Date(employee?.joinedDate); // Convert Firestore timestamp to JS date
+
+        let joinedDate = convertFirebaseDatesToDate(employee?.joinedDate); // Convert Firestore timestamp to JS date
         const salaryHistory = employee?.salaryHistory || []; // Fallback to an empty array if salaryHistory is undefined
         const totalMonths = getMonthsBetweenDates(joinedDate, currentDate); // Ensure this function is correct
 
-        let salaries = [];
+        let salaries: MonthlySalaries[] = [];
         let total = 0;
 
         for (let monthIndex = 0; monthIndex < totalMonths.length - 1; monthIndex++) {
@@ -121,11 +137,11 @@ function EmployeeSalaries({ data, setData }) {
 
             // Find the most recent salary change applicable to the month
             for (let i = salaryHistory.length - 1; i >= 0; i--) {
-                const salaryChangeDate = new Date(salaryHistory[i]?.date?.toDate());
+                const salaryChangeDate = convertFirebaseDatesToDate(salaryHistory[i]?.date);
 
                 if (salaryChangeDate <= monthStartDate) {
                     applicableSalary = salaryHistory[i].amount;
-                    monthStartDate.setDate(salaryHistory[i].date.toDate().getDate())
+                    monthStartDate.setDate(convertFirebaseDatesToDate(salaryHistory[i].date).getDate())
                     break;
                 }
             }
@@ -134,23 +150,15 @@ function EmployeeSalaries({ data, setData }) {
             const endDate = new Date();
             const nextDate = totalMonths[monthIndex + 1];
             endDate.setFullYear(nextDate.year);
-            endDate.setMonth(nextDate.month)
+            endDate.setMonth(nextDate.month - 1)
             endDate.setDate(monthStartDate.getDate());
 
             // Add this month's salary to the list
             salaries.push({
                 date: monthStartDate,
-                persianDate: gregorianToJalali(
-                    monthStartDate.getFullYear(),
-                    monthStartDate.getMonth() + 1, // +1 because JavaScript months are 0-indexed
-                    monthStartDate.getDate()
-                ).join('/'),
+                persianDate: gregorianToJalali(monthStartDate).join('/'),
                 endDate: endDate,
-                persianEndDate: gregorianToJalali(
-                    nextDate.year,
-                    nextDate.month, // +1 because JavaScript months are 0-indexed
-                    endDate.getDate()
-                ).join('/'),
+                persianEndDate: gregorianToJalali(endDate).join('/'),
                 salary: applicableSalary,
             });
         }
@@ -163,6 +171,7 @@ function EmployeeSalaries({ data, setData }) {
 
 
     const updateEmployeeSalaryAmount = async () => {
+        if (!employeeId) return;
         dispatch({ type: actionTypes.SET_SMALL_LOADING, payload: true });
 
         try {
@@ -193,7 +202,7 @@ function EmployeeSalaries({ data, setData }) {
 
     }
 
-    const showDeleteModal = (index) => {
+    const showDeleteModal = (index: number) => {
         dispatch({
             type: actionTypes.SHOW_ASKING_MODAL,
             payload: {
@@ -205,11 +214,14 @@ function EmployeeSalaries({ data, setData }) {
         });
     };
 
-    const deleteSalaryHistory = async (index) => {
+    const deleteSalaryHistory = async (index: number) => {
+        if (!employeeId) return;
+
         dispatch({ type: actionTypes.SET_SMALL_LOADING, payload: true });
         dispatch({
             type: actionTypes.HIDE_ASKING_MODAL,
         });
+
 
         try {
             let salaryHistory = [...data.salaryHistory];
@@ -351,7 +363,7 @@ function EmployeeSalaries({ data, setData }) {
                                     {data?.salaryHistory?.length > 0 ?
                                         data.salaryHistory[data?.salaryHistory?.length - 1].amount
                                         :
-                                        data.salaryHistory}
+                                        data.salary}
                                 </td>
                             </tr>
                             <tr>
@@ -364,7 +376,7 @@ function EmployeeSalaries({ data, setData }) {
                                 <td>{t('date')}:</td>
                                 <td>
                                     <CustomDatePicker onChange={e => {
-                                        const date = jalaliToGregorian(e.year, e.month.number, e.day)
+                                        const date: string = jalaliToGregorian(e.year, e.month.number, e.day).join('/')
                                         const gDate = new Date(date);
                                         setupdateSalary({
                                             ...updateSalary,
@@ -378,12 +390,12 @@ function EmployeeSalaries({ data, setData }) {
                     <div className='margin_top_20'>
                         <Button
                             text={t('update')}
-                            type={'plusBtn'}
+                            btnType={'plusBtn'}
                             onClick={updateEmployeeSalaryAmount}
                         />
                         <Button
                             text={t('cancel')}
-                            type={'crossBtn'}
+                            btnType={'crossBtn'}
                             onClick={() => {
                                 setupdateSalary({
                                     ...updateSalary,
