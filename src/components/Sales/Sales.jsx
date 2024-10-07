@@ -565,7 +565,7 @@ function Sales() {
                             })
                             }
                             {factors?.length == 0 && <tr>
-                                <td colSpan={6}>{t('notExist')}</td>
+                                <td colSpan={9}>{t('notExist')}</td>
                             </tr>}
                         </tbody>
                     </table>
