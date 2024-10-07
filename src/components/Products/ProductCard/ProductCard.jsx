@@ -10,11 +10,15 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, manufactu
     const navigate = useNavigate()
     const [{ authentication },] = useStateValue()
 
+    const navToProductPage = () => {
+        if (authentication.userType != 'Customer' || !authentication.roles('ADMIN')) return
+
+        navigate(id)
+    }
+
+
     return (
-        <section className="card entering-animation box_shadow" onClick={() => {
-            if (authentication.userType != 'Customer')
-                navigate(id)
-        }} ref={customeRef}>
+        <section className="card entering-animation box_shadow" onClick={navToProductPage} ref={customeRef}>
             <img src={image} alt={t('product') + " " + t('name')} />
             {/* <RateStar rate={rating} size={'small'} /> */}
             <div className="product-info   ">
