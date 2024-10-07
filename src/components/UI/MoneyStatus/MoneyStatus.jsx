@@ -2,8 +2,6 @@ import React from 'react'
 import ICONS from '../../../constants/Icons'
 
 function MoneyStatus({ number }) {
-    console.log("money ", number);
-
     if (Number(number).toFixed(0) == 0) return null
 
     return (
