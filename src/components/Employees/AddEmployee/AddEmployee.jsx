@@ -385,10 +385,10 @@ function AddEmployee({ updateMode = false }) {
                                 as='select'
                                 className="input"
                             >
-                                <option value={null}></option>
+                                <option value={undefined}></option>
                                 <option value={VisitorContractType.PERCENT}>{t('percent')}</option>
                                 <option value={VisitorContractType.BASED_ON_PRODUCT_NUMBER}>{t('BasedOnProductNumber')}</option>
-                                <option value={null}>{t('none')}</option>
+                                <option value={VisitorContractType.NONE}>{t('none')}</option>
                             </Field>
                             <ErrorMessage
                                 name="visitorContractType"
@@ -427,7 +427,7 @@ function AddEmployee({ updateMode = false }) {
                     </div>
                     <div className=' margin_top_10 margin_left_10 margin_right_10'>
                         <Button
-                            btnType="submit"
+                            type="submit"
                             id="addButton"
                             text={t("save")}
                             loading={loading}

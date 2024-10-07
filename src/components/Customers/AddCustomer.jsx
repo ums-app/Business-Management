@@ -355,7 +355,7 @@ function AddCustomer({ updateMode = false }) {
                     </div>
                     <div className=' margin_top_10 margin_left_10 margin_right_10'>
                         <Button
-                            btnType="submit"
+                            type="submit"
                             id="addButton"
                             text={t("save")}
                             loading={loading}

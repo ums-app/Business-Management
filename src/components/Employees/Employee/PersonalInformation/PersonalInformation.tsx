@@ -94,10 +94,10 @@ const PersonalInformation: React.FC = () => {
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('salary')} </span>
                 <span>
-                    {employee.salaryHistory.length > 0 ? employee.salaryHistory[employee.salaryHistory.length - 1].amount : employee.salary}
+                    {employee?.salaryHistory?.length > 0 ? employee.salaryHistory[employee.salaryHistory.length - 1].amount : employee.salary}
                 </span>
             </div>
-            {employee?.visitorContractType &&
+            {employee?.visitorContractType != VisitorContractType.NONE &&
                 <>
                     <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                         <span>{t('visitorContractType')}</span>

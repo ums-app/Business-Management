@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { db } from '../../../constants/FirebaseConfig';
@@ -16,7 +16,6 @@ import NotFound from '../../../pages/NotFound/NotFound';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
-import CardLoadingTemplate from '../../UI/LoadingTemplate/CardLoadingTemplate';
 import { toast } from 'react-toastify';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import { getUserImage } from '../../../Utils/FirebaseTools.ts';
@@ -25,6 +24,7 @@ import EmployeeFee from './EmployeeFee/EmployeeFee';
 import EmployeeSalaries from './EmployeeSalaries/EmployeeSalaries';
 import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
 import AvatarLoadingTemplate from "../../UI/LoadingTemplate/AvatarLoadingTemplate"
+import { VisitorContractType } from '../../../constants/Others.js';
 
 
 // components for tabs
@@ -203,7 +203,7 @@ function Employee() {
                 >
                     {t("receipts")}
                 </li>
-                <li
+                {employee.visitorContractType != VisitorContractType.NONE && <li
                     className={
                         displayComponent?.componentName ==
                             components?.Customers?.componentName
@@ -213,19 +213,20 @@ function Employee() {
                     onClick={() => setDisplayComponent(components?.Customers)}
                 >
                     {t("customers")}
-                </li>
-
-                <li
-                    className={
-                        displayComponent?.componentName ==
-                            components?.EmployeeFee?.componentName
-                            ? "active"
-                            : ""
-                    }
-                    onClick={() => setDisplayComponent(components?.EmployeeFee)}
-                >
-                    {t("employeeAccount")}
-                </li>
+                </li>}
+                {employee.visitorContractType != VisitorContractType.NONE &&
+                    <li
+                        className={
+                            displayComponent?.componentName ==
+                                components?.EmployeeFee?.componentName
+                                ? "active"
+                                : ""
+                        }
+                        onClick={() => setDisplayComponent(components?.EmployeeFee)}
+                    >
+                        {t("employeeAccount")}
+                    </li>
+                }
             </TabMenu>
 
             <div>
