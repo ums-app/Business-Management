@@ -29,22 +29,22 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, manufactu
                         </tr>
                         {authentication.userType != 'Customer' ? <>
                             <tr className='after-discount margin_bottom_5'>
-                                <td className='bullet'><span className='bullet'>{t('price')} </span></td>
+                                <td><span className='bullet'>{t('price')} </span></td>
                                 <td>{price}  <sup>af</sup></td>
                             </tr>
                             <tr className='after-discount margin_bottom_5'>
-                                <td className='bullet'><span className='bullet'>{t('inventory')}</span> </td>
+                                <td><span className='bullet'>{t('inventory')}</span> </td>
                                 <td> {inventory}</td>
                             </tr>
                         </>
                             :
                             <>
                                 <tr className='after-discount margin_bottom_5'>
-                                    <td ><span className='bullet'>{t('manufacturer')} </span></td>
+                                    <td><span className='bullet'>{t('manufacturer')} </span></td>
                                     <td>{manufacturer}</td>
                                 </tr>
                                 <tr className='after-discount margin_bottom_5'>
-                                    <td ><span className='bullet'>{t('status')}</span></td>
+                                    <td><span className='bullet'>{t('status')}</span></td>
                                     <td>{inventory > 0 ? t('present') : t('notExist')}</td>
                                 </tr>
                             </>
