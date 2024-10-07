@@ -67,7 +67,7 @@ function Products() {
 
     return (
         <div>
-            {authentication.roles.includes('ADMIN') &&
+            {authentication.roles.includes('ADMIN') || authentication.roles.includes('SUPER_ADMIN') &&
                 < Button
                     text={t('add') + " " + t('product')}
                     onClick={() => nav('add')}
