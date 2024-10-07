@@ -14,9 +14,11 @@ import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 import ProductCard from './ProductCard/ProductCard'
 import CardsContainerLoadingTemplate from "../UI/LoadingTemplate/CardsContainerLoadingTemplate";
 import { getProductImage } from '../../Utils/FirebaseTools.ts'
+import { useStateValue } from '../../context/StateProvider.js'
 
 function Products() {
     const nav = useNavigate();
+    const [{ authentication },] = useStateValue()
     const productCollectionRef = collection(db, Collections.Products);
     const [products, setProducts] = useState()
     const [imageUrls, setImageUrls] = useState()
@@ -65,11 +67,12 @@ function Products() {
 
     return (
         <div>
-            <Button
-                text={t('add') + " " + t('product')}
-                onClick={() => nav('add')}
-            />
-
+            {authentication.roles.includes('ADMIN') &&
+                < Button
+                    text={t('add') + " " + t('product')}
+                    onClick={() => nav('add')}
+                />
+            }
 
             <h1 className='margin_10 title'>{t('products')}</h1>
 
@@ -82,6 +85,7 @@ function Products() {
                         price={prd.price}
                         inventory={prd.inventory}
                         englishName={prd.englishName}
+                        manufacturer={prd.manufacturer}
                         key={prd.id}
                     />
                 })}

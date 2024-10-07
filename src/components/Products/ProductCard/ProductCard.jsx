@@ -3,32 +3,58 @@ import "./productCard.css"
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
 import ReviewStars from '../../UI/ReviewStars/ReviewStars'
+import { useStateValue } from '../../../context/StateProvider'
 // import RateStar from '../Rate-Star/RateStar'
 
-const ProductCard = ({ image, id, name, price, englishName, inventory, discount, customeRef }) => {
+const ProductCard = ({ image, id, name, price, englishName, inventory, manufacturer, customeRef }) => {
     const navigate = useNavigate()
+    const [{ authentication },] = useStateValue()
 
     return (
-        <section className="card entering-animation box_shadow" onClick={() => navigate(id)} ref={customeRef}>
-            {discount > 0 ? <span className='discount-value'>{discount ? discount + "% " : ""}</span> : ""}
+        <section className="card entering-animation box_shadow" onClick={() => {
+            if (authentication.userType != 'Customer')
+                navigate(id)
+        }} ref={customeRef}>
             <img src={image} alt={t('product') + " " + t('name')} />
             {/* <RateStar rate={rating} size={'small'} /> */}
-            <div className="product-info display_flex flex_direction_column align_items_center">
-                <div className=' full_width display_flex justify_content_space_between'>
-                    <p className='bold'>{name}</p>
-                    <p className='bold'>{englishName}</p>
-                </div>
-                <span className='after-discount margin_bottom_5'>
-                    <span className='bullet'>{t('price')}</span>
-                    {price}
-                    <sup>af</sup>
-                </span>
-                <span className='after-discount margin_bottom_5'>
-                    <span className='bullet'>{t('inventory')}</span>
-                    {inventory}
-                </span>
-                <ReviewStars totalStars={5} />
+            <div className="product-info   ">
+                <table className='full_width'>
+                    <tbody >
+                        <tr>
+                            <td>{name}</td>
+                            <td>{englishName}</td>
+                        </tr>
+                        {authentication.userType != 'Customer' ? <>
+                            <tr className='after-discount margin_bottom_5'>
+                                <td className='bullet'><span className='bullet'>{t('price')} </span></td>
+                                <td>{price}  <sup>af</sup></td>
+                            </tr>
+                            <tr className='after-discount margin_bottom_5'>
+                                <td className='bullet'><span className='bullet'>{t('inventory')}</span> </td>
+                                <td> {inventory}</td>
+                            </tr>
+                        </>
+                            :
+                            <>
+                                <tr className='after-discount margin_bottom_5'>
+                                    <td ><span className='bullet'>{t('manufacturer')} </span></td>
+                                    <td>{manufacturer}</td>
+                                </tr>
+                                <tr className='after-discount margin_bottom_5'>
+                                    <td ><span className='bullet'>{t('status')}</span></td>
+                                    <td>{inventory > 0 ? t('present') : t('notExist')}</td>
+                                </tr>
+                            </>
+                        }
+                        <tr>
+                            <td colSpan={2}><ReviewStars totalStars={5} /></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
             </div>
+
 
         </section>
     )

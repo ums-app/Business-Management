@@ -233,7 +233,6 @@ const Navbar = () => {
       {authentication.userType == 'Customer' &&
         <div className="navbar_menu position_absolute">
           <ul className="navbar_content">
-
             <CustomeLinks to="/" id={'home_link'} >
               <i className={ICONS.door}></i>
               <span>{t("home")}</span>
@@ -257,6 +256,21 @@ const Navbar = () => {
             >
               {t("purchases")}
             </Tooltip>
+
+
+            <CustomeLinks to="/products" id={'products_link'}>
+              <i className={ICONS.stack}></i>
+              <span>{t("products")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#products_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("products")}
+            </Tooltip>
+
+
 
             <CustomeLinks to="/customer-payments" id={'customers_link'}>
               <i className={ICONS.personVideo}></i>

@@ -392,6 +392,9 @@ const fa = {
         majorConsumptions: 'مصارف عمده',
         withdrawals: 'برداشت ها',
         constantConsumptions: 'مصارف ثابت',
+        present: 'موجود',
+        nonExistent: 'ناموجود'
+
 
 
 

@@ -371,6 +371,9 @@ const en = {
         majorConsumptions: 'Major Consumptions',
         withdrawals: 'Withdrawals',
         constantConsumptions: 'Constant Consumptions',
+        present: 'Present',
+        nonExistent: 'Not Exist'
+
 
 
 
