@@ -102,11 +102,12 @@ function EmployeeSalaries({ data, setData }) {
 
 
     const calculateMonthlySalaries = (employee) => {
+        console.log(employee);
+
         const currentDate = new Date();
-        let joinedDate = new Date(employee.joinedDate.toDate()); // Convert Firestore timestamp to JS date
+        let joinedDate = new Date(employee?.joinedDate); // Convert Firestore timestamp to JS date
         const salaryHistory = employee?.salaryHistory || []; // Fallback to an empty array if salaryHistory is undefined
         const totalMonths = getMonthsBetweenDates(joinedDate, currentDate); // Ensure this function is correct
-
 
         let salaries = [];
         let total = 0;

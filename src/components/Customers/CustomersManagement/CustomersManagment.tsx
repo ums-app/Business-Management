@@ -1,21 +1,25 @@
 import { collection, endBefore, getCountFromServer, getDocs, limit, limitToLast, orderBy, query, startAfter, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
-import Collections from '../../../constants/Collections';
+import Collections from '../../../constants/Collections.js';
 import { useNavigate } from 'react-router-dom';
-import { pageSizes } from '../../../constants/Others';
-import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
-import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
-import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate';
-import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { pageSizes } from '../../../constants/Others.js';
+import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer.jsx';
+import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate.jsx';
+import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate.jsx';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate.jsx';
 import { t } from 'i18next';
-import Button from '../../UI/Button/Button';
+import Button from '../../UI/Button/Button.tsx';
 import { Tooltip } from 'react-tooltip';
-import Pagination from '../../UI/Pagination/Pagination';
-import { db } from '../../../constants/FirebaseConfig';
+import Pagination from '../../UI/Pagination/Pagination.jsx';
+import { db } from '../../../constants/FirebaseConfig.js';
 import { getUserImage } from '../../../Utils/FirebaseTools.ts';
-import ICONS from '../../../constants/Icons';
+import { CustomerForSaleFactor, Employee } from '../../../Types/Types.ts';
 
-function CustomersManagment() {
+
+interface Suggestion { name: string, lastName: string, id: string }
+
+const CustomersManagment: React.FC = () => {
+
     const nav = useNavigate();
     const customersCollectionRef = collection(db, Collections.Customers);
     const employeesCollectionRef = collection(db, Collections.Employees);
@@ -23,19 +27,19 @@ function CustomersManagment() {
     const [totalPages, setTotalPages] = useState()
     const [totalDocuments, setTotalDocuments] = useState(0); // Total number of documents
     const [currentPage, setCurrentPage] = useState(1); // Track the current page
-    const [customers, setCustomers] = useState();// State to hold the data and pagination state
+    const [customers, setCustomers] = useState<CustomerForSaleFactor[]>([]);// State to hold the data and pagination state
     const [lastVisible, setLastVisible] = useState(null);
     const [firstVisible, setFirstVisible] = useState(null);
     const [isPrevPageAvailable, setIsPrevPageAvailable] = useState(false); // To disable/enable previous page button
     const [searchValue, setsearchValue] = useState('');
     const [loading, setloading] = useState(false);
 
-    const [employees, setEmployees] = useState()
+    const [employees, setEmployees] = useState<Employee[]>()
     const [imageUrls, setImageUrls] = useState()
 
 
     const [inputValue, setInputValue] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
 
     useEffect(() => {
@@ -51,6 +55,7 @@ function CustomersManagment() {
             const newImageUrls = {};
             await Promise.all(
                 customers.map(async (item) => {
+
                     try {
                         const url = await getUserImage(item.email);
                         newImageUrls[item.email] = url; // Store image URL by email
@@ -75,8 +80,8 @@ function CustomersManagment() {
     }, [inputValue]);
 
 
-    const debounce = (func, delay) => {
-        let timeoutId;
+    const debounce = (func: Function, delay: number) => {
+        let timeoutId: NodeJS.Timeout;
         const debounced = (...args) => {
             if (timeoutId) clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
@@ -115,7 +120,7 @@ function CustomersManagment() {
         );
 
         const querySnapshot = await getDocs(q);
-        const fetchedSuggestions = [];
+        const fetchedSuggestions: Suggestion[] = [];
 
         querySnapshot.forEach((doc) => {
             const customerData = doc.data();
@@ -129,7 +134,7 @@ function CustomersManagment() {
         setSuggestions(fetchedSuggestions);
     };
 
-    const findByNameAndLastName = async (name, lastName) => {
+    const findByNameAndLastName = async (name: string, lastName: string) => {
         setloading(true)
         setInputValue(name + " " + lastName)
 
@@ -161,7 +166,7 @@ function CustomersManagment() {
 
 
     // Get the total number of documents in the collection
-    const getTotalDocumentCount = async (pageSize) => {
+    const getTotalDocumentCount = async (pageSize: number) => {
         const snapshot = await getCountFromServer(customersCollectionRef);
         const totalDocs = snapshot.data().count;
         setTotalDocuments(totalDocs);
@@ -202,7 +207,7 @@ function CustomersManagment() {
     };
 
     // Function to get the first page
-    const getFirstPage = async (pageSize) => {
+    const getFirstPage = async (pageSize: number) => {
         setloading(true)
 
         const firstPageQuery = query(
@@ -211,7 +216,7 @@ function CustomersManagment() {
             limit(pageSize));
         const querySnapshot = await getDocs(firstPageQuery);
 
-        const customerData = querySnapshot.docs.map(doc => ({
+        const customerData: CustomerForSaleFactor[] = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
         }));
@@ -359,8 +364,8 @@ function CustomersManagment() {
                             id="pageSize"
                             className='input margin_left_10 margin_right_10'
                             onChange={e => {
-                                setPageSize(e.target.value)
-                                getTotalDocumentCount(e.target.value)
+                                setPageSize(Number(e.target.value))
+                                getTotalDocumentCount(Number(e.target.value))
                             }}
                         >
                             {pageSizes.map(num => {

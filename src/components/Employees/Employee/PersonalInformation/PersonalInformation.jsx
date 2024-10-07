@@ -11,6 +11,7 @@ import { gregorianToJalali } from 'shamsi-date-converter';
 import { useStateValue } from '../../../../context/StateProvider';
 import ICONS from '../../../../constants/Icons';
 import { VisitorContractType } from '../../../../constants/Others';
+import { formatDate, formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 
 function PersonalInformation() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -81,11 +82,11 @@ function PersonalInformation() {
             }
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('createdDate')} </span>
-                <span>{employee?.createdDate && gregorianToJalali(employee?.createdDate?.toDate()).join('/')}</span>
+                <span>{employee?.createdDate && formatFirebaseDates(employee?.createdDate)}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('joinedDate')} </span>
-                <span>{employee?.joinedDate && gregorianToJalali(employee?.joinedDate?.toDate()).join('/')}</span>
+                <span>{employee?.joinedDate && formatFirebaseDates(employee?.joinedDate)}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('salary')} </span>

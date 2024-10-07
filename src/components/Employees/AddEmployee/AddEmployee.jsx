@@ -345,6 +345,7 @@ function AddEmployee({ updateMode = false }) {
                                         toast.error(t('Invalid Date Detected'));
                                         return;
                                     }
+                                    console.log(date);
 
                                     // If the date is valid, store it in the Firebase Timestamp
                                     setformData({
