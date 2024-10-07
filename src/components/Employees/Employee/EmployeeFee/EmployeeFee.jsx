@@ -151,7 +151,7 @@ function EmployeeFee() {
                             </td>
                             <td>
                                 {Math.abs(calculateWithdrawableAmount() - totalEmployeePaidAmount).toFixed(2)}
-                                <MoneyStatus number={calculateWithdrawableAmount() - totalEmployeePaidAmount > 0 ? -1 : 1} />
+                                <MoneyStatus number={calculateWithdrawableAmount() - totalEmployeePaidAmount > 0 ? -1 : calculateWithdrawableAmount() - totalEmployeePaidAmount == 0 ? 0 : 1} />
                             </td>
                             <td>
                                 {loading ? <ButtonLoadingTemplate /> :
