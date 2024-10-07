@@ -11,7 +11,7 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, manufactu
     const [{ authentication },] = useStateValue()
 
     const navToProductPage = () => {
-        if (authentication.userType != 'Customer' || !authentication.roles('ADMIN')) return
+        if (authentication.userType != 'Customer' || !authentication.roles('ADMIN') || !authentication.roles('SUPER_ADMIN')) return
         navigate(id)
     }
 
