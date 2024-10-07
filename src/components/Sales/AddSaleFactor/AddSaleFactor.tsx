@@ -5,10 +5,9 @@ import Button from '../../UI/Button/Button';
 import { useStateValue } from '../../../context/StateProvider';
 import "../Sales.css"
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
-// import { getEmployeeById, getUserImage } from '../../../Utils/FirebaseTools';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, runTransaction, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { Timestamp, collection, doc, getCountFromServer, runTransaction, writeBatch } from 'firebase/firestore';
 import { db } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
@@ -21,7 +20,6 @@ import Menu from "../../UI/Menu/Menu"
 import { FactorType } from '../../../constants/FactorStatus';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { VisitorContractType } from '../../../constants/Others';
-import { productForSale } from './AddSaleFactorForUnknowCustomer';
 import { CustomerFactor, CustomerPayment, Employee, Product, UpdateModeProps } from '../../../Types/Types';
 import { getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
 
@@ -55,11 +53,9 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
     const [{ authentication, customerForSaleFactor, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
-    const [customerImage, setcustomerImage] = useState();
+    const [customerImage, setcustomerImage] = useState<string>();
     const [customerFactors, setCustomeractors] = useState<CustomerFactor[]>([]);
-    const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
-    const paymentCollectionRef = collection(db, Collections.Payments);
     const [allCustomerPayments, setAllCustomerPayments] = useState<CustomerPayment[]>([]);
     const [totalAmountOfCustomerPayments, settotalAmountOfCustomerPayments] = useState(0)
     const [totalAmountOfCustomerFactors, settotalAmountOfCustomerFactors] = useState(0)
@@ -156,9 +152,6 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
     const checkIfProductIsInList = (productId: string) => {
         return customerFactor.productsInFactor.some(item => item.productId == productId)
     }
-
-
-
 
     const getCustomerFactorsForThisComponent = async () => {
         getCustomerFactors(customerForSaleFactor.id)
