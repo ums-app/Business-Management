@@ -1,4 +1,4 @@
-import { collection, endBefore, getCountFromServer, getDocs, limit, limitToLast, orderBy, query, startAfter, where } from 'firebase/firestore';
+import { collection, DocumentData, endBefore, getCountFromServer, getDocs, limit, limitToLast, orderBy, query, startAfter, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import Collections from '../../../constants/Collections.js';
 import { useNavigate } from 'react-router-dom';
@@ -13,10 +13,10 @@ import { Tooltip } from 'react-tooltip';
 import Pagination from '../../UI/Pagination/Pagination.jsx';
 import { db } from '../../../constants/FirebaseConfig.js';
 import { getUserImage } from '../../../Utils/FirebaseTools.ts';
-import { CustomerForSaleFactor, Employee } from '../../../Types/Types.ts';
+import { CustomerForSaleFactor, Employee, ImageUrls, Suggestion } from '../../../Types/Types.ts';
+import { mapDocToCustomer, mapDocToEmployee } from '../../../Utils/Mapper.ts';
 
 
-interface Suggestion { name: string, lastName: string, id: string }
 
 const CustomersManagment: React.FC = () => {
 
@@ -24,18 +24,18 @@ const CustomersManagment: React.FC = () => {
     const customersCollectionRef = collection(db, Collections.Customers);
     const employeesCollectionRef = collection(db, Collections.Employees);
     const [pageSize, setPageSize] = useState(pageSizes[0])
-    const [totalPages, setTotalPages] = useState()
+    const [totalPages, setTotalPages] = useState<number>()
     const [totalDocuments, setTotalDocuments] = useState(0); // Total number of documents
     const [currentPage, setCurrentPage] = useState(1); // Track the current page
     const [customers, setCustomers] = useState<CustomerForSaleFactor[]>([]);// State to hold the data and pagination state
-    const [lastVisible, setLastVisible] = useState(null);
-    const [firstVisible, setFirstVisible] = useState(null);
+    const [lastVisible, setLastVisible] = useState<DocumentData | null>(null);
+    const [firstVisible, setFirstVisible] = useState<DocumentData | null>(null);
     const [isPrevPageAvailable, setIsPrevPageAvailable] = useState(false); // To disable/enable previous page button
     const [searchValue, setsearchValue] = useState('');
     const [loading, setloading] = useState(false);
 
     const [employees, setEmployees] = useState<Employee[]>()
-    const [imageUrls, setImageUrls] = useState()
+    const [imageUrls, setImageUrls] = useState<ImageUrls>()
 
 
     const [inputValue, setInputValue] = useState('');
@@ -52,7 +52,7 @@ const CustomersManagment: React.FC = () => {
 
     useEffect(() => {
         const fetchImages = async () => {
-            const newImageUrls = {};
+            const newImageUrls: ImageUrls = {};
             await Promise.all(
                 customers.map(async (item) => {
 
@@ -82,7 +82,7 @@ const CustomersManagment: React.FC = () => {
 
     const debounce = (func: Function, delay: number) => {
         let timeoutId: NodeJS.Timeout;
-        const debounced = (...args) => {
+        const debounced = (...args: any[]) => {
             if (timeoutId) clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 func(...args);
@@ -98,14 +98,14 @@ const CustomersManagment: React.FC = () => {
 
 
     // Handler for input change
-    const handleInputChange = async (e) => {
+    const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
         const value = e.target.value;
         setsearchValue(value)
         setInputValue(value);
 
         if (value.trim().length === 0) {
-            getFirstPage();
+            getFirstPage(pageSizes[0]);
             setSuggestions([]);
             return;
         }
@@ -147,10 +147,7 @@ const CustomersManagment: React.FC = () => {
 
         try {
             const querySnapshot = await getDocs(q);
-            const customerData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const customerData = querySnapshot.docs.map(doc => mapDocToCustomer(doc));
 
             setCustomers(customerData)
             setSuggestions([]);
@@ -178,34 +175,6 @@ const CustomersManagment: React.FC = () => {
     };
 
 
-
-    // Function to get the first page
-    const getDocsBySearchValue = async () => {
-        setloading(true)
-        const whereObj = searchValue.length > 0 ? where('name', '==', searchValue) : null;
-        const firstPageQuery = query(
-            customersCollectionRef,
-            whereObj,
-            orderBy('name'),
-            limit(pageSize)
-        );
-        const querySnapshot = await getDocs(firstPageQuery);
-
-        const customerData = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-
-        setCustomers(customerData);
-
-        // Set pagination boundaries
-        setFirstVisible(querySnapshot.docs[0]);
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setIsPrevPageAvailable(false); // No previous page on the first load
-        setCurrentPage(1)
-        setloading(false)
-    };
-
     // Function to get the first page
     const getFirstPage = async (pageSize: number) => {
         setloading(true)
@@ -216,11 +185,7 @@ const CustomersManagment: React.FC = () => {
             limit(pageSize));
         const querySnapshot = await getDocs(firstPageQuery);
 
-        const customerData: CustomerForSaleFactor[] = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-
+        const customerData: CustomerForSaleFactor[] = querySnapshot.docs.map(doc => mapDocToCustomer(doc));
         setCustomers(customerData);
 
         // Set pagination boundaries
@@ -246,10 +211,7 @@ const CustomersManagment: React.FC = () => {
         const querySnapshot = await getDocs(nextPageQuery);
 
         if (!querySnapshot.empty) {
-            const customerData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const customerData = querySnapshot.docs.map(doc => mapDocToCustomer(doc));
 
             setCustomers(customerData);
 
@@ -277,10 +239,7 @@ const CustomersManagment: React.FC = () => {
         const querySnapshot = await getDocs(prevPageQuery);
 
         if (!querySnapshot.empty) {
-            const customerData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const customerData = querySnapshot.docs.map(doc => mapDocToCustomer(doc));
 
             setCustomers(customerData);
 
@@ -298,11 +257,9 @@ const CustomersManagment: React.FC = () => {
 
     const getEmployees = async () => {
         const querySnapshot = await getDocs(employeesCollectionRef);
-        const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        const items = querySnapshot.docs.map((doc) => mapDocToEmployee(doc));
         setEmployees(items);
     };
-
-
 
 
     if (!customers || !employees || !imageUrls) {
@@ -405,9 +362,7 @@ const CustomersManagment: React.FC = () => {
                         </thead>
                         <tbody>
                             {customers?.map((emp, index) => {
-
                                 const visitor = employees.find(item => item.id == emp.visitor)
-
                                 return <tr
                                     className=" cursor_pointer hover"
                                     onClick={() => nav('/customers/' + emp.id)}
@@ -428,16 +383,12 @@ const CustomersManagment: React.FC = () => {
                             })
                             }
                             {customers?.length == 0 && <tr>
-                                <td colSpan={6}>{t('notExist')}</td>
+                                <td colSpan={7}>{t('notExist')}</td>
                             </tr>}
                         </tbody>
                     </table>
                 }
             </div>
-
-
-
-
         </div>
     )
 }

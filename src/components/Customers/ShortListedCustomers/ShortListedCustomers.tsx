@@ -1,18 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { getAllCustomerPayments, getAllPayments, getCustomerFactors, getCustomers, getFactors, getStandardFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../Utils/FirebaseTools.ts';
-import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
+import { formatFirebaseDates } from '../../../Utils/DateTimeUtils.js';
 import { t } from 'i18next';
 import { gregorianToJalali } from 'shamsi-date-converter';
-import { actionTypes } from '../../../context/reducer';
-import Button from '../../UI/Button/Button';
-import print from '../../../constants/PrintCssStyles';
-import { useStateValue } from '../../../context/StateProvider';
+import { actionTypes } from '../../../context/reducer.js';
+import Button from '../../UI/Button/Button.tsx';
+import print from '../../../constants/PrintCssStyles.js';
+import { useStateValue } from '../../../context/StateProvider.js';
 import ReactToPrint from 'react-to-print';
-import ICONS from '../../../constants/Icons';
+import ICONS from '../../../constants/Icons.js';
 import "./ShortListedCustomers.css"
-import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
-import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
-import MoneyStatus from "../../UI/MoneyStatus/MoneyStatus"
+import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer.jsx';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate.jsx';
+import MoneyStatus from "../../UI/MoneyStatus/MoneyStatus.jsx"
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment } from '../../../Types/Types.ts';
 
 const filters = {
     All: 'all',
@@ -21,15 +22,15 @@ const filters = {
     Settled: 'settled'
 }
 
-function ShortListedCustomers() {
+const ShortListedCustomers: React.FC = () => {
     const [, dispatch] = useStateValue()
-    const [customers, setCustomers] = useState();
-    const [payments, setpayments] = useState();
-    const [factors, setFactors] = useState();
-    const [shortListOfCustomers, setshortListOfCustomers] = useState([]);
+    const [customers, setCustomers] = useState<CustomerForSaleFactor[]>();
+    const [payments, setpayments] = useState<CustomerPayment[]>([]);
+    const [factors, setFactors] = useState<CustomerFactor[]>([]);
+    const [shortListOfCustomers, setshortListOfCustomers] = useState<CustomerForSaleFactor[]>([]);
     const [loading, setLoading] = useState(false)
     let shortListRef = useRef();
-    const [filter, setFilter] = useState()
+    const [filter, setFilter] = useState<string>()
     useEffect(() => {
         getCustomers().then(res => {
             setCustomers(res)
@@ -60,7 +61,7 @@ function ShortListedCustomers() {
     // console.log(shortListOfCustomers);
 
 
-    const shortListTheCustomer = (filter) => {
+    const shortListTheCustomer = (filter: string) => {
         setLoading(true)
         const list = [];
         customers?.map(customer => {

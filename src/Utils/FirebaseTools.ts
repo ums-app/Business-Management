@@ -5,6 +5,7 @@ import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
+import { mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct } from "./Mapper";
 
 
 
@@ -61,17 +62,7 @@ export const getUserImage = async (email: string): Promise<string> => {
 export const getProducts = async (): Promise<Product[]> => {
     const querySnapshot = await getDocs(productCollectionRef);
     const items: Product[] = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-            id: doc.id,
-            code: data.code,
-            createdDate: data.createdDate,
-            inventory: data.inventory,
-            englishName: data.englishName,
-            name: data.name,
-            manufacturer: data.manufacturer,
-            price: data.price
-        }
+        return mapDocToProduct(doc)
     });
     return items
 }
@@ -89,23 +80,7 @@ export async function getEmployeeById(docId: string): Promise<Employee | null> {
 
 
     if (docSnap.exists()) {
-        const data = docSnap.data();
-        return {
-            id: docSnap.id,
-            createdDate: data.createdDate,
-            email: data.email,
-            jobTitle: data.jobTitle,
-            joinedDate: data.joinedDate,
-            lastName: data.lastName,
-            name: data.name,
-            password: data.password,
-            phoneNumber: data.phoneNumber,
-            profileImage: data.profileImage,
-            salary: data.salary,
-            salaryHistory: data.salaryHistory,
-            visitorAmount: data.visitorAmount,
-            visitorContractType: data.visitorContractType,
-        }
+        return mapDocToEmployee(docSnap);
     } else {
         return null;  // Return null if no document found
     }
@@ -124,21 +99,7 @@ export const getAllEmployeePayments = async (employeeId: string): Promise<Employ
         console.log('querysnapshot is empty: ', querySnapshot.empty);
         // First map to an array, then filter and sort
         let items: EmployeePayment[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    amount: data.amount,
-                    employeeId: data.employeeId,
-                    createdDate: data.createdDate,
-                    date: data.date,
-                    by: data.by,
-                    type: data.type,
-                    id: doc.id
-                }
-            })
-
-        console.log(items);
-
+            .map(doc => mapDocToEmployeePayment(doc))
         return items;
 
     } catch (error) {
@@ -157,21 +118,7 @@ export async function getAllVisitorFactors(visitorId: string): Promise<CustomerF
         const querySnapshot = await getDocs(q);
         // First map to an array, then filter and sort
         let items: CustomerFactor[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    productsInFactor: data.productsInFactor,
-                    customer: data.customer,
-                    createdDate: data.createdDate,
-                    indexNumber: data.indexNumber,
-                    type: data.type,
-                    by: data.by,
-                    paidAmount: data.paidAmount,
-                    totalAll: data.totalAll,
-                    visitorAccount: data.visitorAccount
-                }
-            })
+            .map(doc => mapDocToCustomerFactor(doc))
 
         return items;
 
@@ -196,19 +143,7 @@ export const getCustomerPaymentByCustomerIds = async (customerIds: string): Prom
         const querySnapshot = await getDocs(q);
         // First map to an array, then filter and sort
         let items: CustomerPayment[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    amount: data.amount,
-                    by: data.by,
-                    checkNumber: data.checkNumber,
-                    createdDate: data.createdDate,
-                    date: data.date,
-                    customerId: data.customerId,
-                    saleId: data.saleId
-                }
-            })
+            .map(doc => mapDocToCustomerPayment(doc))
 
         return items;
 
@@ -226,20 +161,7 @@ export const getCustomers = async (): Promise<CustomerForSaleFactor[]> => {
         console.log('querysnapshot is empty: ', querySnapshot.empty);
 
         let items: any[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    email: data.email,
-                    joinedDate: data.joinedDate,
-                    lastName: data.lastName,
-                    name: data.name,
-                    location: data.location,
-                    password: data.password,
-                    visitor: data.visitor,
-                    phoneNumber: data.phoneNumber
-                }
-            })
+            .map(doc => mapDocToCustomerFactor(doc))
 
         return items;
 
@@ -281,24 +203,13 @@ export const totalAmountOfAllFactors = (customerFactors: CustomerFactor[]): numb
 }
 
 
-export const getAllPayments = async (): Promise<EmployeePayment[]> => {
+export const getAllPayments = async (): Promise<CustomerPayment[]> => {
 
     try {
         const querySnapshot = await getDocs(paymentCollectionRef);
 
-        let items: EmployeePayment[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    amount: data.amount,
-                    employeeId: data.employeeId,
-                    createdDate: data.createdDate,
-                    date: data.date,
-                    by: data.by,
-                    type: data.type,
-                    id: doc.id
-                }
-            })
+        let items: CustomerPayment[] = querySnapshot.docs
+            .map(doc => mapDocToCustomerPayment(doc));
 
         return items;
     } catch (error) {
@@ -320,20 +231,8 @@ export const getAllCustomerPayments = async (customerId: string): Promise<Custom
     try {
         const querySnapshot = await getDocs(q);
         // First map to an array, then filter and sort
-        let items = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    amount: data.amount,
-                    by: data.by,
-                    checkNumber: data.checkNumber,
-                    createdDate: data.createdDate,
-                    date: data.date,
-                    customerId: data.customerId,
-                    saleId: data.saleId
-                }
-            })
+        let items: CustomerPayment[] = querySnapshot.docs
+            .map(doc => mapDocToCustomerPayment(doc))
 
         return items;
 
@@ -349,21 +248,7 @@ export const getFactors = async (): Promise<CustomerFactor[]> => {
     try {
         const querySnapshot = await getDocs(salesCollectionRef);
         let items: CustomerFactor[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    productsInFactor: data.productsInFactor,
-                    customer: data.customer,
-                    createdDate: data.createdDate,
-                    indexNumber: data.indexNumber,
-                    type: data.type,
-                    by: data.by,
-                    paidAmount: data.paidAmount,
-                    visitorAccount: data.visitorAccount,
-                    totalAll: data.totalAll
-                }
-            }) // Map to data with id
+            .map(doc => mapDocToCustomerFactor(doc)) // Map to data with id
 
         return items;
 
@@ -383,21 +268,7 @@ export const getStandardFactors = async (): Promise<CustomerFactor[]> => {
 
         const querySnapshot = await getDocs(q);
         let items: CustomerFactor[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    productsInFactor: data.productsInFactor,
-                    customer: data.customer,
-                    createdDate: data.createdDate,
-                    indexNumber: data.indexNumber,
-                    type: data.type,
-                    by: data.by,
-                    paidAmount: data.paidAmount,
-                    visitorAccount: data.visitorAccount,
-                    totalAll: data.totalAll
-                }
-            }) // Map to data with id
+            .map(doc => mapDocToCustomerFactor(doc)) // Map to data with id
 
         return items;
 
@@ -422,21 +293,7 @@ export const getCustomerFactors = async (customerId: string): Promise<CustomerFa
 
         // First map to an array, then filter and sort
         let items: CustomerFactor[] = querySnapshot.docs
-            .map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    productsInFactor: data.productsInFactor,
-                    customer: data.customer,
-                    createdDate: data.createdDate,
-                    indexNumber: data.indexNumber,
-                    type: data.type,
-                    by: data.by,
-                    paidAmount: data.paidAmount,
-                    visitorAccount: data.visitorAccount,
-                    totalAll: data.totalAll
-                }
-            })
+            .map(doc => mapDocToCustomerFactor(doc))
 
         return items;
 

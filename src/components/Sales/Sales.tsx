@@ -3,7 +3,7 @@ import { t } from 'i18next'
 import Button from '../UI/Button/Button'
 import { toast } from 'react-toastify'
 import { db } from '../../constants/FirebaseConfig';
-import { collection, endBefore, getCountFromServer, getDocs, limit, limitToLast, orderBy, query, startAfter, where } from 'firebase/firestore';
+import { collection, DocumentData, endBefore, getCountFromServer, getDocs, limit, limitToLast, orderBy, query, QueryConstraint, QueryFieldFilterConstraint, QueryLimitConstraint, QueryOrderByConstraint, startAfter, where } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom'
 import LoadingTemplateContainer from "../UI/LoadingTemplate/LoadingTemplateContainer"
 import HeadingMenuTemplate from "../UI/LoadingTemplate/HeadingMenuTemplate"
@@ -20,10 +20,13 @@ import Pagination from '../UI/Pagination/Pagination';
 import { pageSizes } from '../../constants/Others';
 import ICONS from '../../constants/Icons';
 import { FactorType } from '../../constants/FactorStatus';
+import { CustomerFactor, Product, ProductForSale, Suggestion } from '../../Types/Types';
+import { mapDocToCustomerFactor } from '../../Utils/Mapper';
+import { formatFirebaseDates } from '../../Utils/DateTimeUtils';
 
 
 
-function Sales() {
+const Sales: React.FC = () => {
     const nav = useNavigate();
     const [globalState, dispatch] = useStateValue()
     const [sales, setSales] = useState();
@@ -33,22 +36,22 @@ function Sales() {
 
     console.log(globalState);
 
-    const [factors, setFactors] = useState()
+    const [factors, setFactors] = useState<CustomerFactor[]>()
 
-    const [pageSize, setPageSize] = useState(pageSizes[0])
-    const [totalPages, setTotalPages] = useState()
-    const [totalDocuments, setTotalDocuments] = useState(0); // Total number of documents
+    const [pageSize, setPageSize] = useState<number>(pageSizes[0])
+    const [totalPages, setTotalPages] = useState<number>()
+    const [totalDocuments, setTotalDocuments] = useState<number>(0); // Total number of documents
     const [currentPage, setCurrentPage] = useState(1); // Track the current page
-    const [lastVisible, setLastVisible] = useState(null);
-    const [firstVisible, setFirstVisible] = useState(null);
-    const [isPrevPageAvailable, setIsPrevPageAvailable] = useState(false); // To disable/enable previous page button
-    const [searchValue, setsearchValue] = useState('');
-    const [searchValueName, setsearchValueName] = useState('')
-    const [loading, setloading] = useState(false);
+    const [lastVisible, setLastVisible] = useState<DocumentData | null>(null);
+    const [firstVisible, setFirstVisible] = useState<DocumentData | null>(null);
+    const [isPrevPageAvailable, setIsPrevPageAvailable] = useState<boolean>(false); // To disable/enable previous page button
+    const [searchValue, setsearchValue] = useState<string>('');
+    const [searchValueName, setsearchValueName] = useState<string>('')
+    const [loading, setloading] = useState<boolean>(false);
 
 
     const [inputValue, setInputValue] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
 
     console.log(factors);
@@ -69,9 +72,9 @@ function Sales() {
     }, [inputValue]);
 
 
-    const debounce = (func, delay) => {
-        let timeoutId;
-        const debounced = (...args) => {
+    const debounce = (func: Function, delay: number) => {
+        let timeoutId: NodeJS.Timeout;;
+        const debounced = (...args: any[]) => {
             if (timeoutId) clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 func(...args);
@@ -86,13 +89,13 @@ function Sales() {
     };
 
     // Handler for input change
-    const handleInputChange = async (e) => {
+    const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
         const value = e.target.value;
         setInputValue(value);
 
         if (value.trim().length === 0) {
-            getFirstPage();
+            getFirstPage(pageSizes[0]);
             setSuggestions([]);
             return;
         }
@@ -107,7 +110,7 @@ function Sales() {
         );
 
         const querySnapshot = await getDocs(q);
-        const fetchedSuggestions = new Map();
+        const fetchedSuggestions: Map<string, Suggestion> = new Map();
 
 
         querySnapshot.forEach((doc) => {
@@ -115,16 +118,15 @@ function Sales() {
             console.log(customerData);
             fetchedSuggestions.set(
                 `${customerData.customer.name} ${customerData.customer.lastName}`,
-                { name: customerData.customer.name, lastName: customerData.customer.lastName }
+                { name: customerData.customer.name, lastName: customerData.customer.lastName, id: doc.id }
             )
         });
 
         console.log(fetchedSuggestions.values());
-
-        setSuggestions([...fetchedSuggestions.values()]);
+        setSuggestions(fetchedSuggestions.values().toArray());
     };
 
-    const findByNameAndLastName = async (name, lastName) => {
+    const findByNameAndLastName = async (name: string, lastName: string) => {
         setloading(true)
         console.log(name, lastName);
         setInputValue(name + " " + lastName)
@@ -138,10 +140,7 @@ function Sales() {
 
         try {
             const querySnapshot = await getDocs(q);
-            const customerData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const customerData = querySnapshot.docs.map(doc => mapDocToCustomerFactor(doc));
 
             console.log(customerData);
 
@@ -157,7 +156,7 @@ function Sales() {
 
 
     // Get the total number of documents in the collection
-    const getTotalDocumentCount = async (pageSize) => {
+    const getTotalDocumentCount = async (pageSize: number) => {
         const snapshot = await getCountFromServer(salesCollectionRef);
         const totalDocs = snapshot.data().count;
 
@@ -223,12 +222,13 @@ function Sales() {
 
 
     // Function to get the first page of documents with optional search filters
-    const getFirstPage = async (pageSize) => {
+    const getFirstPage = async (pageSize: number) => {
         setloading(true);
 
         try {
             // Build query constraints dynamically
-            let queryConstraints = [orderBy("createdDate", "asc"), limit(pageSize)];
+            let queryConstraints: QueryConstraint[] =
+                [orderBy("createdDate", "asc"), limit(pageSize)];
 
             // Add search filter by 'indexNumber' if present
             if (searchValue.length > 0) {
@@ -252,10 +252,7 @@ function Sales() {
                 return;
             }
 
-            const customerData = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-            }));
+            const customerData = querySnapshot.docs.map(doc => mapDocToCustomerFactor(doc));
 
             setFactors(customerData);
 
@@ -282,7 +279,7 @@ function Sales() {
 
         try {
             // Build query constraints dynamically
-            let queryConstraints = [
+            let queryConstraints: QueryConstraint[] = [
                 orderBy("createdDate", "asc"),
                 startAfter(lastVisible),
                 limit(pageSize)
@@ -304,10 +301,7 @@ function Sales() {
             const querySnapshot = await getDocs(nextPageQuery);
 
             if (!querySnapshot.empty) {
-                const customerData = querySnapshot.docs.map(doc => ({
-                    ...doc.data(),
-                    id: doc.id,
-                }));
+                const customerData = querySnapshot.docs.map(doc => mapDocToCustomerFactor(doc));
 
                 setFactors(customerData);
 
@@ -334,7 +328,7 @@ function Sales() {
 
         try {
             // Build query constraints dynamically
-            let queryConstraints = [
+            let queryConstraints: QueryConstraint[] = [
                 orderBy("createdDate", "desc"),
                 endBefore(firstVisible),
                 limitToLast(pageSize)
@@ -356,10 +350,7 @@ function Sales() {
             const querySnapshot = await getDocs(prevPageQuery);
 
             if (!querySnapshot.empty) {
-                const customerData = querySnapshot.docs.map(doc => ({
-                    ...doc.data(),
-                    id: doc.id,
-                }));
+                const customerData = querySnapshot.docs.map(doc => mapDocToCustomerFactor(doc));
 
                 setFactors(customerData);
 
@@ -382,7 +373,7 @@ function Sales() {
 
 
 
-    const getTotalProdcuts = (products) => {
+    const getTotalProdcuts = (products: ProductForSale[]) => {
         let total = 0;
         products.forEach(item => {
             total += Number(item.total);
@@ -390,7 +381,7 @@ function Sales() {
         return total;
     }
 
-    const getTotalPriceOfProdcuts = (products) => {
+    const getTotalPriceOfProdcuts = (products: ProductForSale[]) => {
         let total = 0;
         products.forEach(item => {
             total += Number(item.totalPrice);
@@ -487,8 +478,8 @@ function Sales() {
                             id="pageSize"
                             className='input margin_left_10 margin_right_10'
                             onChange={e => {
-                                setPageSize(e.target.value)
-                                getTotalDocumentCount(e.target.value)
+                                setPageSize(Number(e.target.value))
+                                getTotalDocumentCount(Number(e.target.value))
                             }}
                         >
                             {pageSizes.map(num => {
@@ -555,7 +546,7 @@ function Sales() {
                                     <td>{factor.indexNumber}</td>
                                     <td>{factor?.customer?.name}</td>
                                     <td>{factor?.customer?.lastName}</td>
-                                    <td>{factor.createdDate && gregorianToJalali(new Date(factor?.createdDate.toDate())).join('/')} </td>
+                                    <td>{formatFirebaseDates(factor.createdDate)} </td>
                                     <td>{getTotalProdcuts(factor?.productsInFactor)}</td>
                                     <td>{getTotalPriceOfProdcuts(factor?.productsInFactor)}</td>
                                     <td>{factor?.paidAmount}</td>

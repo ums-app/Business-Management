@@ -160,3 +160,13 @@ export interface ConfirmModal {
 }
 
 
+export type ImageUrls = {
+    [email: string]: string; // Keys are email strings, values are URL strings
+};
+
+
+
+export interface Suggestion { name: string, lastName: string, id: string }
+
+
+
