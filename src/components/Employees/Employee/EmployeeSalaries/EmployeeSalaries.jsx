@@ -246,8 +246,6 @@ function EmployeeSalaries({ data, setData }) {
     return (
         <div className='margin_top_20'>
 
-
-
             <div className='margin_bottom_10 margin_top_10'>
                 <table className='custom_table full_width'>
                     <thead>
@@ -435,7 +433,7 @@ function EmployeeSalaries({ data, setData }) {
                     <tbody>
                         {monthlySalaries
                             .map((item, index) => {
-                                return <tr >
+                                return <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>{item.persianDate}</td>
                                     <td>{item.persianEndDate}</td>

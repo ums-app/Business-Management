@@ -11,6 +11,9 @@ import AddSaleFactor from "../components/Sales/AddSaleFactor/AddSaleFactor.tsx";
 import AddSaleFactorForUnknowCustomer from "../components/Sales/AddSaleFactor/AddSaleFactorForUnknowCustomer";
 import { FactorType } from "../constants/FactorStatus";
 import Depot from "../components/Depot/Depot.tsx";
+import CustomerPaymentsForCustomer from "../components/Customers/CustomerPaymentForCustomer/CustomerPaymentsForCustomer.jsx";
+import CustomerFactorsForCustomer from "../components/Customers/CustomerFactorsForCustomer/CustomerFactorsForCustomer.jsx";
+import FactorPrintForUsers from "../components/Sales/FactorPrintForUsers/FactorPrintForUsers.jsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -156,6 +159,25 @@ const browserRouter = createBrowserRouter([
         path: "/settings",
         element: <Settings />,
       },
+
+      // customer linkes
+      {
+        path: "/customer-payments",
+        element: <CustomerPaymentsForCustomer />,
+      },
+      {
+        path: "/customer-purchases",
+        element: <CustomerFactorsForCustomer />,
+      },
+      {
+        path: "/customer-factors",
+        element: <CustomerFactorsForCustomer />,
+      },
+      {
+        path: "/customer-factors/print",
+        element: <FactorPrintForUsers />,
+      },
+
       {
         path: "*",
         element: <NotFound />,

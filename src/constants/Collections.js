@@ -3,7 +3,7 @@ export default {
     Users: 'Users',
     Customers: "Customers",
     Employees: 'Employees',
-    Sales: 'Sales',
+    Sales: 'CustomerFactors',
     Products: 'Products',
     Purchases: "ProductPurchases",
     Payments: 'Payments',

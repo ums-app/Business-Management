@@ -35,10 +35,16 @@ function Login() {
                 })
                 const getData = async () => {
                     try {
-                        const q = query(userCollectionRef, where("email", "==", values.email));
+                        const q = query(userCollectionRef, where("email", "==", values.email.toLowerCase()));
                         const data = await getDocs(q);
-                        const imageURL = await getUserImage(values.email);
+                        console.log('user image ....');
+                        const imageURL = await getUserImage(values.email.toLowerCase());
+
+                        console.log('getting user info');
+
                         const items = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                        console.log('data is ', data.empty);
+
                         if (!data.empty) {
                             const user = items[0];
                             console.log(user);

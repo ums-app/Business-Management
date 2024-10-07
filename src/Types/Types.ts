@@ -34,6 +34,8 @@ export interface CustomerFactor {
     by: string,
     paidAmount: number,
     totalAll: number,
+    currentRemainedAmount: number,
+    previousRemainedAmount: number,
     visitorAccount: {
         visitorId: string;
         VisitorContractType: string;

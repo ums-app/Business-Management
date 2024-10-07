@@ -61,174 +61,7 @@ const Navbar = () => {
     <div className={`navbar ${navbarCollapse && " active_nav_right "} display_flex flex_direction_column justify_content_space_between`}>
 
       {/* for admin user */}
-      <div className="navbar_menu position_absolute">
-        <ul className="navbar_content">
-          <CustomeLinks to="/" id={'home_link'} >
-            <i className={ICONS.door}></i>
-            <span>{t("home")}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#home_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("home")}
-          </Tooltip>
-
-          <CustomeLinks to="/dashboard" id={'dashboard_link'}>
-            <i className={ICONS.dashboard}></i>
-            <span>{t("dashboard")}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#dashboard_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("dashboard")}
-          </Tooltip>
-
-          <CustomeLinks to="/sales" id={'sales_link'}>
-            <i className={ICONS.card3}></i>
-            <span>{t("sales")}</span>
-          </CustomeLinks>
-
-          <Tooltip
-            anchorSelect="#sales_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("sales")}
-          </Tooltip>
-
-
-          <CustomeLinks to="/purchase-products" id={'purchases_link'}>
-            <i className={ICONS.hangBag}></i>
-            <span>{t('purchases')}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#purchases_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("purchases")}
-          </Tooltip>
-
-
-          <CustomeLinks to="/consumptions" id={'consumptions_link'}>
-            <i className={ICONS.consumptions}></i>
-            <span>{t('consumptions')}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#consumptions_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("consumptions")}
-          </Tooltip>
-
-          <CustomeLinks to="/depot" id={'depot_link'}>
-            <i className={ICONS.building}></i>
-            <span>{t("depot")}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#depot_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("depot")}
-          </Tooltip>
-
-          <CustomeLinks to="/reports" id={'reports_link'}>
-            <i className={ICONS.reports}></i>
-            <span>{t('reports')}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#reports_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("reports")}
-          </Tooltip>
-
-          <CustomeLinks to="/products" id={'products_link'}>
-            <i className={ICONS.stack}></i>
-            <span>{t("products")}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#products_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("products")}
-          </Tooltip>
-
-
-          <CustomeLinks to="/employees" id={'employees_link'}>
-            <i className={ICONS.peopleFill}></i>
-            <span>{t("employees")}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#employees_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("employees")}
-          </Tooltip>
-
-          <CustomeLinks to="/customers" id={'customers_link'}>
-            <i className={ICONS.personVideo}></i>
-            <span>{t("customers")}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#customers_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("customers")}
-          </Tooltip>
-
-          <CustomeLinks to="/settings" id={'settings_link'}>
-            <i className={ICONS.gear}></i>
-            <span>{t("settings")}</span>
-          </CustomeLinks>
-          <Tooltip
-            anchorSelect="#settings_link"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("settings")}
-          </Tooltip>
-
-          {/* <CustomeLinks
-            className="position_relative"
-            to="/notifications"
-            title={t("notifications")}>
-            <Budget number={notificationCount} left="40px" />
-            <i className={ICONS.bell}></i>
-            <span>{t("notifications")}</span>
-          </CustomeLinks> */}
-
-
-          <li className="link" onClick={logoutModal} id={"logout"}>
-            <a>
-              <i className={ICONS.logout2}></i>
-              <span>{t("logout")}</span>
-            </a>
-          </li>
-
-          <Tooltip
-            anchorSelect="#logout"
-            place="left"
-            className="toolTip_style"
-          >
-            {t("logout")}
-          </Tooltip>
-        </ul>
-      </div>
-
-
-      {/* for customer */}
-      {authentication.userType == 'customer' &&
+      {authentication.userType != 'Customer' &&
         <div className="navbar_menu position_absolute">
           <ul className="navbar_content">
             <CustomeLinks to="/" id={'home_link'} >
@@ -243,6 +76,32 @@ const Navbar = () => {
               {t("home")}
             </Tooltip>
 
+            <CustomeLinks to="/dashboard" id={'dashboard_link'}>
+              <i className={ICONS.dashboard}></i>
+              <span>{t("dashboard")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#dashboard_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("dashboard")}
+            </Tooltip>
+
+            <CustomeLinks to="/sales" id={'sales_link'}>
+              <i className={ICONS.card3}></i>
+              <span>{t("sales")}</span>
+            </CustomeLinks>
+
+            <Tooltip
+              anchorSelect="#sales_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("sales")}
+            </Tooltip>
+
+
             <CustomeLinks to="/purchase-products" id={'purchases_link'}>
               <i className={ICONS.hangBag}></i>
               <span>{t('purchases')}</span>
@@ -255,6 +114,42 @@ const Navbar = () => {
               {t("purchases")}
             </Tooltip>
 
+
+            <CustomeLinks to="/consumptions" id={'consumptions_link'}>
+              <i className={ICONS.consumptions}></i>
+              <span>{t('consumptions')}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#consumptions_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("consumptions")}
+            </Tooltip>
+
+            <CustomeLinks to="/depot" id={'depot_link'}>
+              <i className={ICONS.building}></i>
+              <span>{t("depot")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#depot_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("depot")}
+            </Tooltip>
+
+            <CustomeLinks to="/reports" id={'reports_link'}>
+              <i className={ICONS.reports}></i>
+              <span>{t('reports')}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#reports_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("reports")}
+            </Tooltip>
 
             <CustomeLinks to="/products" id={'products_link'}>
               <i className={ICONS.stack}></i>
@@ -269,6 +164,17 @@ const Navbar = () => {
             </Tooltip>
 
 
+            <CustomeLinks to="/employees" id={'employees_link'}>
+              <i className={ICONS.peopleFill}></i>
+              <span>{t("employees")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#employees_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("employees")}
+            </Tooltip>
 
             <CustomeLinks to="/customers" id={'customers_link'}>
               <i className={ICONS.personVideo}></i>
@@ -293,6 +199,88 @@ const Navbar = () => {
             >
               {t("settings")}
             </Tooltip>
+
+            {/* <CustomeLinks
+            className="position_relative"
+            to="/notifications"
+            title={t("notifications")}>
+            <Budget number={notificationCount} left="40px" />
+            <i className={ICONS.bell}></i>
+            <span>{t("notifications")}</span>
+          </CustomeLinks> */}
+
+
+            <li className="link" onClick={logoutModal} id={"logout"}>
+              <a>
+                <i className={ICONS.logout2}></i>
+                <span>{t("logout")}</span>
+              </a>
+            </li>
+
+            <Tooltip
+              anchorSelect="#logout"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("logout")}
+            </Tooltip>
+          </ul>
+        </div>
+      }
+
+
+      {/* for customer */}
+      {authentication.userType == 'Customer' &&
+        <div className="navbar_menu position_absolute">
+          <ul className="navbar_content">
+
+            <CustomeLinks to="/" id={'home_link'} >
+              <i className={ICONS.door}></i>
+              <span>{t("home")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#home_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("home")}
+            </Tooltip>
+
+            <CustomeLinks to="/customer-purchases" id={'purchases_link'}>
+              <i className={ICONS.hangBag}></i>
+              <span>{t('purchases')}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#purchases_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("purchases")}
+            </Tooltip>
+
+            <CustomeLinks to="/customer-payments" id={'customers_link'}>
+              <i className={ICONS.personVideo}></i>
+              <span>{t("payments")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#customers_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("payments")}
+            </Tooltip>
+
+            {/* <CustomeLinks to="/settings" id={'settings_link'}>
+              <i className={ICONS.gear}></i>
+              <span>{t("settings")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#settings_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("settings")}
+            </Tooltip> */}
 
 
 

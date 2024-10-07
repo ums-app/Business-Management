@@ -90,7 +90,9 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         by: authentication.email,
         paidAmount: 0,
         totalAll: 0,
-        visitorAccount: null
+        visitorAccount: null,
+        currentRemainedAmount: 0,
+        previousRemainedAmount: 0,
     }))
 
     useEffect(() => {
@@ -415,17 +417,20 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 ...customerFactor,
                 paidAmount: userPayment.amount,
                 totalAll: totalAll(),
-                ...(visitorAccount ? { visitorAccount } : {}) // Conditionally include visitorAccount
+                ...(visitorAccount ? { visitorAccount } : {}), // Conditionally include visitorAccount,
+                currentRemainedAmount: remainedAmount(),
+                previousRemainedAmount: Math.abs(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()).toFixed(2),
+                totalRemainedAmount: Math.abs((totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()) + remainedAmount()).toFixed(2)
             };
 
             // Using transaction to add the first document
-            const factorDocRef = doc(collection(db, 'sales')); // Assuming you are using 'sales' collection
+            const factorDocRef = doc(collection(db, Collections.Sales)); // Assuming you are using 'sales' collection
             await runTransaction(db, async (transaction) => {
                 transaction.set(factorDocRef, factorData); // Set the factor data in the transaction
 
                 if (userPayment.amount > 0) {
                     console.log('sending payment doc: ', userPayment.amount);
-                    const paymentDocRef = doc(collection(db, 'payments')); // Assuming you are using 'payments' collection
+                    const paymentDocRef = doc(collection(db, Collections.Payments)); // Assuming you are using 'payments' collection
                     transaction.set(paymentDocRef, { ...userPayment, saleId: factorDocRef.id });
                 }
             });
