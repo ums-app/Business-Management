@@ -248,6 +248,7 @@ function CustomerFactorsForCustomer() {
     return (
         <div>
             {/* <div className='full_width input'></div> */}
+            <h1 className='margin_10 title'>{t('factors')}</h1>
             <div className='table_container margin_top_10'>
                 <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
                     <div className='search_bar display_flex'>
