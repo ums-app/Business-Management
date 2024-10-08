@@ -397,8 +397,8 @@ const fa = {
         af: 'افـ',
         apply: 'درخواست',
         chooseDatePeriod: 'بازه زمانی  مورد نظر را انتخاب کنید',
-        theAmountOfSales: 'میزان فروش',
-        theAmountOfMoneySold: 'میزان پول فروش',
+        theAmountOfSales: 'مجموعه کل فروش',
+        theAmountOfMoneySold: 'مجموعه پول فروش',
         mostPurchased: 'بیشترین خرید',
 
 

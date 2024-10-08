@@ -180,7 +180,7 @@ const ProductSales: React.FC = () => {
                             }}
                         >
                             <span className='bold'>{t('theAmountOfMoneySold')}</span>
-                            <span>{totalAmount}</span>
+                            <span>{totalAmount}  <sup>{t('af')}</sup></span>
                         </div>
                     </div>
                     <div className='card card_user_analyse '>
