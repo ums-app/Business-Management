@@ -20,7 +20,7 @@ import ICONS from '../../constants/Icons'
 import avatar from "../../assets/img/profile_avatar.png"
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import { mapDocToEmployee } from '../../Utils/Mapper.ts'
-import { VisitorContractType } from '../../constants/Others.js'
+import { UserTypes, VisitorContractType } from '../../constants/Others.js'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -118,7 +118,7 @@ function AddCustomer({ updateMode = false }) {
                     phoneNumber: values.phoneNumber,
                     email: values.email.toLowerCase(),
                     roles: [],
-                    userType: 'Customer'
+                    userType: UserTypes.CUSTOMER
                 })
 
                 toast.success(t('successfullyAdded'))

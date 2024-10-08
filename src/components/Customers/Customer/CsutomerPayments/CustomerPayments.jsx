@@ -184,11 +184,12 @@ function CustomerPayments() {
 
             </div>
 
-
-            <Button
-                text={t('add') + " " + t('payment')}
-                onClick={() => setShowPaymentModal(true)}
-            />
+            {authentication?.roles?.includes('ADMIN') || authentication?.roles?.includes('SUPER_ADMIN') &&
+                <Button
+                    text={t('add') + " " + t('payment')}
+                    onClick={() => setShowPaymentModal(true)}
+                />
+            }
 
             <Modal show={showPaymentModal} modalClose={() => setShowPaymentModal(false)}>
                 <div className='display_flex flex_direction_column align_items_center  margin_bottom_10 margin_top_20'>
@@ -290,7 +291,9 @@ function CustomerPayments() {
                             <th>{t('createdDate')}</th>
                             <th>{t('employee')}</th>
                             <th>{t('paidAmount')}</th>
-                            <th>{t('actions')}</th>
+                            {authentication?.roles?.includes('ADMIN') || authentication?.roles?.includes('SUPER_ADMIN') &&
+                                <th>{t('actions')}</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -304,23 +307,26 @@ function CustomerPayments() {
                                 <td>{formatFirebaseDates(pay.date)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>
-                                <td>
-                                    <Button
-                                        icon={ICONS.trash}
-                                        onClick={() => showDeleteModal(pay.id, index)}
-                                        type={'crossBtn'}
-                                    />
-                                    <Tooltip
-                                        anchorSelect="#delete_row"
-                                        place="right"
-                                        className="toolTip_style"
-                                    >
-                                        {t("delete")}
-                                    </Tooltip>
-                                </td>
+                                {authentication?.roles?.includes('ADMIN') || authentication?.roles?.includes('SUPER_ADMIN') &&
+                                    <td>
+                                        <Button
+                                            icon={ICONS.trash}
+                                            onClick={() => showDeleteModal(pay.id, index)}
+                                            type={'crossBtn'}
+                                        />
+                                        <Tooltip
+                                            anchorSelect="#delete_row"
+                                            place="right"
+                                            className="toolTip_style"
+                                        >
+                                            {t("delete")}
+                                        </Tooltip>
+                                    </td>
+                                }
                             </tr>
                         })
                         }
+                        {payments?.length == 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
                     </tbody>
                 </table>
             </div>

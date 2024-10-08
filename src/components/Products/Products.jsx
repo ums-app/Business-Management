@@ -58,7 +58,9 @@ function Products() {
     if (!products || !imageUrls) {
         return (
             <LoadingTemplateContainer>
-                <ButtonLoadingTemplate />
+                {authentication.roles.includes('ADMIN') || authentication.roles.includes('SUPER_ADMIN') &&
+                    <ButtonLoadingTemplate />
+                }
                 <HeadingMenuTemplate />
                 <CardsContainerLoadingTemplate />
             </LoadingTemplateContainer>

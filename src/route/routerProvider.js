@@ -14,6 +14,9 @@ import Depot from "../components/Depot/Depot.tsx";
 import CustomerPaymentsForCustomer from "../components/Customers/CustomerPaymentForCustomer/CustomerPaymentsForCustomer.jsx";
 import CustomerFactorsForCustomer from "../components/Customers/CustomerFactorsForCustomer/CustomerFactorsForCustomer.jsx";
 import FactorPrintForUsers from "../components/Sales/FactorPrintForUsers/FactorPrintForUsers.jsx";
+import CustomerFactorsForVisitor from "../components/Employees/CustomerFactorsForVisitor/CustomerFactorsForVisitor.jsx";
+import EmployeePaymentsForEmployee from "../components/Employees/EmployeePaymentsForEmployee/EmployeePaymentsForEmployee.jsx";
+import EmployeeCustomersForEmployee from "../components/Employees/EmployeeCustomersForEmployee/EmployeeCustomersForEmployee.jsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -166,10 +169,6 @@ const browserRouter = createBrowserRouter([
         element: <CustomerPaymentsForCustomer />,
       },
       {
-        path: "/customer-purchases",
-        element: <CustomerFactorsForCustomer />,
-      },
-      {
         path: "/customer-factors",
         element: <CustomerFactorsForCustomer />,
       },
@@ -177,6 +176,27 @@ const browserRouter = createBrowserRouter([
         path: "/customer-factors/print",
         element: <FactorPrintForUsers />,
       },
+
+
+
+      // visitor link
+      {
+        path: "/visitor-receipts",
+        element: <EmployeePaymentsForEmployee />,
+      },
+      {
+        path: "/visitor-factors",
+        element: <CustomerFactorsForVisitor />,
+      },
+      {
+        path: "/visitor-factors/print",
+        element: <FactorPrintForUsers />,
+      },
+      {
+        path: "/visitor-customers",
+        element: <EmployeeCustomersForEmployee />,
+      },
+
 
       {
         path: "*",

@@ -178,7 +178,7 @@ function Product() {
                 >
                     {t('sales')}
                 </li>
-                <li
+                {/* <li
                     className={
                         displayComponent?.componentName ==
                             components?.ProductAnalysis?.componentName
@@ -188,7 +188,7 @@ function Product() {
                     onClick={() => setDisplayComponent(components?.ProductAnalysis)}
                 >
                     {t('analysis')}
-                </li>
+                </li> */}
             </TabMenu>
 
             <div>

@@ -1,33 +1,34 @@
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { t } from 'i18next';
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
-import { db } from '../../../../constants/FirebaseConfig';
-import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
-import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemplate';
-import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate';
-import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { toast } from 'react-toastify';
-import Collections from '../../../../constants/Collections';
+import { useNavigate } from 'react-router-dom';
+import { db } from '../../../constants/FirebaseConfig';
+import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
+import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
+import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
+import Collections from '../../../constants/Collections';
+import { useStateValue } from '../../../context/StateProvider';
+import { mapDocToCustomer } from '../../../Utils/Mapper';
 
-function EmployeeCustomers() {
+function EmployeeCustomersForEmployee() {
     const nav = useNavigate()
-    const { employeeId } = useParams();
+    const [{ authentication },] = useStateValue()
     const [customers, setCustomers] = useState();
     const customersCollectionRef = collection(db, Collections.Customers);
 
 
+
     useEffect(() => {
         getAllEmployeeCustomers();
-    }, [employeeId])
+    }, [])
 
     const getAllEmployeeCustomers = async () => {
         try {
 
-            console.log(employeeId);
-            const q = query(customersCollectionRef, where("visitor", "==", employeeId))
+            const q = query(customersCollectionRef, where("visitor", "==", authentication.originalEntityId))
             const data = await getDocs(q);
-            const items = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            const items = data.docs.map((doc) => mapDocToCustomer(doc));
             setCustomers(items);
         } catch (err) {
             // toast.error(err.message)
@@ -90,4 +91,4 @@ function EmployeeCustomers() {
     )
 }
 
-export default EmployeeCustomers
+export default EmployeeCustomersForEmployee

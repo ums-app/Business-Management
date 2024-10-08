@@ -15,8 +15,9 @@ import Pagination from '../../UI/Pagination/Pagination';
 import ICONS from '../../../constants/Icons';
 import Button from '../../UI/Button/Button';
 import HeadingLoadingTemplate from '../../UI/LoadingTemplate/HeadingLoadingTemplate';
+import { mapDocToCustomerFactor } from '../../../Utils/Mapper';
 
-function CustomerFactorsForCustomer() {
+function CustomerFactorsForVisitor() {
     const nav = useNavigate();
     const [{ authentication }, dispatch] = useStateValue()
     const [sales, setSales] = useState();
@@ -62,7 +63,7 @@ function CustomerFactorsForCustomer() {
             // Apply the 'where' condition to count only the relevant documents
             const countQuery = query(
                 salesCollectionRef,
-                where('customer.id', '==', authentication.originalEntityId)
+                where('visitorAccount.visitorId', '==', authentication.originalEntityId)
             );
 
             // Get the count of matching documents
@@ -101,7 +102,7 @@ function CustomerFactorsForCustomer() {
                 queryConstraints.unshift(where('indexNumber', '==', Number(searchValue)));
             }
 
-            queryConstraints.unshift(where('customer.id', '==', authentication.originalEntityId));
+            queryConstraints.unshift(where('visitorAccount.visitorId', '==', authentication.originalEntityId));
 
             const firstPageQuery = query(salesCollectionRef, ...queryConstraints);
 
@@ -114,10 +115,7 @@ function CustomerFactorsForCustomer() {
                 return;
             }
 
-            const customerData = querySnapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-            }));
+            const customerData = querySnapshot.docs.map(doc => mapDocToCustomerFactor(doc));
 
             setSales(customerData);
 
@@ -140,7 +138,7 @@ function CustomerFactorsForCustomer() {
         try {
             const firstPageQuery = query(
                 salesCollectionRef,
-                where('customer.id', '==', authentication.originalEntityId),
+                where('visitorAccount.visitorId', '==', authentication.originalEntityId),
                 orderBy('createdDate', 'asc'), // Adjust order as needed
                 limit(pageSize)
             );
@@ -182,7 +180,7 @@ function CustomerFactorsForCustomer() {
 
         const nextPageQuery = query(
             salesCollectionRef,
-            where('customer.id', '==', authentication.originalEntityId),
+            where('visitorAccount.visitorId', '==', authentication.originalEntityId),
             orderBy('createdDate', 'asc'),
             startAfter(lastVisible),
             limit(pageSize)
@@ -213,7 +211,7 @@ function CustomerFactorsForCustomer() {
         setLoading(true)
         const prevPageQuery = query(
             salesCollectionRef,
-            where('customer.id', '==', authentication.originalEntityId),
+            where('visitorAccount.visitorId', '==', authentication.originalEntityId),
             orderBy('createdDate', 'asc'),
             endBefore(firstVisible),
             limitToLast(pageSize)
@@ -348,4 +346,4 @@ function CustomerFactorsForCustomer() {
     )
 }
 
-export default CustomerFactorsForCustomer
+export default CustomerFactorsForVisitor

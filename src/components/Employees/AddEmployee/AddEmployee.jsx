@@ -19,7 +19,7 @@ import { checkIfEmailIsAlreadyExist, getUserImage } from '../../../Utils/Firebas
 import Folders from '../../../constants/Folders';
 import { ref, uploadBytes } from 'firebase/storage';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
-import { VisitorContractType } from '../../../constants/Others';
+import { UserTypes, VisitorContractType } from '../../../constants/Others';
 import { jalaliToGregorian } from 'shamsi-date-converter';
 
 
@@ -129,7 +129,7 @@ function AddEmployee({ updateMode = false }) {
                     phoneNumber: values.phoneNumber,
                     email: values.email.toLowerCase(),
                     roles: [],
-                    userType: 'Employee',
+                    userType: formData.visitorContractType == VisitorContractType.NONE ? UserTypes.EMPLOYEE : UserTypes.VISITOR,
                 });
 
                 console.log('User entity saved with ID:', userDoc.id);
@@ -246,7 +246,6 @@ function AddEmployee({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
-
                         <div className='display_flex flex_direction_column margin_5'>
                             <label htmlFor="lastName">{t('lastName')}</label>
                             <Field

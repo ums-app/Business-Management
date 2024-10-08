@@ -396,7 +396,7 @@ const fa = {
         nonExistent: 'ناموجود',
         af: 'افـ',
         apply: 'درخواست',
-        chooseDatePeriod: 'بازه زمانی  مورد نظر را انتخاب کنید',
+        chooseDatePeriod: 'بازه زمانی مورد نظر را انتخاب کنید',
         theAmountOfSales: 'مجموعه کل فروش',
         theAmountOfMoneySold: 'مجموعه پول فروش',
         mostPurchased: 'بیشترین خرید',

@@ -39,7 +39,7 @@ const components = {
 
 function Customer() {
     const { customerId } = useParams();
-    const [, dispatch] = useStateValue()
+    const [{ authentication }, dispatch] = useStateValue()
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, Collections.Users);
     const [imageURL, setimageURL] = useState();
@@ -124,7 +124,7 @@ function Customer() {
     if (!customer) {
         return (
             <LoadingTemplateContainer>
-                <LoadingTemplateContainer className="display_flex justify_content_space_between align_items_center">
+                <LoadingTemplateContainer className="display_flex justify_content_space_between align_items_center ">
                     <ButtonLoadingTemplate />
                     <AvatarLoadingTemplate size="xlarge" />
                 </LoadingTemplateContainer>
@@ -136,27 +136,30 @@ function Customer() {
 
     return (
         <div className='employee'>
-            <section className="profile_header display_flex justify_content_space_between">
+            <section
+                className={`profile_header display_flex ${authentication.roles.includes('ADMIN') || authentication.roles.includes('SUPER_ADMIN') ? 'justify_content_space_between' : 'justify_content_end'} `}>
                 {/* Profile Menu */}
-                <Menu >
-                    <Button
-                        icon={ICONS.trash}
-                        text={t("delete")}
-                        onClick={showDeleteModal}
-                    />
-                    {/* <Button
+                {authentication.roles.includes('ADMIN') || authentication.roles.includes('SUPER_ADMIN') &&
+                    <Menu >
+                        <Button
+                            icon={ICONS.trash}
+                            text={t("delete")}
+                            onClick={showDeleteModal}
+                        />
+                        {/* <Button
                         icon={customer?.isEnable ? ICONS.lockFill : ICONS.unlock}
                         onClick={lockOrUnlockStudentAccount}
                         text={customer?.isEnable ? t("disable") : t("enable")}
                     /> */}
-                    <Button
-                        icon={ICONS.edit}
-                        text={t("updateInformation")}
-                        onClick={() =>
-                            navigate("update")
-                        }
-                    />
-                </Menu>
+                        <Button
+                            icon={ICONS.edit}
+                            text={t("updateInformation")}
+                            onClick={() =>
+                                navigate("update")
+                            }
+                        />
+                    </Menu>
+                }
 
                 {/* User Profile Image */}
                 <div className=" display_flex align_items_center" >

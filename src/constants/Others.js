@@ -12,3 +12,10 @@ export const EmployeePaymentType = {
     SALARY: 'SALARY',
     SALES: 'SALES'
 }
+
+
+export const UserTypes = {
+    EMPLOYEE: 'EMPLOYEE',
+    VISITOR: 'VISITOR',
+    CUSTOMER: 'CUSTOMER',
+}

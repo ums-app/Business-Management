@@ -18,7 +18,7 @@ import Button from '../../../UI/Button/Button';
 function CustomerProductPurchases({ data }) {
     const { customerId } = useParams();
     const nav = useNavigate();
-    const [, dispatch] = useStateValue()
+    const [{ authentication }, dispatch] = useStateValue()
     const [sales, setSales] = useState();
     const salesCollectionRef = collection(db, Collections.Sales);
 
@@ -216,18 +216,19 @@ function CustomerProductPurchases({ data }) {
     return (
         <div>
             {/* <div className='full_width input'></div> */}
+            {authentication?.roles?.includes('ADMIN') || authentication?.roles?.includes('SUPER_ADMIN') &&
+                <Button
+                    text={t('add') + " " + t('factor') + " " + t('sale')}
+                    onClick={() => {
+                        dispatch({
+                            type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
+                            payload: data
+                        })
+                        nav('/sales/add')
+                    }}
 
-            <Button
-                text={t('add') + " " + t('factor') + " " + t('sale')}
-                onClick={() => {
-                    dispatch({
-                        type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
-                        payload: data
-                    })
-                    nav('/sales/add')
-                }}
-
-            />
+                />
+            }
             <div className='table_container margin_top_10'>
                 <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
                     <div className='pagination display_flex '>
@@ -289,7 +290,10 @@ function CustomerProductPurchases({ data }) {
                                         type: actionTypes.ADD_CUSTOMER_TO_SALE_FACTOR,
                                         payload: factor.customer
                                     })
-                                    nav('/sales/' + factor.id)
+                                    if (authentication.roles.includes('ADMIN') || authentication.roles.includes('SUPER_ADMIN'))
+                                        nav('/sales/' + factor.id)
+                                    else
+                                        nav('/customer-factors/print')
                                 }}
                                 key={factor.id}
                             >
