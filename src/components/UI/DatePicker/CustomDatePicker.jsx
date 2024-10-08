@@ -3,7 +3,7 @@ import DatePicker from 'react-multi-date-picker'
 import persian from "react-date-object/calendars/persian"
 import dari_dr from "../../../constants/Dari_dr"
 
-const CustomDatePicker = ({ name, value, onChange, className, ...props }) => {
+const CustomDatePicker = ({ name, value, onChange, placeholder = '', className, ...props }) => {
 
 
     return (
@@ -14,7 +14,9 @@ const CustomDatePicker = ({ name, value, onChange, className, ...props }) => {
             locale={dari_dr}
             className={className}
             name={name}
+            placeholder={placeholder}
             {...props}
+
         />
     );
 };

@@ -19,6 +19,8 @@ import Folders from '../../constants/Folders'
 import ICONS from '../../constants/Icons'
 import avatar from "../../assets/img/profile_avatar.png"
 import { jalaliToGregorian } from 'shamsi-date-converter'
+import { mapDocToEmployee } from '../../Utils/Mapper.ts'
+import { VisitorContractType } from '../../constants/Others.js'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -76,7 +78,9 @@ function AddCustomer({ updateMode = false }) {
 
     const getEmployees = async () => {
         const querySnapshot = await getDocs(employeesCollectionRef);
-        const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        const items = querySnapshot.docs.map((doc) => mapDocToEmployee(doc))
+            .filter(item => item.visitorContractType != VisitorContractType.NONE);
+
         setEmployees(items);
         console.log(items);
     };

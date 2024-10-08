@@ -373,7 +373,12 @@ const en = {
         constantConsumptions: 'Constant Consumptions',
         present: 'Present',
         nonExistent: 'Not Exist',
-        af: 'Af'
+        af: 'Af',
+        apply: 'Apply',
+        chooseDatePeriod: 'Choose Date Period',
+        theAmountOfSales: 'The Amount Of Sales',
+        theAmountOfMoneySold: 'The amount of money sold',
+        mostPurchased: "Most purchased"
 
 
 

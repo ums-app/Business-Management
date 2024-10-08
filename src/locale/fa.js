@@ -394,11 +394,12 @@ const fa = {
         constantConsumptions: 'مصارف ثابت',
         present: 'موجود',
         nonExistent: 'ناموجود',
-        af: 'افـ'
-
-
-
-
+        af: 'افـ',
+        apply: 'درخواست',
+        chooseDatePeriod: 'بازه زمانی  مورد نظر را انتخاب کنید',
+        theAmountOfSales: 'میزان فروش',
+        theAmountOfMoneySold: 'میزان پول فروش',
+        mostPurchased: 'بیشترین خرید',
 
 
 
