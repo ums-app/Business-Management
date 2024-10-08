@@ -375,7 +375,7 @@ const EmployeeSalaries: React.FC<EmployeeSalariesProps> = ({ data, setData }) =>
                             <tr>
                                 <td>{t('date')}:</td>
                                 <td>
-                                    <CustomDatePicker onChange={e => {
+                                    <CustomDatePicker onChange={(e: any) => {
                                         const date: string = jalaliToGregorian(e.year, e.month.number, e.day).join('/')
                                         const gDate = new Date(date);
                                         setupdateSalary({

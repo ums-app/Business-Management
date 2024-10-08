@@ -283,7 +283,7 @@ const Navbar = () => {
             </Tooltip>
 
             <CustomeLinks to="/visitor-receipts" id={'customers_link'}>
-              <i className={ICONS.personVideo}></i>
+              <i className={ICONS.coin}></i>
               <span>{t("receipts")}</span>
             </CustomeLinks>
             <Tooltip
@@ -292,6 +292,17 @@ const Navbar = () => {
               className="toolTip_style"
             >
               {t("receipts")}
+            </Tooltip>
+            <CustomeLinks to="/visitor-salaries" id={'customers_link'}>
+              <i className={ICONS.personVideo}></i>
+              <span>{t("salaries")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#customers_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("salaries")}
             </Tooltip>
 
             {/* <CustomeLinks to="/settings" id={'settings_link'}>

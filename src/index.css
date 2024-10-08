@@ -923,6 +923,14 @@ th .btn i {
 
 /* Responsive Layout */
 @media (max-width: 768px) {
+  .info_card {
+    width: 80% !important;
+  }
+
+  .custom_table {
+    font-size: 12px;
+  }
+
   .card_user_analyse {
     width: 80% !important;
   }
