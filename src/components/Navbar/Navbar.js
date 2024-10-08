@@ -305,6 +305,18 @@ const Navbar = () => {
               {t("salaries")}
             </Tooltip>
 
+            <CustomeLinks to="/visitor-information" id={'customers_link'}>
+              <i className={ICONS.personVideo}></i>
+              <span>{t("personalInformation")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#customers_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("personalInformation")}
+            </Tooltip>
+
             {/* <CustomeLinks to="/settings" id={'settings_link'}>
               <i className={ICONS.gear}></i>
               <span>{t("settings")}</span>
@@ -316,9 +328,6 @@ const Navbar = () => {
             >
               {t("settings")}
             </Tooltip> */}
-
-
-
 
             <li className="link" onClick={logoutModal} id={"logout"}>
               <a>
@@ -394,6 +403,20 @@ const Navbar = () => {
             >
               {t("payments")}
             </Tooltip>
+
+
+            <CustomeLinks to="/customer-information" id={'customers_link'}>
+              <i className={ICONS.personVideo}></i>
+              <span>{t("personalInformation")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#customers_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("personalInformation")}
+            </Tooltip>
+
 
             <li className="link" onClick={logoutModal} id={"logout"}>
               <a>

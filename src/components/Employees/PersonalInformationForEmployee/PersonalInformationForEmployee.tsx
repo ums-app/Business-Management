@@ -1,43 +1,42 @@
 import { t } from 'i18next'
 import React, { useEffect, useState } from 'react'
-import "../Employee.css"
+import "../Employee/Employee.css"
 import { useParams } from 'react-router-dom';
-import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
-import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { useStateValue } from '../../../../context/StateProvider';
-import ICONS from '../../../../constants/Icons';
-import { VisitorContractType } from '../../../../constants/Others';
-import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
-import { Employee } from '../../../../Types/Types';
-import { getEmployeeById } from '../../../../Utils/FirebaseTools';
-import NotFound from '../../../../pages/NotFound/NotFound';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../constants/FirebaseConfig';
+import Collections from '../../../constants/Collections';
+import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { gregorianToJalali } from 'shamsi-date-converter';
+import { useStateValue } from '../../../context/StateProvider';
+import ICONS from '../../../constants/Icons';
+import { VisitorContractType } from '../../../constants/Others';
+import { formatDate, formatFirebaseDates } from '../../../Utils/DateTimeUtils';
+import { Employee } from '../../../Types/Types';
+import { mapDocToEmployee } from '../../../Utils/Mapper';
+import { getEmployeeById } from '../../../Utils/FirebaseTools';
 
-const PersonalInformation: React.FC = () => {
+const PersonalInformationForEmployee: React.FC = () => {
     const [{ authentication }, dispatch] = useStateValue()
-    const { employeeId } = useParams();
-    const [notFound, setnotFound] = useState<boolean>()
+    const [notFound, setnotFound] = useState<string>()
 
     const [showPassword, setshowPassword] = useState(false)
     const [employee, setemployee] = useState<Employee>();
     useEffect(() => {
 
-        if (employeeId)
-            getEmployeeById(employeeId).then(res => {
+        if (authentication.originalEntityId)
+            getEmployeeById(authentication.originalEntityId).then(res => {
                 if (res)
                     setemployee(res)
                 else
-                    setnotFound(true)
+                    setnotFound(t("notFound"))
 
             }).catch(err => {
                 setnotFound(err)
             })
 
 
-    }, [employeeId])
-
-    if (notFound) {
-        return <NotFound />
-    }
+    }, [])
 
 
 
@@ -113,4 +112,4 @@ const PersonalInformation: React.FC = () => {
     )
 }
 
-export default PersonalInformation
+export default PersonalInformationForEmployee

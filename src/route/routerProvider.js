@@ -18,6 +18,8 @@ import CustomerFactorsForVisitor from "../components/Employees/CustomerFactorsFo
 import EmployeePaymentsForEmployee from "../components/Employees/EmployeePaymentsForEmployee/EmployeePaymentsForEmployee.jsx";
 import EmployeeCustomersForEmployee from "../components/Employees/EmployeeCustomersForEmployee/EmployeeCustomersForEmployee.jsx";
 import EmployeeSalariesForEmployee from "../components/Employees/EmployeeSalariesForEmployee/EmployeeSalariesForEmployee.tsx";
+import PersonalInformationForEmployee from "../components/Employees/PersonalInformationForEmployee/PersonalInformationForEmployee.tsx";
+import PersonalInformationForCustomer from "../components/Customers/PeronsalInformationForCustomer/PersonalInformationForCustomer.jsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -178,6 +180,11 @@ const browserRouter = createBrowserRouter([
         element: <FactorPrintForUsers />,
       },
 
+      {
+        path: "/customer-information",
+        element: <PersonalInformationForCustomer />,
+      },
+
 
 
       // visitor link
@@ -200,6 +207,10 @@ const browserRouter = createBrowserRouter([
       {
         path: "/visitor-salaries",
         element: <EmployeeSalariesForEmployee />,
+      },
+      {
+        path: "/visitor-information",
+        element: <PersonalInformationForEmployee />,
       },
 
       {
