@@ -93,10 +93,10 @@ const ProductSales: React.FC = () => {
                             totalAmount: person.totalAmount + pr.totalPrice
 
                         }
-                        topBuier.set(item.customer.email, person);
+                        topBuier.set(item.customer.id, person);
                     } else {
 
-                        topBuier.set(item.customer.email, {
+                        topBuier.set(item.customer.id, {
                             customer: item.customer,
                             totalElement: pr.total,
                             totalAmount: pr.totalPrice
