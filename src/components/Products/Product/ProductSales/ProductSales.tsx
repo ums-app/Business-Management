@@ -164,31 +164,26 @@ const ProductSales: React.FC = () => {
 
             {loading && <ShotLoadingTemplate />}
             {analysReady &&
-                <div className='card_container margin_top_20 display_flex flex_flow_wrap full_width justify_content_center'>
-                    <div className='card'
-                        style={{
-                            height: '100px'
-
-                        }}
-                    >
-                        <span className='bold'>{t('theAmountOfSales')}</span>
-                        <span>{totalSold}</span>
+                <div className='card_container margin_top_20 display_flex flex_direction_column align_items_center'>
+                    <div className='display_flex flex_flow_wrap justify_content_center full_width'>
+                        <div className='card '
+                            style={{
+                                height: '100px',
+                            }}
+                        >
+                            <span className='bold'>{t('theAmountOfSales')}</span>
+                            <span>{totalSold}</span>
+                        </div>
+                        <div className='card '
+                            style={{
+                                height: '100px',
+                            }}
+                        >
+                            <span className='bold'>{t('theAmountOfMoneySold')}</span>
+                            <span>{totalAmount}</span>
+                        </div>
                     </div>
-                    <div className='card'
-                        style={{
-                            height: '100px'
-
-                        }}
-
-                    >
-                        <span className='bold'>{t('theAmountOfMoneySold')}</span>
-                        <span>{totalAmount}</span>
-                    </div>
-                    <div className='card'
-                        style={{
-                            width: '580px'
-
-                        }}>
+                    <div className='card card_user_analyse '>
                         <span className='bold'>{t('mostPurchased')}</span>
                         <div className='display_flex flex_direction_column justify_content_center full_width align_items_center'>
                             <div className='text_align_center'>

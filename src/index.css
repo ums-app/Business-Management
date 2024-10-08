@@ -825,7 +825,17 @@ th .btn i {
   pointer-events: none;
 }
 
+
+.card_user_analyse {
+  width: 580px !important;
+}
+
+
+
+
 /* End of Card Information */
+
+
 
 
 .overflow_hidden {
@@ -913,6 +923,9 @@ th .btn i {
 
 /* Responsive Layout */
 @media (max-width: 768px) {
+  .card_user_analyse {
+    width: 80% !important;
+  }
 
   .right-to-left,
   .left-to-right {
@@ -933,6 +946,7 @@ th .btn i {
   .modal_bottom_width {
     padding: 0px;
   }
+
 }
 
 @media (max-width: 375px) {
