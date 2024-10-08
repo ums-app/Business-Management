@@ -7,12 +7,20 @@ import { collection, getDocs, query, Timestamp, where } from 'firebase/firestore
 import { db } from '../../../../constants/FirebaseConfig'
 import Collections from '../../../../constants/Collections'
 import { mapDocToCustomerFactor } from '../../../../Utils/Mapper'
-import { CustomerFactor } from '../../../../Types/Types'
+import { CustomerFactor, CustomerForSaleFactor } from '../../../../Types/Types'
 import Button from '../../../UI/Button/Button'
 import { useParams } from 'react-router-dom'
 import DisplayLogo from '../../../UI/DisplayLogo/DisplayLogo'
 import { getUserImage } from '../../../../Utils/FirebaseTools'
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate'
+
+
+interface PersonPurchaseRate {
+    customer: CustomerForSaleFactor,
+    totalElement: number,
+    totalAmount: number,
+    imageUrl: string
+}
 
 const ProductSales: React.FC = () => {
     const { productId } = useParams()
@@ -77,29 +85,29 @@ const ProductSales: React.FC = () => {
         setanalysReady(false)
         let totalElement = 0;
         let totalAmount = 0
-        const topBuier = new Map();
+        const topBuier: Map<string, PersonPurchaseRate> = new Map();
         factors.forEach(item => {
             item.productsInFactor.forEach(pr => {
                 if (pr.productId == productId) {
                     totalElement += pr.total
                     totalAmount += pr.totalPrice
                     if (item.customer.email) {
-                        let person = topBuier.get(item.customer.id);
+                        let person: PersonPurchaseRate | undefined = topBuier.get(item.customer.id);
                         if (person) {
                             console.log(person, pr.total);
 
                             person = {
                                 ...person,
                                 totalElement: person.totalElement + pr.total,
-                                totalAmount: person.totalAmount + pr.totalPrice
-
+                                totalAmount: person.totalAmount + pr.totalPrice,
                             }
                             topBuier.set(item.customer.id, person);
                         } else {
                             topBuier.set(item.customer.id, {
                                 customer: item.customer,
                                 totalElement: pr.total,
-                                totalAmount: pr.totalPrice
+                                totalAmount: pr.totalPrice,
+                                imageUrl: item.customer.email
                             })
                         }
                     }
@@ -110,25 +118,28 @@ const ProductSales: React.FC = () => {
         console.log('total sold amount: ', totalAmount);
         console.log(topBuier.values());
 
-        let top = { totalElement: 0 };
-        topBuier.values().forEach(item => {
-            if (item.totalElement >= top.totalElement) {
-                top = item;
+        if (topBuier.size > 0) {
+            let top: PersonPurchaseRate = topBuier.values().toArray()[0];
+            topBuier.values().forEach(item => {
+                if (item.totalElement >= top.totalElement) {
+                    top = item;
+                }
+            })
+            if (top) {
+                getUserImage(top?.customer?.email)
+                    .then(url => {
+                        top = {
+                            ...top,
+                            imageUrl: url
+                        }
+                    })
+                    .finally(() => {
+                        settopBuier(top)
+                    })
             }
-        })
-        if (top) {
-            getUserImage(top?.customer?.email)
-                .then(url => {
-                    top = {
-                        ...top,
-                        imageUrl: url
-                    }
-
-                })
-                .finally(() => {
-                    settopBuier(top)
-                })
         }
+
+
 
         settotalAmount(totalAmount)
         settotalSold(totalElement)
