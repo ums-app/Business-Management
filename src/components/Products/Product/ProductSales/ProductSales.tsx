@@ -83,24 +83,25 @@ const ProductSales: React.FC = () => {
                 if (pr.productId == productId) {
                     totalElement += pr.total
                     totalAmount += pr.totalPrice
-                }
-                if (item.customer.email) {
-                    let person = topBuier.get(item.customer.id);
-                    if (person) {
-                        person = {
-                            ...person,
-                            totalELement: person.totalElement + pr.total,
-                            totalAmount: person.totalAmount + pr.totalPrice
+                    if (item.customer.email) {
+                        let person = topBuier.get(item.customer.id);
+                        if (person) {
+                            console.log(person, pr.total);
 
+                            person = {
+                                ...person,
+                                totalElement: person.totalElement + pr.total,
+                                totalAmount: person.totalAmount + pr.totalPrice
+
+                            }
+                            topBuier.set(item.customer.id, person);
+                        } else {
+                            topBuier.set(item.customer.id, {
+                                customer: item.customer,
+                                totalElement: pr.total,
+                                totalAmount: pr.totalPrice
+                            })
                         }
-                        topBuier.set(item.customer.id, person);
-                    } else {
-
-                        topBuier.set(item.customer.id, {
-                            customer: item.customer,
-                            totalElement: pr.total,
-                            totalAmount: pr.totalPrice
-                        })
                     }
                 }
             })
@@ -112,7 +113,7 @@ const ProductSales: React.FC = () => {
         let top = { totalElement: 0 };
         topBuier.values().forEach(item => {
             if (item.totalElement >= top.totalElement) {
-                top = item;;
+                top = item;
             }
         })
         if (top) {
