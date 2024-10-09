@@ -173,6 +173,7 @@ const ShortListedCustomers: React.FC = () => {
                         <option value={filters.All}>{t(filters.All)}</option>
                         <option value={filters.DebtorCustomers}>{t(filters.DebtorCustomers)}</option>
                         <option value={filters.CreditorCustomers}>{t(filters.CreditorCustomers)}</option>
+                        <option value={filters.Settled}>{t(filters.Settled)}</option>
                     </select>
 
                 </div>
