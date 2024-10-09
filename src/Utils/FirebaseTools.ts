@@ -1,4 +1,4 @@
-import { collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, where } from "firebase/firestore"
+import { collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore"
 import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
@@ -79,6 +79,21 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
         throw err
     }
 }
+
+
+// Function to get a document by its ID
+export async function disableUserAccountBy(user: User): Promise<any> {
+    const customerDoc = doc(db, Collections.Users, user.id)
+    return updateDoc(customerDoc, { ...user, disabled: true });
+}
+
+// Function to get a document by its ID
+export async function enableUserAccountBy(user: User): Promise<any> {
+    const customerDoc = doc(db, Collections.Users, user.id)
+    return updateDoc(customerDoc, { ...user, disabled: false });
+}
+
+
 
 
 

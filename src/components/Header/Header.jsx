@@ -21,7 +21,7 @@ const Header = ({ isDark, darkModeHandler }) => {
         console.log(res);
         setprofileImage(res)
       })
-  }, [])
+  }, [authentication?.email])
 
   const navbarHandler = () => {
     dispatch({

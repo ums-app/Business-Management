@@ -46,6 +46,7 @@ export const mapDocToUser = (doc: DocumentData): User => {
     console.log(data);
 
     return {
+        id: doc.id,
         joinedDate: data.joinedDate,
         lastName: data.lastName,
         name: data.name,

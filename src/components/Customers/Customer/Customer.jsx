@@ -19,7 +19,7 @@ import NotFound from '../../../pages/NotFound/NotFound';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
 import Collections from '../../../constants/Collections';
-import { getUserImage } from '../../../Utils/FirebaseTools.ts';
+import { disableUserAccountBy, enableUserAccountBy, getUserByEmail, getUserImage } from '../../../Utils/FirebaseTools.ts';
 import DisplayLogo from "../../UI/DisplayLogo/DisplayLogo"
 import CustomerPayments from './CsutomerPayments/CustomerPayments';
 import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
@@ -43,6 +43,7 @@ function Customer() {
     const navigate = useNavigate();
     const usersCollectionRef = collection(db, Collections.Users);
     const [imageURL, setimageURL] = useState();
+    const [user, setUser] = useState();
 
     const [customer, setCustomer] = useState()
     const [displayComponent, setDisplayComponent] = usePersistentComponent(
@@ -57,7 +58,13 @@ function Customer() {
             try {
                 const data = await getDoc(doc(db, Collections.Customers, customerId));
                 if (data.exists()) {
-                    const url = await getUserImage(data.data().email)
+                    const email = data.data().email
+                    const url = await getUserImage(email);
+                    getUserByEmail(email)
+                        .then(res => {
+                            setUser(res)
+                        });
+
                     setimageURL(url)
                     setCustomer({ ...data.data(), id: data.id })
                 }
@@ -82,7 +89,29 @@ function Customer() {
 
 
 
-    const lockOrUnlockStudentAccount = () => { }
+    const lockOrUnlockStudentAccount = () => {
+        if (user.disabled) {
+            enableUserAccountBy(user)
+                .then(res => {
+                    setUser({
+                        ...user,
+                        disabled: false
+                    })
+                    console.log(res);
+                })
+        } else {
+            disableUserAccountBy(user)
+                .then(res => {
+                    setUser({
+                        ...user,
+                        disabled: true
+                    })
+                    console.log(res);
+
+                })
+        }
+
+    }
 
     const removeEmployee = async () => {
         dispatch({
@@ -133,6 +162,8 @@ function Customer() {
             </LoadingTemplateContainer>
         );
     }
+    console.log(authentication);
+
 
     return (
         <div className='employee'>
@@ -146,11 +177,11 @@ function Customer() {
                             text={t("delete")}
                             onClick={showDeleteModal}
                         />
-                        {/* <Button
-                        icon={customer?.isEnable ? ICONS.lockFill : ICONS.unlock}
-                        onClick={lockOrUnlockStudentAccount}
-                        text={customer?.isEnable ? t("disable") : t("enable")}
-                    /> */}
+                        <Button
+                            icon={customer?.isEnable ? ICONS.lockFill : ICONS.unlock}
+                            onClick={lockOrUnlockStudentAccount}
+                            text={!user?.disabled ? t("disable") : t("enable")}
+                        />
                         <Button
                             icon={ICONS.edit}
                             text={t("updateInformation")}

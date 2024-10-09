@@ -29,11 +29,20 @@ function Layout() {
   // Function to check if the user is disabled
   const checkIfUserDisabled = () => {
     const email = authentication.email
+    if (!email) {
+      dispatch({
+        type: actionTypes.LOGOUT,
+      });
+      dispatch({
+        type: actionTypes.HIDE_ASKING_MODAL,
+      });
+      navigate("/login");
+    }
     console.log('start tracking user account email is: ', email);
     getUserByEmail(email).then(user => {
       console.log('ready for checking user account is: ', user.disabled);
       // If the user is disabled, sign them out and redirect
-      if (user.disabled) {
+      if (user?.disabled || !user) {
         dispatch({
           type: actionTypes.LOGOUT,
         });
@@ -54,9 +63,7 @@ function Layout() {
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
 
-  }, [authentication?.email]);
-
-
+  }, [authentication]);
 
 
   useEffect(() => {

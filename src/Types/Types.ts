@@ -4,6 +4,7 @@ import { FactorType } from "../constants/FactorStatus";
 
 
 export interface User {
+    id: string,
     joinedDate: Timestamp | Date,
     lastName: string,
     name: string,

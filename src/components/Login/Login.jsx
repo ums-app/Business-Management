@@ -54,12 +54,15 @@ function Login() {
                                     originalEntityId: user.originalEntityId,
                                     userType: user.userType,
                                     userId: user.id,
-                                    roles: user?.roles?.join(','),
+                                    roles: user?.roles,
                                 }
                             })
                             console.log('nav to home');
                             navigate("/");
                         } else {
+                            dispatch({
+                                type: actionTypes.LOGOUT,
+                            });
                             setError(t('accountLocked'))
                         }
                     })
