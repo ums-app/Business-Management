@@ -1,5 +1,5 @@
 import { DocumentData } from "firebase/firestore";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product, User } from "../Types/Types";
 
 
 // ==>   in this file we are going to map the DocumentData object to appropriate data object using mapper function  <== //
@@ -40,6 +40,26 @@ export const mapDocToEmployee = (doc: DocumentData): Employee => {
         visitorContractType: data.visitorContractType
     }
 }
+
+export const mapDocToUser = (doc: DocumentData): User => {
+    const data = doc.data();
+    console.log(data);
+
+    return {
+        joinedDate: data.joinedDate,
+        lastName: data.lastName,
+        name: data.name,
+        originalEntityId: data.originalEntityId,
+        password: data.password,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        roles: data.roles,
+        userType: data.userType,
+        disabled: data.disabled
+    }
+}
+
+
 
 export const mapDocToEmployeePayment = (doc: DocumentData): EmployeePayment => {
     const data = doc.data();

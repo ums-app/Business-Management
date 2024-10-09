@@ -11,7 +11,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import Button from '../UI/Button/Button';
 import bebevit from "../../assets/img/bebvit.jpg"
 import { useLocalStorage } from 'usehooks-ts';
-import { getUserImage } from '../../Utils/FirebaseTools.ts';
+import { getUserByEmail, getUserImage } from '../../Utils/FirebaseTools.ts';
 import Collections from '../../constants/Collections';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { actionTypes } from '../../context/reducer';
@@ -33,23 +33,9 @@ function Login() {
                     type: actionTypes.SET_SMALL_LOADING,
                     payload: true
                 })
-                const getData = async () => {
-                    try {
-                        const q = query(userCollectionRef, where("email", "==", values.email.toLowerCase()));
-                        const data = await getDocs(q);
-                        console.log('user image ....');
-                        const imageURL = await getUserImage(values.email.toLowerCase());
-
-                        console.log('getting user info');
-
-                        const items = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-                        console.log('data is ', data.empty);
-
-                        if (!data.empty) {
-                            const user = items[0];
-                            console.log(user);
-                            console.log('localstorage data');
-                            localStorage.setItem('imageURL', imageURL);
+                getUserByEmail(values.email)
+                    .then(user => {
+                        if (!user.disabled) {
                             localStorage.setItem('name', user.name);
                             localStorage.setItem('lastname', user.lastName);
                             localStorage.setItem('email', user.email);
@@ -57,11 +43,11 @@ function Login() {
                             localStorage.setItem('userType', user.userType);
                             localStorage.setItem('userId', user.id);
                             localStorage.setItem('roles', user?.roles?.join(','));
+
                             console.log('dispatching data');
                             dispatch({
                                 type: actionTypes.SET_AUTHENTICATION,
                                 payload: {
-                                    imageURL: imageURL,
                                     name: user.name,
                                     lastname: user.lastName,
                                     email: user.email,
@@ -72,18 +58,14 @@ function Login() {
                                 }
                             })
                             console.log('nav to home');
-                            dispatch({
-                                type: actionTypes.SET_SMALL_LOADING,
-                                payload: false
-                            })
                             navigate("/");
+                        } else {
+                            setError(t('accountLocked'))
                         }
-
-                    } catch (err) {
-                        console.log(err);
-                    }
-                }
-                getData()
+                    })
+                    .catch(err => {
+                        setError(err.message);
+                    })
             })
             .catch(err => {
                 setError(err.message);
@@ -91,6 +73,10 @@ function Login() {
             .finally(() => {
                 setLoading(false);
                 setSubmitting(false);
+                dispatch({
+                    type: actionTypes.SET_SMALL_LOADING,
+                    payload: false
+                })
             })
     }
 

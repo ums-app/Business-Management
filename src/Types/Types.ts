@@ -1,6 +1,24 @@
 import { Timestamp } from "firebase/firestore";
 import { FactorType } from "../constants/FactorStatus";
 
+
+
+export interface User {
+    joinedDate: Timestamp | Date,
+    lastName: string,
+    name: string,
+    originalEntityId: string,
+    password: string,
+    phoneNumber: string,
+    email: string,
+    roles: string[],
+    userType: string,
+    disabled: boolean
+}
+
+
+
+
 export interface ProductForSale {
     productId: string;
     name: string,

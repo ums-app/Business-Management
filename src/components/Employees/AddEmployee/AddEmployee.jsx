@@ -130,6 +130,7 @@ function AddEmployee({ updateMode = false }) {
                     email: values.email.toLowerCase(),
                     roles: [],
                     userType: formData.visitorContractType == VisitorContractType.NONE ? UserTypes.EMPLOYEE : UserTypes.VISITOR,
+                    disabled: false
                 });
 
                 console.log('User entity saved with ID:', userDoc.id);

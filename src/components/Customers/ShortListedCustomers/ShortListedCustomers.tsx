@@ -175,10 +175,7 @@ const ShortListedCustomers: React.FC = () => {
                         <option value={filters.CreditorCustomers}>{t(filters.CreditorCustomers)}</option>
                         <option value={filters.Settled}>{t(filters.Settled)}</option>
                     </select>
-
                 </div>
-
-
             </div>
             <div ref={(value) => shortListRef = value} className='customers_list'>
                 <div className='full_width display_flex flex_direction_column align_items_center'>

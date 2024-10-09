@@ -7,11 +7,21 @@ import { t } from "i18next";
 import AvatarLoadingTemplate from "../UI/LoadingTemplate/AvatarLoadingTemplate";
 import LangBox from "../LangBox/LangBox";
 import { actionTypes } from "../../context/reducer";
+import { getUserImage } from "../../Utils/FirebaseTools";
 const Header = ({ isDark, darkModeHandler }) => {
 
   const [{ authentication, navbarCollapse }, dispatch] = useStateValue();
   const [avatarLoading, setAvatarLoading] = useState(true)
+  const [profileImage, setprofileImage] = useState('')
 
+
+  useEffect(() => {
+    getUserImage(authentication.email)
+      .then(res => {
+        console.log(res);
+        setprofileImage(res)
+      })
+  }, [])
 
   const navbarHandler = () => {
     dispatch({
@@ -55,7 +65,7 @@ const Header = ({ isDark, darkModeHandler }) => {
               <div className="user_profile_img_container display_flex position_relative border_radius_50">
                 {avatarLoading && <AvatarLoadingTemplate />}
                 {<img
-                  src={authentication.imageURL}
+                  src={profileImage}
                   className="user_profile_img position_absolute"
                   alt="user_image"
                   onLoad={() => setAvatarLoading(false)}

@@ -118,7 +118,8 @@ function AddCustomer({ updateMode = false }) {
                     phoneNumber: values.phoneNumber,
                     email: values.email.toLowerCase(),
                     roles: [],
-                    userType: UserTypes.CUSTOMER
+                    userType: UserTypes,
+                    disabled: false
                 })
 
                 toast.success(t('successfullyAdded'))

@@ -3,9 +3,9 @@ import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product, User } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct } from "./Mapper";
+import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct, mapDocToUser } from "./Mapper";
 
 
 
@@ -56,6 +56,40 @@ export const getUserImage = async (email: string): Promise<string> => {
         return downloadURL;
     }
 };
+
+
+
+
+
+
+
+//  ============= users =================
+// Function to get a document by its ID
+export async function getUserByEmail(email: string): Promise<User> {
+    const q = query(
+        usersCollectionRef,
+        where("email", "==", email.toLowerCase())
+    );
+    try {
+        const docSnap = await getDocs(q);
+        console.log('users: ', docSnap.docs);
+
+        return mapDocToUser(docSnap.docs[0]);
+    } catch (err) {
+        throw err
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //  =========================== product service =================================
 
