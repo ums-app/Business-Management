@@ -65,7 +65,7 @@ export const getUserImage = async (email: string): Promise<string> => {
 
 //  ============= users =================
 // Function to get a document by its ID
-export async function getUserByEmail(email: string): Promise<User> {
+export async function getUserByEmail(email: string): Promise<User | undefined> {
     const q = query(
         usersCollectionRef,
         where("email", "==", email.toLowerCase())
@@ -73,8 +73,8 @@ export async function getUserByEmail(email: string): Promise<User> {
     try {
         const docSnap = await getDocs(q);
         console.log('users: ', docSnap.docs);
-
-        return mapDocToUser(docSnap.docs[0]);
+        if (docSnap.docs.length > 0)
+            return mapDocToUser(docSnap.docs[0]);
     } catch (err) {
         throw err
     }

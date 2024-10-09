@@ -7,9 +7,9 @@ import { db } from '../../../../constants/FirebaseConfig';
 import Collections from '../../../../constants/Collections';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { gregorianToJalali } from 'shamsi-date-converter';
 import { useStateValue } from '../../../../context/StateProvider';
 import ICONS from '../../../../constants/Icons';
+import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 
 function PersonalInformation() {
     const { customerId } = useParams();
@@ -93,11 +93,11 @@ function PersonalInformation() {
             }
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('createdDate')} </span>
-                <span>{customer?.createdDate && gregorianToJalali(customer?.createdDate?.toDate()).join('/')}</span>
+                <span>{customer?.createdDate && formatFirebaseDates(customer.createdDate)}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('joinedDate')} </span>
-                <span>{customer?.joinedDate && gregorianToJalali(customer?.joinedDate?.toDate()).join('/')}</span>
+                <span>{customer?.joinedDate && formatFirebaseDates(customer.joinedDate)}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('visitor')}</span>
