@@ -22,8 +22,6 @@ function Login() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false); // State for displaying password
     const navigate = useNavigate();
-    const userCollectionRef = collection(db, Collections.Users)
-
 
     const login = async (values, { setSubmitting }) => {
         setLoading(true);
@@ -35,6 +33,7 @@ function Login() {
                 })
                 getUserByEmail(values.email)
                     .then(user => {
+                        setSubmitting(true);
                         if (!user.disabled) {
                             localStorage.setItem('name', user.name);
                             localStorage.setItem('lastname', user.lastName);
@@ -63,11 +62,19 @@ function Login() {
                             dispatch({
                                 type: actionTypes.LOGOUT,
                             });
-                            setError(t('accountLocked'))
+
                         }
                     })
                     .catch(err => {
                         setError(err.message);
+                    })
+                    .finally(() => {
+                        setSubmitting(false);
+                        setError(t('accountLocked'))
+                        dispatch({
+                            type: actionTypes.SET_SMALL_LOADING,
+                            payload: false
+                        })
                     })
             })
             .catch(err => {

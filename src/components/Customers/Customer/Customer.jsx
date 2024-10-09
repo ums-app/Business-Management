@@ -90,6 +90,10 @@ function Customer() {
 
 
     const lockOrUnlockStudentAccount = () => {
+        dispatch({
+            type: actionTypes.SET_SMALL_LOADING,
+            payload: true
+        })
         if (user.disabled) {
             enableUserAccountBy(user)
                 .then(res => {
@@ -98,6 +102,12 @@ function Customer() {
                         disabled: false
                     })
                     console.log(res);
+                })
+                .finally(() => {
+                    dispatch({
+                        type: actionTypes.SET_SMALL_LOADING,
+                        payload: false
+                    })
                 })
         } else {
             disableUserAccountBy(user)
@@ -108,6 +118,12 @@ function Customer() {
                     })
                     console.log(res);
 
+                })
+                .finally(() => {
+                    dispatch({
+                        type: actionTypes.SET_SMALL_LOADING,
+                        payload: false
+                    })
                 })
         }
 
@@ -177,11 +193,13 @@ function Customer() {
                             text={t("delete")}
                             onClick={showDeleteModal}
                         />
-                        <Button
-                            icon={customer?.isEnable ? ICONS.lockFill : ICONS.unlock}
-                            onClick={lockOrUnlockStudentAccount}
-                            text={!user?.disabled ? t("disable") : t("enable")}
-                        />
+                        {authentication.roles.includes('SUPER_ADMIN') &&
+                            <Button
+                                icon={!user?.disabled ? ICONS.lockFill : ICONS.unlock}
+                                onClick={lockOrUnlockStudentAccount}
+                                text={!user?.disabled ? t("disable") : t("enable")}
+                            />
+                        }
                         <Button
                             icon={ICONS.edit}
                             text={t("updateInformation")}

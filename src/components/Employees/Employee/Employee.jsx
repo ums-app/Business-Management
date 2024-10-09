@@ -18,7 +18,7 @@ import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { toast } from 'react-toastify';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
-import { getUserImage } from '../../../Utils/FirebaseTools.ts';
+import { disableUserAccountBy, enableUserAccountBy, getUserByEmail, getUserImage } from '../../../Utils/FirebaseTools.ts';
 import EmployeePayments from './EmployeePayments/EmployeePayments';
 import EmployeeFee from './EmployeeFee/EmployeeFee';
 import EmployeeSalaries from './EmployeeSalaries/EmployeeSalaries';
@@ -42,9 +42,9 @@ const components = {
 
 function Employee() {
     const { employeeId } = useParams();
-    const [, dispatch] = useStateValue()
+    const [{ authentication }, dispatch] = useStateValue()
     const navigate = useNavigate();
-
+    const [user, setUser] = useState()
     const [employee, setemployee] = useState()
     const [displayComponent, setDisplayComponent] = usePersistentComponent(
         components,
@@ -59,7 +59,13 @@ function Employee() {
             try {
                 const data = await getDoc(doc(db, 'Employees', employeeId));
                 if (data.exists()) {
-                    const url = await getUserImage(data.data().email)
+                    const email = data.data().email
+                    const url = await getUserImage(email);
+                    getUserByEmail(email)
+                        .then(res => {
+                            setUser(res)
+                        });
+
                     setImageURL(url)
                     setemployee(data.data())
                 }
@@ -83,8 +89,45 @@ function Employee() {
     };
 
 
+    const lockOrUnlockStudentAccount = () => {
+        dispatch({
+            type: actionTypes.SET_SMALL_LOADING,
+            payload: true
+        })
+        if (user.disabled) {
+            enableUserAccountBy(user)
+                .then(res => {
+                    setUser({
+                        ...user,
+                        disabled: false
+                    })
+                    console.log(res);
+                })
+                .finally(() => {
+                    dispatch({
+                        type: actionTypes.SET_SMALL_LOADING,
+                        payload: false
+                    })
+                })
+        } else {
+            disableUserAccountBy(user)
+                .then(res => {
+                    setUser({
+                        ...user,
+                        disabled: true
+                    })
+                    console.log(res);
 
-    const lockOrUnlockStudentAccount = () => { }
+                })
+                .finally(() => {
+                    dispatch({
+                        type: actionTypes.SET_SMALL_LOADING,
+                        payload: false
+                    })
+                })
+        }
+
+    }
 
     const removeEmployee = async () => {
         dispatch({
@@ -136,25 +179,30 @@ function Employee() {
         <div className='employee'>
             <section className="profile_header display_flex justify_content_space_between">
                 {/* Profile Menu */}
-                <Menu >
-                    <Button
-                        icon={ICONS.trash}
-                        text={t("delete")}
-                        onClick={showDeleteModal}
-                    />
-                    {/* <Button
-                        icon={employee?.isEnable ? ICONS.lockFill : ICONS.unlock}
-                        onClick={lockOrUnlockStudentAccount}
-                        text={employee?.isEnable ? t("disable") : t("enable")}
-                    /> */}
-                    <Button
-                        icon={ICONS.edit}
-                        text={t("updateInformation")}
-                        onClick={() =>
-                            navigate("update")
+                {authentication.roles.includes('ADMIN') || authentication.roles.includes('SUPER_ADMIN') &&
+                    <Menu >
+                        <Button
+                            icon={ICONS.trash}
+                            text={t("delete")}
+                            onClick={showDeleteModal}
+                        />
+
+                        {authentication.roles.includes('SUPER_ADMIN') &&
+                            <Button
+                                icon={!user?.disabled ? ICONS.lockFill : ICONS.unlock}
+                                onClick={lockOrUnlockStudentAccount}
+                                text={!user?.disabled ? t("disable") : t("enable")}
+                            />
                         }
-                    />
-                </Menu>
+                        <Button
+                            icon={ICONS.edit}
+                            text={t("updateInformation")}
+                            onClick={() =>
+                                navigate("update")
+                            }
+                        />
+                    </Menu>
+                }
 
                 {/* User Profile Image */}
                 <div className=" display_flex align_items_center" >
