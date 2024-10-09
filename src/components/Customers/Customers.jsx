@@ -6,6 +6,7 @@ import CustomersManagment from './CustomersManagement/CustomersManagment'
 import ShortListedCustomers from './ShortListedCustomers/ShortListedCustomers'
 import TabMenu from '../UI/TabMenu/TabMenu'
 import usePersistentComponent from '../../Hooks/usePersistentComponent'
+import { useStateValue } from '../../context/StateProvider'
 
 
 // components for tabs
@@ -21,6 +22,12 @@ function Customers() {
     const [displayComponent, setDisplayComponent] = useState(
         { component: components.CustomersManagment.component, componentName: "CustomersManagement" }
     );
+
+    const [{ authentication },] = useStateValue();
+
+
+
+
 
 
     return (

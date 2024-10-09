@@ -51,22 +51,20 @@ const Header = ({ isDark, darkModeHandler }) => {
           </div>
 
           {authentication.isAuthenticated && (
-            <NavLink to="profile" title={t("profile")}>
-              <div className="user_profile user_select_none display_flex">
-                <div className="user_profile_img_container display_flex position_relative border_radius_50">
-                  {avatarLoading && <AvatarLoadingTemplate />}
-                  {<img
-                    src={authentication.imageURL}
-                    className="user_profile_img position_absolute"
-                    alt="user_image"
-                    onLoad={() => setAvatarLoading(false)}
-                  />}
-                </div>
-                <p className="text_color">
-                  {authentication.name} {authentication.lastname}
-                </p>
+            <div className="user_profile user_select_none display_flex">
+              <div className="user_profile_img_container display_flex position_relative border_radius_50">
+                {avatarLoading && <AvatarLoadingTemplate />}
+                {<img
+                  src={authentication.imageURL}
+                  className="user_profile_img position_absolute"
+                  alt="user_image"
+                  onLoad={() => setAvatarLoading(false)}
+                />}
               </div>
-            </NavLink>
+              <p className="text_color">
+                {authentication.name} {authentication.lastname}
+              </p>
+            </div>
           )}
         </div>
       </div>

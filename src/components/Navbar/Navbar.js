@@ -62,7 +62,7 @@ const Navbar = () => {
     <div className={`navbar ${navbarCollapse && " active_nav_right "} display_flex flex_direction_column justify_content_space_between`}>
 
       {/* for admin user */}
-      {authentication.userType == UserTypes.EMPLOYEE &&
+      {authentication.userType == UserTypes.EMPLOYEE || authentication.userType == 'SUPER_ADMIN' &&
         <div className="navbar_menu position_absolute">
           <ul className="navbar_content">
             <CustomeLinks to="/" id={'home_link'} >
