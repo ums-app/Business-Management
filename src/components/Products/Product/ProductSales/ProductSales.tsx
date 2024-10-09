@@ -89,7 +89,7 @@ const ProductSales: React.FC = () => {
         factors.forEach(item => {
             item.productsInFactor.forEach(pr => {
                 if (pr.productId == productId) {
-                    totalElement += pr.total
+                    totalElement += Number(pr.total)
                     totalAmount += pr.totalPrice
                     if (item.customer.email) {
                         let person: PersonPurchaseRate | undefined = topBuier.get(item.customer.id);
@@ -98,7 +98,7 @@ const ProductSales: React.FC = () => {
 
                             person = {
                                 ...person,
-                                totalElement: person.totalElement + pr.total,
+                                totalElement: Number(person.totalElement) + Number(pr.total),
                                 totalAmount: person.totalAmount + pr.totalPrice,
                             }
                             topBuier.set(item.customer.id, person);
