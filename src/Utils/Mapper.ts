@@ -102,11 +102,11 @@ export const mapDocToCustomerFactor = (doc: DocumentData): CustomerFactor => {
         indexNumber: data.indexNumber,
         type: data.type,
         by: data.by,
-        paidAmount: data.paidAmount,
+        paidAmount: Number(data.paidAmount),
         visitorAccount: data.visitorAccount,
-        totalAll: data.totalAll,
-        currentRemainedAmount: data.currentRemainedAmount,
-        previousRemainedAmount: data.previousRemainedAmount
+        totalAll: Number(data.totalAll),
+        currentRemainedAmount: Number(data.currentRemainedAmount),
+        previousRemainedAmount: Number(data.previousRemainedAmount)
     }
 }
 

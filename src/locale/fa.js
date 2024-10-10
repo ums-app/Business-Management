@@ -399,7 +399,9 @@ const fa = {
         chooseDatePeriod: 'بازه زمانی مورد نظر را انتخاب کنید',
         theAmountOfSales: 'مجموعه کل فروش',
         theAmountOfMoneySold: 'مجموعه پول فروش',
+        totalAllPaidAmount: 'مجموعه مبالغ پرداختی',
         mostPurchased: 'بیشترین خرید',
+        totalSoldProducts: 'مجموعه اجناس فروخته شده'
 
 
 

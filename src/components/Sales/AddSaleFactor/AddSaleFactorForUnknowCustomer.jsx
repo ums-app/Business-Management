@@ -26,17 +26,17 @@ export const productForSale = {
     productId: '',
     name: "",
     englishName: "",
-    total: "",
-    pricePer: "",
+    total: 0,
+    pricePer: 0,
     discount: {
         value: 0,
         type: 'percent'
     },
-    totalPrice: "",
+    totalPrice: 0,
 };
 
 
-function AddSaleFactorForUnknowCustomer({ updateMode }) {
+const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
     const [{ authentication, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
@@ -56,7 +56,8 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
         createdDate: new Date(),
         indexNumber: 0,
         type: FactorType.SUNDRY_FACTOR,
-        by: authentication.email
+        by: authentication.email,
+        totalAll: 0
     })
 
     useEffect(() => {
@@ -117,8 +118,8 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
                 value: 0,
                 type: 'percent'
             },
-            pricePer: selectedProduct.price,
-            totalPrice: selectedProduct.price,
+            pricePer: Number(selectedProduct.price),
+            totalPrice: Number(selectedProduct.price),
         }
         setcustomerFactor({
             ...customerFactor,
@@ -249,7 +250,7 @@ function AddSaleFactorForUnknowCustomer({ updateMode }) {
 
             console.log('sending data to api as new factor');
             console.log(customerFactor);
-            const data = await addDoc(salesCollectionRef, customerFactor);
+            const data = await addDoc(salesCollectionRef, { ...customerFactor, totalAll: totalAll() });
             toast.success(t('successfullyAdded'));
             setsaved(true)
             // nav('/sales')
