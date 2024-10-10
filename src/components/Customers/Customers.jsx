@@ -5,7 +5,6 @@ import { t } from 'i18next'
 import CustomersManagment from './CustomersManagement/CustomersManagment'
 import ShortListedCustomers from './ShortListedCustomers/ShortListedCustomers'
 import TabMenu from '../UI/TabMenu/TabMenu'
-import usePersistentComponent from '../../Hooks/usePersistentComponent'
 import { useStateValue } from '../../context/StateProvider'
 
 

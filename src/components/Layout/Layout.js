@@ -69,7 +69,7 @@ function Layout() {
   useEffect(() => {
     // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      if (user && localStorage.length > 0) {
         const localStorageAuthObj = {
           isAuthenticated: true,
           name: localStorage.getItem("name"),

@@ -42,6 +42,7 @@ function Login() {
                             localStorage.setItem('userType', user.userType);
                             localStorage.setItem('userId', user.id);
                             localStorage.setItem('roles', user?.roles?.join(','));
+                            localStorage.setItem('locale', 'fa')
 
                             console.log('dispatching data');
                             dispatch({
