@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkBusiness_Management=self.webpackChunkBusiness_Management||[]).push([[842],{7842:function(e,n,s){s.r(n);s(2791);var u=s(184);n.default=function(){return(0,u.jsx)("div",{children:"Home"})}}}]);
+//# sourceMappingURL=842.9beb257d.chunk.js.map
