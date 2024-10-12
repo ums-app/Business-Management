@@ -231,7 +231,7 @@ function AddProduct({ updateMode = false }) {
                     <div className=' margin_top_10 margin_left_10 margin_right_10'>
                         <Button
                             text={t('save')}
-                            btnType={'submit'}
+                            type={'submit'}
                             loading={loading}
                         />
                     </div>

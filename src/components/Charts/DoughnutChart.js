@@ -1,12 +1,13 @@
 import React from 'react'
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { t } from 'i18next';
 
 // Register the required elements for Chart.js, including ArcElement
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
-function DoughnutChart({ data, chartTitle }) {
+function DoughnutChart({ data, chartTitle, unit = '' }) {
 
 
     const options = {
@@ -20,22 +21,23 @@ function DoughnutChart({ data, chartTitle }) {
                 display: true,
                 position: 'top',
                 labels: {
-
                 }
             },
+            datalabels: {
+                display: true, // Show the labels
+                color: '#fff', // Set label color to black
+                align: 'center', // Position the label at the end (top) of the bar
+                anchor: 'center', // Anchor the label at the end of the bar
+                clamp: true,
+                font: {
+                    weight: 'bold', // Make the text bold
+                    size: 12, // Text size
+                },
+                formatter: (value: number) => `${value} ${t(unit)}`, // Custom formatter to show the value
+            },
             tooltip: {
-                enabled: true,
-                // backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                // titleFont: {
-                //     size: 16,
-                //     family: 'Arial, sans-serif',
-                //     weight: 'bold'
-                // },
-                // bodyFont: {
-                //     size: 14,
-                //     family: 'Arial, sans-serif'
-                // },
-            }
+                enabled: true, // Tooltips still enabled for hover interaction
+            },
         },
         cutout: '50%',
         circumference: 360,

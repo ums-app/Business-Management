@@ -218,22 +218,22 @@ const SalesReport: React.FC = () => {
                     <div className='display_flex flex_flow_wrap justify_content_space_around'>
                         <div className='card_box data_card_info margin_5'>
                             <div>{t('theAmountOfMoneySold')}</div>
-                            <div>{salesReport.totalAllAmount}</div>
+                            <div className='bold'>{salesReport.totalAllAmount}</div>
                         </div>
                         <div className='card_box data_card_info margin_5'>
                             <div>{t('totalAllPaidAmount')}</div>
-                            <div>{salesReport.totalPaidAmount}</div>
+                            <div className='bold'>{salesReport.totalPaidAmount}</div>
                         </div>
                         <div className='card_box data_card_info margin_5'>
                             <div>{t('totalRemainedAmount')}</div>
-                            <div>
+                            <div className='bold'>
                                 {Math.abs(salesReport.totalAllRemainedAmount)}
                                 <MoneyStatus number={salesReport.totalAllRemainedAmount} />
                             </div>
                         </div>
                         <div className='card_box data_card_info margin_5'>
                             <div>{t('totalProducts')}</div>
-                            <div>{salesReport.totalSoldProducts}</div>
+                            <div className='bold'>{salesReport.totalSoldProducts}</div>
                         </div>
                     </div>
                     <div className=' full_width justify_content_space_around display_flex flex_flow_wrap margin_top_10' >
