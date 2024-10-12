@@ -215,7 +215,7 @@ const SalesReport: React.FC = () => {
             </div>
             {loading ? <ShotLoadingTemplate /> :
                 <div className='display_flex margin_top_20 flex_flow_wrap flex_direction_column justify_content_center full_width'>
-                    <div className='display_flex '>
+                    <div className='display_flex flex_flow_wrap justify_content_space_around'>
                         <div className='card_box data_card_info margin_5'>
                             <div>{t('theAmountOfMoneySold')}</div>
                             <div>{salesReport.totalAllAmount}</div>
