@@ -240,7 +240,7 @@ const SalesReport: React.FC = () => {
                         <div className='chart_container input'>
                             <p className='title_2 '>{t('theAmountOfMoneySold')}</p>
                             {productsSales ?
-                                <DoughnutChart data={productsSales} />
+                                <DoughnutChart data={productsSales} unit='af' />
                                 :
                                 <ShotLoadingTemplate />
                             }

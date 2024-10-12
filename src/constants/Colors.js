@@ -1,4 +1,14 @@
 export default [
+    'rgba(255, 99, 132, 0.8)',    // Bright Red
+    'rgba(54, 162, 235, 0.8)',    // Vivid Blue
+    'rgba(255, 206, 86, 0.8)',    // Soft Yellow
+    'rgba(75, 192, 192, 0.8)',    // Soft Cyan
+    'rgba(153, 102, 255, 0.8)',   // Lavender Purple
+    'rgba(255, 159, 64, 0.8)',    // Warm Orange
+    'rgba(144, 238, 144, 0.8)',   // Light Green
+    'rgba(238, 130, 238, 0.8)',   // Vivid Violet
+    'rgba(255, 105, 180, 0.8)',   // Hot Pink
+    'rgba(100, 149, 237, 0.8)',   // Cornflower Blue
     'crimson',
     'dodgerblue',
     'darkorchid',
