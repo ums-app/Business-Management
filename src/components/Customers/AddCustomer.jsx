@@ -118,7 +118,7 @@ function AddCustomer({ updateMode = false }) {
                     phoneNumber: values.phoneNumber,
                     email: values.email.toLowerCase(),
                     roles: [],
-                    userType: UserTypes,
+                    userType: UserTypes.CUSTOMER,
                     disabled: false
                 })
 
@@ -342,11 +342,11 @@ function AddCustomer({ updateMode = false }) {
                                 as='select'
                                 className="input"
                             >
-                                <option value={null}>{t('visitor')}</option>
+                                <option value={undefined}>{t('visitor')}</option>
                                 {employees?.map(item => {
                                     return <option value={item.id} key={item.id}>{item.name} {item.lastName}</option>
                                 })}
-                                <option value={null}>{t('none')}</option>
+                                <option value={undefined}>{t('none')}</option>
 
 
                             </Field>

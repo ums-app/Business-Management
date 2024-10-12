@@ -231,7 +231,7 @@ const Navbar = () => {
 
 
       {/* for customer */}
-      {UserTypes.VISITOR?.toLowerCase() == authentication?.userType?.toLowerCase() &&
+      {UserTypes?.VISITOR?.toLowerCase() == authentication?.userType?.toLowerCase() &&
         <div className="navbar_menu position_absolute">
           <ul className="navbar_content">
             <CustomeLinks to="/" id={'home_link'} >
