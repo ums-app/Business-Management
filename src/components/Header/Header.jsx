@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { useStateValue } from "../../context/StateProvider";
@@ -8,12 +8,18 @@ import AvatarLoadingTemplate from "../UI/LoadingTemplate/AvatarLoadingTemplate";
 import LangBox from "../LangBox/LangBox";
 import { actionTypes } from "../../context/reducer";
 import { getUserImage } from "../../Utils/FirebaseTools";
+import { useOnClickOutside } from "usehooks-ts";
 const Header = ({ isDark, darkModeHandler }) => {
-
+  const navigate = useNavigate()
   const [{ authentication, navbarCollapse }, dispatch] = useStateValue();
   const [avatarLoading, setAvatarLoading] = useState(true)
   const [profileImage, setprofileImage] = useState('')
+  const [showLangBox, setShowLangBox] = useState(false);
+  const profileRef = useRef();
 
+  useOnClickOutside(profileRef, () => {
+    setShowLangBox(false)
+  })
 
   useEffect(() => {
     getUserImage(authentication.email)
@@ -28,6 +34,34 @@ const Header = ({ isDark, darkModeHandler }) => {
       type: actionTypes.COLLAPSE_NAVBAR,
     })
   }
+
+
+  const logoutModal = () => {
+    dispatch({
+      type: actionTypes.SHOW_ASKING_MODAL,
+      payload: {
+        show: true,
+        message: "logoutMessage",
+        btnAction: logout,
+        id: null,
+      },
+    });
+  }
+
+  const showBoxHandler = () => {
+    setShowLangBox((prev) => !prev);
+  }
+
+  const logout = () => {
+    showBoxHandler();
+    dispatch({
+      type: actionTypes.LOGOUT,
+    });
+    dispatch({
+      type: actionTypes.HIDE_ASKING_MODAL,
+    });
+    navigate("/");
+  };
 
 
   return (
@@ -61,7 +95,10 @@ const Header = ({ isDark, darkModeHandler }) => {
           </div>
 
           {authentication.isAuthenticated && (
-            <div className="user_profile user_select_none display_flex">
+            <div className="user_profile user_select_none display_flex"
+              ref={profileRef}
+              onClick={showBoxHandler}
+            >
               <div className="user_profile_img_container display_flex position_relative border_radius_50">
                 {avatarLoading && <AvatarLoadingTemplate />}
                 {<img
@@ -74,6 +111,14 @@ const Header = ({ isDark, darkModeHandler }) => {
               <p className="text_color">
                 {authentication.name} {authentication.lastname}
               </p>
+              <div className={'lang_menu showLangBox ' + (showLangBox && 'show')} >
+                <div onClick={logoutModal}>
+                  {t('logout')}
+                </div>
+                <div >
+                  {t('settings')}
+                </div>
+              </div>
             </div>
           )}
         </div>
