@@ -1,0 +1,17 @@
+.data_card_info {
+    width: 190px;
+    background-color: var(--gen-bg-color);
+    padding: 5px 10px;
+}
+
+
+.chart_container {
+    width: 50%;
+}
+
+
+@media (max-width:960px) {
+    .chart_container {
+        width: 100%;
+    }
+}

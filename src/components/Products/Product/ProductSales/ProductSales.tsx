@@ -1,6 +1,5 @@
 import { t } from 'i18next'
-import React, { useEffect, useState } from 'react'
-import DatePicker from 'react-multi-date-picker'
+import React, { useState } from 'react'
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker'
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import { collection, getDocs, query, Timestamp, where } from 'firebase/firestore'

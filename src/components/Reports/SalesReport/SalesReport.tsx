@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { CustomerFactor, CustomerPayment } from '../../../Types/Types'
-import { getAllCustomerPayments, getAllPayments, getFactors } from '../../../Utils/FirebaseTools'
+import { CustomerFactor, CustomerPayment, DoughnutChartData, DoughnutDataSet, Product } from '../../../Types/Types'
+import { getAllCustomerPayments, getAllPayments, getFactors, getProducts } from '../../../Utils/FirebaseTools'
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer'
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate'
 import { FactorType } from '../../../constants/FactorStatus'
 import { t } from 'i18next'
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus'
-import { Doughnut } from 'react-chartjs-2'
-import DoughnutChart from '../../Charts/DoughnutChart'
+import "../Reports.css"
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker'
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import Button from '../../UI/Button/Button'
+import Colors from '../../../constants/Colors'
+import DoughnutChart from '../../Charts/DoughnutChart'
+import BarChart from '../../Charts/BarChart'
+
+
 
 
 interface SalesReport {
@@ -21,25 +25,11 @@ interface SalesReport {
     totalSoldProducts: number,
 }
 
-interface ProductSalesAnalys {
-    totalSalesAmount: number,
-    totalNumberOfProduct: number,
-    productName: string,
-
-
-
-
-    color: 'red'
-}
-
-interface SaleActivity {
-
-}
-
 const SalesReport: React.FC = () => {
 
     const [customerFactors, setCustomerFactors] = useState<CustomerFactor[]>()
     const [customerPayments, setcustomerPayments] = useState<CustomerPayment[]>([])
+    const [products, setproducts] = useState<Product[]>([])
     const [range, setRange] = useState<[]>([])
     const [salesReport, setSalesReport] = useState<SalesReport>({
         totalAllAmount: 0,
@@ -50,6 +40,8 @@ const SalesReport: React.FC = () => {
     })
     const [loading, setLoading] = useState<boolean>(false)
 
+    const [productsSales, setProductsSales] = useState<DoughnutChartData>()
+    const [productsNumber, setproductsNumber] = useState<DoughnutChartData>()
 
     useEffect(() => {
 
@@ -61,23 +53,26 @@ const SalesReport: React.FC = () => {
             .then(res => {
                 setcustomerPayments(res)
             })
+        getProducts().then(res => {
+            setproducts(res);
+        })
     }, [])
 
     useEffect(() => {
         if (customerFactors && customerPayments) {
             generateReport(customerFactors, customerPayments, range)
         }
+        if (products) {
+            saleActivity()
 
-    }, [customerFactors, customerPayments])
+        }
 
-
-
-
+    }, [customerFactors, customerPayments, products])
 
 
     const generateReport = (customerFactors: CustomerFactor[], customerPayments: CustomerPayment[], range: []) => {
-        console.log(customerFactors);
-        console.log(customerPayments);
+        // console.log(customerFactors);
+        // console.log(customerPayments);
 
 
         if (range.length == 0) {
@@ -92,7 +87,7 @@ const SalesReport: React.FC = () => {
                 let totalProduct: number = 0;
                 factor.productsInFactor.forEach(pr => totalProduct += Number(pr.total))
                 let paidAmount: number = factor.type == FactorType.SUNDRY_FACTOR ? Number(factor.paidAmount) : 0
-                console.log('totalFactor: ', factor.totalAll);
+                // console.log('totalFactor: ', factor.totalAll);
 
                 report = {
                     ...report,
@@ -114,11 +109,58 @@ const SalesReport: React.FC = () => {
 
         }
 
-
     }
 
 
     const saleActivity = () => {
+        const name: string[] = [];
+        const color: string[] = [];
+        let priceDataSet: DoughnutDataSet = {
+            backgroundColor: [],
+            data: [],
+            label: t('theAmountOfMoneySold')
+        }
+        let numberDataSet: DoughnutDataSet = {
+            backgroundColor: [],
+            data: [],
+            label: t('totalProducts')
+        }
+        products.forEach((prd, index) => {
+            let totalAmount: number = 0;
+            let totalNumber: number = 0;
+
+            customerFactors?.forEach(fac => {
+                const result = fac.productsInFactor.find(item => item.productId == prd.id);
+                if (result) {
+                    totalAmount += Number(result.totalPrice);
+                    totalNumber += Number(result.total);
+                }
+            })
+            priceDataSet.data.push(totalAmount);
+            numberDataSet.data.push(totalNumber);
+            name.push(prd.name);
+            color.push(Colors[index])
+        })
+        priceDataSet.backgroundColor = color;
+        numberDataSet.backgroundColor = color;
+
+        setProductsSales({
+            labels: name,
+            datasets: [
+                priceDataSet,
+            ]
+        })
+        setproductsNumber({
+            labels: name,
+            datasets: [
+                numberDataSet
+            ]
+        })
+        // setproductsActivity(productsAnalys)
+
+        // console.log(productsActivity);
+
+
 
     }
 
@@ -127,24 +169,11 @@ const SalesReport: React.FC = () => {
         setLoading(true)
         const dates: Date[] = range.map(item => new Date(jalaliToGregorian(item.year, item.month.number, item.day).join('/')))
         console.log(dates);
-        let q;
-
-        try {
-
-        } catch (err) {
-            console.log(err);
-
-        } finally {
-            setLoading(false)
-        }
     }
 
 
-
-
-
     console.log(salesReport);
-
+    // console.log(productsActivity);
 
 
     if (!customerFactors) {
@@ -170,30 +199,41 @@ const SalesReport: React.FC = () => {
                     onClick={getProductSalesInDatePeriod}
                 />
             </div>
-            <div className='display_flex flex_flow_wrap justify_content_space_around margin_top_20 margin_bottom_10'>
-                <div className='card_box input margin_5'>
-                    <div>{t('theAmountOfMoneySold')}</div>
-                    <div>{salesReport.totalAllAmount}</div>
-                </div>
-                <div className='card_box input margin_5'>
-                    <div>{t('totalAllPaidAmount')}</div>
-                    <div>{salesReport.totalPaidAmount}</div>
-                </div>
-                <div className='card_box input margin_5'>
-                    <div>{t('totalRemainedAmount')}</div>
-                    <div>
-                        {Math.abs(salesReport.totalAllRemainedAmount)}
-                        <MoneyStatus number={salesReport.totalAllRemainedAmount} />
+            {loading ? <ShotLoadingTemplate /> :
+                <div className='display_flex margin_top_20 flex_flow_wrap flex_direction_column justify_content_center full_width'>
+                    <div className='display_flex '>
+                        <div className='card_box data_card_info margin_5'>
+                            <div>{t('theAmountOfMoneySold')}</div>
+                            <div>{salesReport.totalAllAmount}</div>
+                        </div>
+                        <div className='card_box data_card_info margin_5'>
+                            <div>{t('totalAllPaidAmount')}</div>
+                            <div>{salesReport.totalPaidAmount}</div>
+                        </div>
+                        <div className='card_box data_card_info margin_5'>
+                            <div>{t('totalRemainedAmount')}</div>
+                            <div>
+                                {Math.abs(salesReport.totalAllRemainedAmount)}
+                                <MoneyStatus number={salesReport.totalAllRemainedAmount} />
+                            </div>
+                        </div>
+                        <div className='card_box data_card_info margin_5'>
+                            <div>{t('totalProducts')}</div>
+                            <div>{salesReport.totalSoldProducts}</div>
+                        </div>
+                    </div>
+                    <div className='input full_width justify_content_space_around display_flex flex_flow_wrap' >
+                        <div className='chart_container'>
+                            <p className='title_2 '>{t('productSalesAnalysis')}</p>
+                            <DoughnutChart chartTitle={t('productSalesAnalysis')} data={productsSales} />
+                        </div>
+                        <div className=' chart_container'>
+                            <p className='title_2'>{t('productSalesAnalysis')}</p>
+                            <BarChart chartData={productsNumber} title={t('productSalesAnalysis')} />
+                        </div>
                     </div>
                 </div>
-                <div className='card_box input margin_5'>
-                    <div>{t('totalSoldProducts')}</div>
-                    <div>{salesReport.totalSoldProducts}</div>
-                </div>
-            </div>
-            <div className='iknput'>
-                {/* <DoughnutChart /> */}
-            </div>
+            }
         </div>
     )
 }

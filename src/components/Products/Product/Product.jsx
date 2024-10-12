@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Collections from '../../../constants/Collections';
 import { deleteDoc, doc, getDoc } from 'firebase/firestore';
-import { db, storage } from '../../../constants/FirebaseConfig';
+import { db } from '../../../constants/FirebaseConfig';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
-import CardLoadingTemplate from '../../UI/LoadingTemplate/CardLoadingTemplate';
 import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import TabMenu from '../../UI/TabMenu/TabMenu';
@@ -14,8 +13,6 @@ import ProductInformation from "./ProductInformation/ProductInformation"
 import ProductSales from './ProductSales/ProductSales';
 import ProductAnalysis from './ProductAnalysis/ProductAnalysis';
 import usePersistentComponent from '../../../Hooks/usePersistentComponent';
-import { getDownloadURL, ref } from 'firebase/storage';
-import Folders from '../../../constants/Folders';
 import { actionTypes } from '../../../context/reducer';
 import { useStateValue } from '../../../context/StateProvider';
 import { toast } from 'react-toastify';

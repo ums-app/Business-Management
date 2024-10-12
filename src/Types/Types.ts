@@ -193,3 +193,17 @@ export interface Suggestion { name: string, lastName: string, id: string }
 
 
 
+
+export interface DoughnutChartData {
+    labels: string[],
+    datasets: DoughnutDataSet[]
+};
+
+export interface DoughnutDataSet {
+    label: string,
+    data: number[],
+    backgroundColor: string[],
+}
+
+
+

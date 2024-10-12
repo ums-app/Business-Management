@@ -378,7 +378,8 @@ const en = {
         chooseDatePeriod: 'Choose Date Period',
         theAmountOfSales: 'The Amount Of Sales',
         theAmountOfMoneySold: 'The amount of money sold',
-        mostPurchased: "Most purchased"
+        mostPurchased: "Most purchased",
+        productSalesAnalysis: 'Product Sales Analysis'
 
 
 
