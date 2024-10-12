@@ -402,7 +402,8 @@ const fa = {
         totalAllPaidAmount: 'مجموعه مبالغ پرداختی',
         mostPurchased: 'بیشترین خرید',
         totalProducts: 'مجموعه اجناس ',
-        productSalesAnalysis: 'تحلیل فروش اجناس'
+        productSalesAnalysis: 'تحلیل فروش اجناس',
+        totalNumberOFSold: 'تعداد کل فروش'
 
 
 

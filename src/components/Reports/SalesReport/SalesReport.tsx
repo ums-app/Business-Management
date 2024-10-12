@@ -30,7 +30,7 @@ const SalesReport: React.FC = () => {
     const [customerFactors, setCustomerFactors] = useState<CustomerFactor[]>()
     const [customerPayments, setcustomerPayments] = useState<CustomerPayment[]>([])
     const [products, setproducts] = useState<Product[]>([])
-    const [range, setRange] = useState<[]>([])
+    const [range, setRange] = useState<Date[]>([])
     const [salesReport, setSalesReport] = useState<SalesReport>({
         totalAllAmount: 0,
         totalAllFactor: 0,
@@ -43,8 +43,9 @@ const SalesReport: React.FC = () => {
     const [productsSales, setProductsSales] = useState<DoughnutChartData>()
     const [productsNumber, setproductsNumber] = useState<DoughnutChartData>()
 
-    useEffect(() => {
 
+    useEffect(() => {
+        setLoading(true)
         getFactors()
             .then(res => {
                 setCustomerFactors(res)
@@ -56,63 +57,82 @@ const SalesReport: React.FC = () => {
         getProducts().then(res => {
             setproducts(res);
         })
+            .finally(() => {
+                setLoading(false)
+            })
     }, [])
 
     useEffect(() => {
+        console.log('useEffect run for analysing data');
+
         if (customerFactors && customerPayments) {
             generateReport(customerFactors, customerPayments, range)
         }
-        if (products) {
-            saleActivity()
-
-        }
+        console.log('end useEffect run for analysing data');
 
     }, [customerFactors, customerPayments, products])
 
 
-    const generateReport = (customerFactors: CustomerFactor[], customerPayments: CustomerPayment[], range: []) => {
-        // console.log(customerFactors);
-        // console.log(customerPayments);
 
+    const generateReport = (customerFactors: CustomerFactor[], customerPayments: CustomerPayment[], range: Date[]) => {
+        let payments: CustomerPayment[] = customerPayments;
+        let factors: CustomerFactor[] = customerFactors;
 
-        if (range.length == 0) {
-            let report: SalesReport = {
-                totalAllAmount: 0,
-                totalAllFactor: customerFactors.length,
-                totalAllRemainedAmount: 0,
-                totalPaidAmount: 0,
-                totalSoldProducts: 0
-            }
-            customerFactors.forEach(factor => {
-                let totalProduct: number = 0;
-                factor.productsInFactor.forEach(pr => totalProduct += Number(pr.total))
-                let paidAmount: number = factor.type == FactorType.SUNDRY_FACTOR ? Number(factor.paidAmount) : 0
-                // console.log('totalFactor: ', factor.totalAll);
+        if (range.length >= 2) {
+            console.log(range);
 
-                report = {
-                    ...report,
-                    totalAllAmount: report.totalAllAmount + Number(factor.totalAll),
-                    totalAllFactor: customerFactors.length,
-                    totalSoldProducts: report.totalSoldProducts + totalProduct,
-                    totalPaidAmount: report.totalPaidAmount + paidAmount
-                }
+            factors = factors.filter(item => {
+                console.log(item.createdDate.toDate());
+
+                const elementDate = item.createdDate.toDate(); // Convert Firebase Timestamp to JS Date
+                return elementDate >= range[0] && elementDate <= range[1];
             })
-            let totalPaid = 0;
-            customerPayments.forEach(pay => totalPaid += pay.amount);
-            let totalRemaiedAmount: number = report.totalAllAmount - totalPaid;
+            payments = payments.filter(item => {
+                const elementDate = item.createdDate.toDate(); // Convert Firebase Timestamp to JS Date
+                return elementDate >= range[0] && elementDate <= range[1];
+            })
+        }
+        console.log('after filter');
+        console.log(factors);
+        console.log(payments);
+
+
+        let report: SalesReport = {
+            totalAllAmount: 0,
+            totalAllFactor: factors.length,
+            totalAllRemainedAmount: 0,
+            totalPaidAmount: 0,
+            totalSoldProducts: 0
+        }
+        factors.forEach(factor => {
+            let totalProduct: number = 0;
+            factor.productsInFactor.forEach(pr => totalProduct += Number(pr.total))
+            let paidAmount: number = factor.type == FactorType.SUNDRY_FACTOR ? Number(factor.paidAmount) : 0
+
             report = {
                 ...report,
-                totalPaidAmount: totalPaid,
-                totalAllRemainedAmount: totalRemaiedAmount
+                totalAllAmount: report.totalAllAmount + Number(factor.totalAll),
+                totalAllFactor: customerFactors.length,
+                totalSoldProducts: report.totalSoldProducts + totalProduct,
+                totalPaidAmount: report.totalPaidAmount + paidAmount
             }
-            setSalesReport(report)
-
+        })
+        let totalPaid = 0;
+        payments.forEach(pay => totalPaid += pay.amount);
+        let totalRemaiedAmount: number = report.totalAllAmount - totalPaid;
+        report = {
+            ...report,
+            totalPaidAmount: totalPaid,
+            totalAllRemainedAmount: totalRemaiedAmount
         }
+        setSalesReport(report)
+        saleActivity(factors);
+
 
     }
 
 
-    const saleActivity = () => {
+    const saleActivity = (customerFactors: CustomerFactor[]) => {
         const name: string[] = [];
         const color: string[] = [];
         let priceDataSet: DoughnutDataSet = {
@@ -123,7 +143,7 @@ const SalesReport: React.FC = () => {
         let numberDataSet: DoughnutDataSet = {
             backgroundColor: [],
             data: [],
-            label: t('totalProducts')
+            label: t('totalNumberOFSold')
         }
         products.forEach((prd, index) => {
             let totalAmount: number = 0;
@@ -156,19 +176,14 @@ const SalesReport: React.FC = () => {
                 numberDataSet
             ]
         })
-        // setproductsActivity(productsAnalys)
-
-        // console.log(productsActivity);
-
-
-
     }
 
 
     const getProductSalesInDatePeriod = async () => {
-        setLoading(true)
         const dates: Date[] = range.map(item => new Date(jalaliToGregorian(item.year, item.month.number, item.day).join('/')))
-        console.log(dates);
+        generateReport(customerFactors, customerPayments, dates)
+
+
     }
 
 
@@ -186,7 +201,6 @@ const SalesReport: React.FC = () => {
 
     return (
         <div>
-            <h1 className='title'>{t('analysis')}</h1>
             <div className='text_align_center margin_top_20 margin_bottom_10'>
                 {/* <span>{t('chooseDatePeriod')}: </span> */}
                 <CustomDatePicker
@@ -222,14 +236,22 @@ const SalesReport: React.FC = () => {
                             <div>{salesReport.totalSoldProducts}</div>
                         </div>
                     </div>
-                    <div className='input full_width justify_content_space_around display_flex flex_flow_wrap' >
-                        <div className='chart_container'>
-                            <p className='title_2 '>{t('productSalesAnalysis')}</p>
-                            <DoughnutChart chartTitle={t('productSalesAnalysis')} data={productsSales} />
+                    <div className=' full_width justify_content_space_around display_flex flex_flow_wrap margin_top_10' >
+                        <div className='chart_container input'>
+                            <p className='title_2 '>{t('theAmountOfMoneySold')}</p>
+                            {productsSales ?
+                                <DoughnutChart data={productsSales} />
+                                :
+                                <ShotLoadingTemplate />
+                            }
                         </div>
-                        <div className=' chart_container'>
-                            <p className='title_2'>{t('productSalesAnalysis')}</p>
-                            <BarChart chartData={productsNumber} title={t('productSalesAnalysis')} />
+                        <div className=' chart_container input'>
+                            <p className='title_2'>{t('totalNumberOFSold')}</p>
+                            {productsNumber ?
+                                <BarChart chartData={productsNumber} />
+                                :
+                                <ShotLoadingTemplate />
+                            }
                         </div>
                     </div>
                 </div>

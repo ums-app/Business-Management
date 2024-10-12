@@ -379,7 +379,8 @@ const en = {
         theAmountOfSales: 'The Amount Of Sales',
         theAmountOfMoneySold: 'The amount of money sold',
         mostPurchased: "Most purchased",
-        productSalesAnalysis: 'Product Sales Analysis'
+        productSalesAnalysis: 'Product Sales Analysis',
+        totalNumberOFSold: 'Total Number OF Sold'
 
 
 
