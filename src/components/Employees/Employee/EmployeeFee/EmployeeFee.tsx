@@ -65,6 +65,31 @@ const EmployeeFee: React.FC = () => {
 
     }, [allFactors])
 
+    useEffect(() => {
+        if (allFactors) {
+            setLoading(true);
+
+            // Fixing the issue with Set and toArray
+            const ids: string[] = [...new Set(
+                allFactors
+                    .filter(item => item.type === FactorType.STANDARD_FACTOR)
+                    .map(item => item.customer.id)
+            )];
+
+            getCustomerPaymentByCustomerIds(ids)
+                .then(res => {
+                    console.log(res);
+                    let total = 0;
+                    res.forEach(item => total += item.amount);
+                    setTotalCustomersPaid(total);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [allFactors]);
+
+
 
 
     const calculateWithdrawableAmount = () => {
