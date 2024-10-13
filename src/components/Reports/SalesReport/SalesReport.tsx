@@ -78,6 +78,21 @@ const SalesReport: React.FC = () => {
         let payments: CustomerPayment[] = customerPayments;
         let factors: CustomerFactor[] = customerFactors;
 
+        if (range.length == 1) {
+            console.log(range);
+
+            factors = factors.filter(item => {
+                console.log(item.createdDate.toDate());
+
+                const elementDate = item.createdDate.toDate(); // Convert Firebase Timestamp to JS Date
+                return elementDate == range[0];
+            })
+            payments = payments.filter(item => {
+                const elementDate = item.createdDate.toDate(); // Convert Firebase Timestamp to JS Date
+                return elementDate == range[0];
+            })
+        }
+
         if (range.length >= 2) {
             console.log(range);
 

@@ -9,6 +9,7 @@ import ButtonLoadingTemplate from '../../../UI/LoadingTemplate/ButtonLoadingTemp
 import { EmployeePaymentType } from '../../../../constants/Others.js';
 import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate.jsx';
 import { CustomerFactor } from '../../../../Types/Types.ts';
+import { FactorType } from '../../../../constants/FactorStatus.js';
 
 const EmployeeFee: React.FC = () => {
     const { employeeId } = useParams()
@@ -47,7 +48,9 @@ const EmployeeFee: React.FC = () => {
     useEffect(() => {
         if (allFactors) {
             setLoading(true);
-            let ids: string[] = new Set([...allFactors.map(item => item.customer.id)]).values().toArray();
+            // there som error in here have a check
+            let ids: string[] = new Set([...allFactors.filter(item => item.type == FactorType.STANDARD_FACTOR)
+                .map(item => item.customer.id)])?.values()?.toArray();
 
             getCustomerPaymentByCustomerIds(ids)
                 .then(res => {
