@@ -264,6 +264,30 @@ export const getAllPayments = async (): Promise<CustomerPayment[]> => {
     }
 };
 
+export const getAllCustomerPaymentsOfToday = async (): Promise<CustomerPayment[]> => {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0); // Start of today (midnight)
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); // End of today
+
+    const q = query(
+        paymentCollectionRef,
+        where("createdDate", ">=", startOfDay),
+        where("createdDate", "<=", endOfDay)
+    );
+    try {
+        const querySnapshot = await getDocs(q);
+        let items: CustomerPayment[] = querySnapshot.docs
+            .map(doc => mapDocToCustomerPayment(doc));
+        return items;
+    } catch (error) {
+        // console.error("Error getting documents: ", error);
+        return []
+    }
+};
+
+
 
 
 
@@ -303,6 +327,30 @@ export const getFactors = async (): Promise<CustomerFactor[]> => {
         return []
     }
 }
+
+export const getFactorsOfToday = async (): Promise<CustomerFactor[]> => {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0); // Start of today (midnight)
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); // End of today
+
+    const q = query(
+        salesCollectionRef,
+        where("createdDate", ">=", startOfDay),
+        where("createdDate", "<=", endOfDay)
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+        const items: CustomerFactor[] = querySnapshot.docs.map(doc => mapDocToCustomerFactor(doc));
+        return items;
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return [];
+    }
+};
+
 
 export const getStandardFactors = async (): Promise<CustomerFactor[]> => {
 

@@ -403,7 +403,8 @@ const fa = {
         mostPurchased: 'بیشترین خرید',
         totalProducts: 'مجموعه اجناس ',
         productSalesAnalysis: 'تحلیل فروش اجناس',
-        totalNumberOFSold: 'تعداد کل فروش'
+        totalNumberOFSold: 'تعداد کل فروش',
+        todaySalesStatistics: "آمار فروشات امروز"
 
 
 

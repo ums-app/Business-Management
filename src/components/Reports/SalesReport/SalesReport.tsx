@@ -143,7 +143,6 @@ const SalesReport: React.FC = () => {
         setSalesReport(report)
         saleActivity(factors);
 
-
     }
 
 
