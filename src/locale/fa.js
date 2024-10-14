@@ -316,7 +316,7 @@ const fa = {
         of: 'از',
         factor: 'فاکتور',
         factors: 'فاکتورها',
-        size: 'تعداد',
+        size: 'اندازه',
         people: 'افراد',
         numberOfElementPerPage: "تعداد ردیف ها در هر صفحه",
         enterValueForSearching: 'نام مورد نظر را وارد کنید',
