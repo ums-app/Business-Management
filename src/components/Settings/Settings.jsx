@@ -6,11 +6,11 @@ import TabMenu from "../UI/TabMenu/TabMenu";
 import AccountSettings from "./AccountSettings/AccountSettings";
 import SystemSettings from "./SystemSettings/SystemSettings";
 import usePersistentComponent from "../../Hooks/usePersistentComponent";
-import Sections from "./Sections/Sections";
+import FirestoreBackup from "../Backup/FirestoreBackup";
 
 const components = {
   accountSettings: { componentName: "AccountSettings", component: AccountSettings },
-  sections: { componentName: "sections", component: Sections },
+  backup: { componentName: "backup", component: FirestoreBackup },
   systemSettings: { componentName: "SystemSettings", component: SystemSettings },
 };
 
@@ -38,6 +38,16 @@ function Settings() {
         </li>
         <li
           className={
+            displayComponent?.componentName == components?.backup?.componentName
+              ? "active"
+              : ""
+          }
+          onClick={() => setDisplayComponent(components?.backup)}
+        >
+          {t("backup")}
+        </li>
+        {/* <li
+          className={
             displayComponent?.componentName == components?.sections?.componentName
               ? "active"
               : ""
@@ -45,7 +55,7 @@ function Settings() {
           onClick={() => setDisplayComponent(components?.sections)}
         >
           {t("sections")}
-        </li>
+        </li> */}
 
         <li
           className={

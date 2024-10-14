@@ -404,7 +404,15 @@ const fa = {
         totalProducts: 'مجموعه اجناس ',
         productSalesAnalysis: 'تحلیل فروش اجناس',
         totalNumberOFSold: 'تعداد کل فروش',
-        todaySalesStatistics: "آمار فروشات امروز"
+        todaySalesStatistics: "آمار فروشات امروز",
+        backup: "بک آپ",
+        productpurchases: 'خرید اجناس',
+        customerfactors: 'فاکتور ها',
+        employeepayments: "بردگی کارمندان",
+        users: 'کاربران',
+        backupAll: 'دانلود بک آپ'
+
+
 
 
 

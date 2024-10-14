@@ -188,6 +188,17 @@ const Navbar = () => {
             >
               {t("customers")}
             </Tooltip>
+            <CustomeLinks to="/backup" id={'backup_link'}>
+              <i className={ICONS.arrowDown}></i>
+              <span>{t("backup")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#backup_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("backup")}
+            </Tooltip>
 
             <CustomeLinks to="/settings" id={'settings_link'}>
               <i className={ICONS.gear}></i>

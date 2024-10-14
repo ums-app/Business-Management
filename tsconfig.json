@@ -19,6 +19,10 @@
     "allowImportingTsExtensions": true
   },
   "include": [
-    "src"
+    "src",
+    "src/components/UI/Loading/.jsx"
   ],
+  "exclude": [
+    "node_modules/@types/trusted-types"
+  ]
 }

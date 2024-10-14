@@ -9,5 +9,4 @@ export default {
     Payments: 'Payments',
     EmployeePayments: 'EmployeePayments'
 
-
 }

@@ -319,7 +319,7 @@ const Sales: React.FC = () => {
         try {
             // Build query constraints dynamically
             let queryConstraints: QueryConstraint[] = [
-                orderBy("createdDate", "desc"),
+                orderBy("createdDate", "asc"),
                 endBefore(firstVisible),
                 limitToLast(pageSize)
             ];
@@ -360,6 +360,10 @@ const Sales: React.FC = () => {
             setloading(false);
         }
     };
+
+    console.log("current-page: ", currentPage);
+    console.log('last visible item: ', lastVisible);
+
 
 
 

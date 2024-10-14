@@ -132,6 +132,8 @@ const ICONS = {
   pen: "bi bi-building",
   whatsapp: 'bi bi-whatsapp',
   telegram: 'bi bi-telegram',
+  arrowDown: 'bi bi-box-arrow-down',
+  arrowUp: 'bi bi-box-arrow-up'
 };
 
 export default ICONS;

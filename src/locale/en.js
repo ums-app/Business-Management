@@ -381,7 +381,8 @@ const en = {
         mostPurchased: "Most purchased",
         productSalesAnalysis: 'Product Sales Analysis',
         totalNumberOFSold: 'Total Number OF Sold',
-        todaySalesStatistics: "Today Sales Statistics"
+        todaySalesStatistics: "Today Sales Statistics",
+        backup: "Backup"
 
 
 
