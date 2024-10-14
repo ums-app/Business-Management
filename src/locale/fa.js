@@ -118,7 +118,7 @@ const fa = {
         userName: "نام کاربری",
         phoneNumber: "شماره تماس",
         address: "آدرس",
-        upload: "بارگزاری",
+        upload: "بارگذاری",
         location: "موقعیت مکان",
         actions: "عملیات",
         deleteMessage: "آیا درباره حذف   مطمئن هستید؟",
