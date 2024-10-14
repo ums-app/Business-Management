@@ -60,7 +60,6 @@ function Product() {
     }, [productId])
 
 
-
     // if (notFound) {
     //     return <NotFound />;
     // }
@@ -89,7 +88,6 @@ function Product() {
         });
     };
 
-
     const removeProdcut = async () => {
         dispatch({
             type: actionTypes.SET_GLOBAL_LOADING,
@@ -112,10 +110,6 @@ function Product() {
             });
         }
     };
-
-
-
-
 
 
     return (

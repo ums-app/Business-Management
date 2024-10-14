@@ -415,7 +415,9 @@ const fa = {
         uploadedSuccessfully: 'با موفقیت آپلود شد',
         fileUploadAlert: 'لطفا قبل از آپلود فایل را انتخاب کنید',
         selectedFile: "فایل انتخاب شده",
-        saveBackup: 'ذخیره بک آپ'
+        saveBackup: 'ذخیره بک آپ',
+        dragFileToUpload: 'فایل‌ها را به اینجا بکشید یا رها کنید یا برای انتخاب فایل‌ها کلیک کنید',
+        uploadedFiles: 'فایل های آپلود شده'
 
 
 

@@ -27,17 +27,17 @@ const BarChart = ({ chartData, title }) => {
       },
     },
     scales: {
-      yAxes: [{
-        display: false,
-        gridLines: {
-          display: false
-        },
-        ticks: {
-          max: Math.max(...chartData.datasets[0].data) + 10,
-          display: false,
-          beginAtZero: true
-        }
-      }],
+      // yAxes: [{
+      //   display: false,
+      //   gridLines: {
+      //     display: false
+      //   },
+      //   ticks: {
+      //     max: Math.max(...chartData.datasets[0].data) + 10,
+      //     display: false,
+      //     beginAtZero: true
+      //   }
+      // }],
       x: {
         ticks: {
           color: 'black', // Color for labels on X-axis (bottom)

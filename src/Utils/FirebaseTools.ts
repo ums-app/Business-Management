@@ -5,7 +5,8 @@ import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product, User } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct, mapDocToUser } from "./Mapper";
+import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
+import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 
 
 
@@ -16,6 +17,7 @@ const paymentCollectionRef = collection(db, Collections.Payments);
 const usersCollectionRef = collection(db, Collections.Users);
 const employeePaymentsCollectionRef = collection(db, Collections.EmployeePayments);
 const employeesCollectionRef = collection(db, Collections.Employees);
+const filesCollectionRef = collection(db, Collections.Files)
 
 export const checkIfEmailIsAlreadyExist = async (email: string): Promise<Boolean> => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -39,6 +41,23 @@ export const getProductImage = async (productId: string): Promise<String> => {
         return downloadURL;
     }
 };
+
+
+export const getAllUploadedFile = async (): Promise<UploadedFile[]> => {
+    const q = query(
+        filesCollectionRef,
+        orderBy("date", 'asc')
+    );
+    try {
+        const docSnap = await getDocs(q);
+        console.log('users: ', docSnap.docs);
+        return docSnap.docs.map(item => mapDocToUploadedFile(item));
+    } catch (err) {
+        throw err
+    }
+};
+
+
 
 
 

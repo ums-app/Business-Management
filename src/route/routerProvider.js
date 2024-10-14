@@ -35,7 +35,10 @@ const Sales = React.lazy(() => import("../components/Sales/Sales"));
 const Dashboard = React.lazy(() => import("../components/Dashboard/Dashboard"));
 const Home = React.lazy(() => import("../components/Home/Home"));
 const Settings = React.lazy(() => import("../components/Settings/Settings"));
-const FirestoreBackup = React.lazy(() => import("../components/Backup/FirestoreBackup.tsx"));
+const FilesManagement = React.lazy(() => import("../components/FilesManagement/FilesManagement.tsx"));
+
+
+
 const browserRouter = createBrowserRouter([
   {
     path: "/",
@@ -163,8 +166,8 @@ const browserRouter = createBrowserRouter([
       },
 
       {
-        path: "/backup",
-        element: <FirestoreBackup />,
+        path: "/files",
+        element: <FilesManagement />,
       },
       {
         path: "/settings",

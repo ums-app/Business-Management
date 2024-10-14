@@ -11,7 +11,7 @@ import Button from '../../../UI/Button/Button'
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer'
 import Colors from '../../../../constants/Colors'
 import { FactorType } from '../../../../constants/FactorStatus'
-import { getAllCustomerPaymentsOfToday, getFactorsOfToday, getProducts } from '../../../../Utils/FirebaseTools'
+import { getAllCustomerPaymentsOfToday, getFactorsOfToday, getProducts, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools'
 
 export const DailySalesReport: React.FC = () => {
 
@@ -182,7 +182,7 @@ export const DailySalesReport: React.FC = () => {
                     <div className='chart_container input'>
                         <p className='title_2 '>{t('theAmountOfMoneySold')}</p>
                         {productsSales ?
-                            <DoughnutChart data={productsSales} unit='af' />
+                            <DoughnutChart totalAmount={`${salesReport.totalAllAmount} ${t('af')}`} data={productsSales} unit='af' />
                             :
                             <ShotLoadingTemplate />
                         }

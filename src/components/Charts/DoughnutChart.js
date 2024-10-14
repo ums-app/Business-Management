@@ -7,8 +7,20 @@ import { t } from 'i18next';
 // Register the required elements for Chart.js, including ArcElement
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
-function DoughnutChart({ data, chartTitle, unit = '' }) {
+function DoughnutChart({ data, chartTitle, unit = '', totalAmount }) {
+    const textCenterDoughnut = {
+        id: 'textCenterDoughnut',
+        afterDatasetDraw(chart, args, pluginOptions) {
+            const { ctx } = chart;
+            const x = chart.getDatasetMeta(0).data[0]?.x;
+            const y = chart.getDatasetMeta(0).data[0]?.y;
+            ctx.fillStyle = 'crimson'
 
+            ctx.font = 'bold 32px sans-serif'
+            ctx.textAlign = 'center'
+            ctx.fillText(totalAmount, x, y)
+        }
+    }
 
     const options = {
         responsive: true,
@@ -50,7 +62,7 @@ function DoughnutChart({ data, chartTitle, unit = '' }) {
 
 
     return (
-        <Doughnut options={options} title={chartTitle} data={data} />
+        <Doughnut options={options} title={chartTitle} data={data} plugins={totalAmount && [textCenterDoughnut]} />
     )
 }
 

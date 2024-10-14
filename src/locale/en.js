@@ -387,7 +387,10 @@ const en = {
         uploadedSuccessfully: 'Uploaded Successfully',
         fileUploadAlert: "Please select a file before importing.",
         selectedFile: "Selected file",
-        saveBackup: 'Save Backup'
+        saveBackup: 'Save Backup',
+        dragFileToUpload: 'Drag and drop some files here, or click to select files',
+        uploadedFiles: 'Uploaded Files'
+
 
 
 

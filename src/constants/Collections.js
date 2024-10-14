@@ -7,6 +7,7 @@ export default {
     Products: 'Products',
     Purchases: "ProductPurchases",
     Payments: 'Payments',
-    EmployeePayments: 'EmployeePayments'
+    EmployeePayments: 'EmployeePayments',
+    Files: 'Files',
 
 }

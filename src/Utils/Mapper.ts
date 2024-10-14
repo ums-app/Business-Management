@@ -1,5 +1,6 @@
 import { DocumentData } from "firebase/firestore";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product, User } from "../Types/Types";
+import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 
 
 // ==>   in this file we are going to map the DocumentData object to appropriate data object using mapper function  <== //
@@ -122,6 +123,19 @@ export const mapDocToProduct = (doc: DocumentData): Product => {
         name: data.name,
         manufacturer: data.manufacturer,
         price: data.price
+    }
+}
+
+
+
+export const mapDocToUploadedFile = (doc: DocumentData): UploadedFile => {
+    const data = doc.data();
+    return {
+        id: doc.id,
+        date: data.date,
+        name: data.name,
+        size: data.size,
+        url: data.url
     }
 }
 
