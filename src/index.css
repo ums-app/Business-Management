@@ -456,6 +456,14 @@ a {
   justify-content: flex-end;
 }
 
+.justify_self_end {
+  justify-self: flex-end;
+}
+
+.align_self_end {
+  align-self: flex-end;
+}
+
 .flex_direction_column {
   flex-direction: column;
 }

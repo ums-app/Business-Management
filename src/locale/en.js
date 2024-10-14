@@ -382,7 +382,11 @@ const en = {
         productSalesAnalysis: 'Product Sales Analysis',
         totalNumberOFSold: 'Total Number OF Sold',
         todaySalesStatistics: "Today Sales Statistics",
-        backup: "Backup"
+        backup: "Backup",
+        uploadingData: "Uploading Data ...",
+        uploadedSuccessfully: 'Uploaded Successfully',
+        fileUploadAlert: "Please select a file before importing.",
+        selectedFile: "Selected file"
 
 
 

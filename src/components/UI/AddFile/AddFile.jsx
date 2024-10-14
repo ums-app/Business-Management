@@ -73,18 +73,7 @@ const AddFile = ({
         className="file_form display_flex align_items_center justify_content_center flex_direction_column"
         onSubmit={handleSubmit}
       >
-        <textarea
-          name="description"
-          type="text"
-          id="fileDescription"
-          className="input"
-          placeholder={t("description")}
-          value={description}
-          onChange={handleDescriptionChange}
-          autoFocus
-          rows={5}
-        ></textarea>
-        <div className="logo_input_box">
+        <div className="logo_input_box display_flex">
           <input
             name="file"
             type="file"
@@ -95,10 +84,9 @@ const AddFile = ({
             multiple
           />
 
-          {!fileURLs.length ? (
+          {!fileURLs?.length ? (
             <div className="file_input_uploading display_flex flex_direction_column align_items_center justify_content_center">
               <i className={ICONS.cloudUpload}></i>
-              <span>.pdf, .png, jpg, .doc, .docx</span>
               <label htmlFor="subjectFile">
                 {t("select") + " " + t("files")}
               </label>

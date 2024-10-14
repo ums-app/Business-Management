@@ -7,8 +7,10 @@ import { gregorianToJalali } from 'shamsi-date-converter';
 import Button from '../UI/Button/Button';
 import ICONS from '../../constants/Icons';
 import { t } from 'i18next';
-import Spinner from '../UI/Loading/Spinner';
 import SmallSpinner from '../UI/Loading/SmallSpinner';
+import { InputGroup, FormControl, Alert } from 'react-bootstrap';
+import { BiArrowToBottom } from 'react-icons/bi'; // Icon from react-icons
+
 
 interface BackupState {
     loading: boolean;
@@ -29,8 +31,11 @@ const fetchCollectionData = async (collectionName: string) => {
 
 const BackupComponent: React.FC = () => {
     const [loadingCollections, setLoadingCollections] = useState<{ [key: string]: string }>({});
-    const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
-    const [importLoading, setImportLoading] = useState(false);
+    const [uploadingStatus, setuploadingStatus] = useState<string>('');
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [importLoading, setImportLoading] = useState<boolean>(false);
+    const [feedbackMessage, setFeedbackMessage] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     const handleBackupAll = async () => {
         const newLoadingState = { ...Collections };
@@ -71,26 +76,48 @@ const BackupComponent: React.FC = () => {
         });
     };
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            setImportLoading(true);
-            const zip = new JSZip();
-            try {
-                const content = await zip.loadAsync(file);
-                // Assuming each file in the ZIP corresponds to a collection
-                for (const filename of Object.keys(content.files)) {
-                    const fileData = await content.files[filename].async("string");
-                    const collectionName = getCollectionNameFromFilename(filename); // Implement this function
-                    console.log(collectionName);
 
-                    await updateFirestoreCollection(collectionName, fileData);
-                }
-            } catch (error) {
-                console.error("Error importing data from ZIP file:", error);
-            } finally {
-                setImportLoading(false);
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] || null;
+        if (file) {
+            setSelectedFile(file);
+            setFeedbackMessage(`${t('selectedFile')}: ${file.name}`);
+            setErrorMessage('');
+        } else {
+            setFeedbackMessage('');
+            setErrorMessage('No file selected.');
+        }
+    };
+
+    const handleImport = async () => {
+        if (!selectedFile) {
+            setErrorMessage(t('fileUploadAlert'));
+            return;
+        }
+        setImportLoading(true);
+        setFeedbackMessage('');
+        setErrorMessage('');
+        const zip = new JSZip();
+        try {
+            const content = await zip.loadAsync(selectedFile);
+            // Assuming each file in the ZIP corresponds to a collection
+            let numberOfFile = Object.keys(content.files).length;
+            let index = 1
+            for (const filename of Object.keys(content.files)) {
+                const progress = (index++ / numberOfFile) * 100;
+                setuploadingStatus(`${progress.toFixed(0)}%`)
+                const fileData = await content.files[filename].async("string");
+                const collectionName = getCollectionNameFromFilename(filename); // Implement this function
+                console.log(collectionName);
+                await updateFirestoreCollection(collectionName, fileData);
+
             }
+            setSelectedFile(null);
+            setFeedbackMessage(t('uploadedSuccessfully'));
+        } catch (error) {
+            console.error("Error importing data from ZIP file:", error);
+        } finally {
+            setImportLoading(false);
         }
     };
 
@@ -133,28 +160,132 @@ const BackupComponent: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1 className='title'>Backup Collections</h1>
-            <Button
-                text={t('backupAll')}
-                onClick={handleBackupAll}
-                icon={ICONS.download}
-            />
-            <ul className='list'>
-                {Object.keys(Collections).map((collectionKey) => (
-                    <li className='display_flex margin_5' key={collectionKey} style={{ marginBottom: '10px' }}>
-                        {loadingCollections[collectionKey] == 'loading' && <SmallSpinner visibility={true} />}
-                        {loadingCollections[collectionKey] == 'done' && <i className={ICONS.thick} style={{ color: 'var(--main-color)', fontSize: '20px', margin: '0 5px' }}></i>}
-                        <span>{t(Collections[collectionKey].toLowerCase())}</span>
-                    </li>
-                ))}
-            </ul>
+        <div style={styles.container}>
+            <h1 className='title'>{t('backup')}</h1>
+            <div style={styles.container} >
+                <h1 className='title'>{t('save')}</h1>
+                <div className='display_flex align_items_center flex_flow_wrap justify_content_space_between   margin_right_10 margin_left_10'>
+                    <ul className='list'>
+                        {Object.keys(Collections).map((collectionKey) => (
+                            <li className='display_flex margin_5' key={collectionKey} style={{ marginBottom: '10px' }}>
+                                {loadingCollections[collectionKey] == 'loading' && <SmallSpinner visibility={true} />}
+                                {loadingCollections[collectionKey] == 'done' && <i className={ICONS.thick} style={{ color: 'var(--main-color)', fontSize: '20px', margin: '0 5px' }}></i>}
+                                <span>{t(Collections[collectionKey].toLowerCase())}</span>
+                            </li>
+                        ))}
 
-            <h2>Import Data</h2>
-            <input type="file" accept=".zip" onChange={handleFileChange} />
-            {importLoading && <span>Importing data...</span>}
-        </div>
+                    </ul>
+                    <Button
+                        text={t('backupAll')}
+                        onClick={handleBackupAll}
+                        icon={ICONS.download}
+
+                    />
+
+                </div>
+            </div>
+
+            <div style={styles.container}>
+                <div className="text-center display_flex align_items_center">
+                    <i style={styles.icon} className={ICONS.arrowUpShort}></i>
+                    <h2 style={styles.title}>{t('upload')}</h2>
+                </div>
+
+                <div style={styles.inputContainer}>
+                    <input
+                        type="file"
+                        accept=".zip"
+                        onChange={handleFileChange}
+                        style={styles.fileInput}
+                        id="fileInput"
+                    />
+                    <label htmlFor="fileInput" style={styles.customFileInput}>
+                        {t('addFile')}
+                    </label>
+
+
+                    <Button
+                        onClick={handleImport}
+                        style={styles.button}
+                        disabled={importLoading}
+                        isLock={importLoading}
+                        text={importLoading ? t('uploadingData') : t('upload')}
+                    >
+
+                    </Button>
+                </div>
+
+                {importLoading && <span style={styles.loadingText}>{uploadingStatus} {t('uploadingData')}</span>}
+
+                {feedbackMessage && <Alert variant="success" style={styles.alert}>{feedbackMessage}</Alert>}
+                {errorMessage && <Alert variant="danger" style={styles.alert}>{errorMessage}</Alert>}
+            </div>
+
+        </div >
     );
 };
 
+// Enhanced styles for the component
+const styles = {
+    container: {
+        maxWidth: '100%',
+        margin: '50px auto',
+        padding: '20px',
+        border: '1px solid #e1e1e1',
+        borderRadius: '10px',
+        backgroundColor: '#ffffff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    },
+    title: {
+        marginBottom: '20px',
+        fontSize: '24px',
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    icon: {
+        fontSize: '40px',
+        color: '#007bff',
+        marginBottom: '10px',
+    },
+    inputContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        marginBottom: '20px',
+    },
+    fileInput: {
+        display: 'none',
+    },
+    customFileInput: {
+        display: 'inline-block',
+        padding: '5px 20px',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+    customFileInputHover: {
+        backgroundColor: '#0056b3',
+    },
+    loadingText: {
+        display: 'block',
+        margin: '10px 0',
+        fontSize: '16px',
+        color: '#007bff',
+        fontWeight: 'bold',
+    },
+    button: {
+        padding: '10px 20px',
+        fontWeight: 'bold',
+    },
+    alert: {
+        marginTop: '20px',
+    },
+};
+
+
+
 export default BackupComponent;
+
+

@@ -410,7 +410,11 @@ const fa = {
         customerfactors: 'فاکتور ها',
         employeepayments: "بردگی کارمندان",
         users: 'کاربران',
-        backupAll: 'دانلود بک آپ'
+        backupAll: 'دانلود بک آپ',
+        uploadingData: '... در حال بارگذاری اطلاعات',
+        uploadedSuccessfully: 'با موفقیت آپلود شد',
+        fileUploadAlert: 'لطفا قبل از آپلود فایل را انتخاب کنید',
+        selectedFile: "فایل انتخاب شده"
 
 
 
