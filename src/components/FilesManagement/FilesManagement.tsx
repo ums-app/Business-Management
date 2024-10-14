@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { addDoc, collection, deleteDoc, doc, Timestamp } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, Timestamp } from "firebase/firestore";
 import { db, storage } from "../../constants/FirebaseConfig";
 import Collections from "../../constants/Collections";
 import Folders from "../../constants/Folders";
@@ -15,6 +15,8 @@ import { mapDocToUploadedFile } from "../../Utils/Mapper";
 import { getAllUploadedFile } from "../../Utils/FirebaseTools";
 import LoadingTemplateContainer from "../UI/LoadingTemplate/LoadingTemplateContainer";
 import HeadingLoadingTemplate from "../UI/LoadingTemplate/HeadingLoadingTemplate";
+import { useStateValue } from "../../context/StateProvider";
+import { actionTypes } from "../../context/reducer";
 
 
 export interface UploadedFile {
@@ -26,13 +28,12 @@ export interface UploadedFile {
 }
 
 const FilesManagement: React.FC = () => {
-    const [files, setFiles] = useState<FileList | null>(null);
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>();
+    const [, dispatch] = useStateValue()
+    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [uploading, setUploading] = useState(false);
     const [showAddFile, setshowAddFile] = useState(false)
     const [progress, setProgress] = useState<number[]>([]);
-    const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
-
+    const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
     // Firestore collection reference
     const filesCollectionRef = collection(db, Collections.Files);
 
@@ -45,44 +46,73 @@ const FilesManagement: React.FC = () => {
     }, []);
 
 
+    const onDrop = (newFiles: File[]) => {
+        setAcceptedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    };
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        multiple: true, // Allow multiple files
+    });
 
     const handleUpload = async () => {
-        if (!files || files.length === 0) return;
-        setUploading(true);
+        if (!acceptedFiles || acceptedFiles.length === 0) return;
+
+        setUploading(true); // Start loading
+        const files = [...acceptedFiles]; // Create a copy of the accepted files
+
         const progressArray = new Array(files.length).fill(0); // Initialize progress array
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const fileName = `${file.name}-[${new Date().getMilliseconds()}]`;
 
-            const uploadTask = uploadFile(file, fileName, i);
+            try {
+                const uploadTask = await uploadFile(file, fileName, i); // Await the upload task
 
-            uploadTask.then((res) => {
                 // Once the upload is complete, get the download URL
-                getDownloadURL(res.ref).then((url) => {
-                    // Save file metadata including the download URL to Firestore
-                    const fileData = {
-                        name: file.name,
-                        size: file.size,
-                        url: url, // Use the download URL here
-                        date: new Date().toLocaleString(),
-                        descriptions: ''
-                    };
+                const downloadURL = await getDownloadURL(uploadTask.ref);
 
-                    addDoc(filesCollectionRef, fileData)
-                        .then((docRes) => {
-                            setUploadedFiles((prev) => [
-                                ...prev,
-                                mapDocToUploadedFile(docRes),
-                            ]);
-                        });
-                });
-            });
+                // Save file metadata including the download URL to Firestore
+                const fileData = {
+                    name: file.name,
+                    size: file.size,
+                    url: downloadURL,
+                    date: new Date(),
+                    descriptions: '',
+                };
+
+                const docRef = await addDoc(filesCollectionRef, fileData);
+
+                // Fetch the document snapshot using getDoc
+                const docSnap = await getDoc(docRef); // Import getDoc from Firestore
+
+                if (docSnap.exists()) {
+                    // Update uploaded files with the new file data
+                    setUploadedFiles((prev) => [
+                        ...prev,
+                        mapDocToUploadedFile(docSnap), // Map the fetched document snapshot
+                    ]);
+                } else {
+                    console.error('No such document!');
+                }
+
+                // Remove the file from the accepted files list after successful upload
+                const updatedFiles = [...files];
+                updatedFiles.splice(i, 1);
+                setAcceptedFiles(updatedFiles);
+
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                // Handle any errors here (e.g., show toast notifications)
+            }
         }
 
+        // End loading after all files are uploaded
         setUploading(false);
-        setFiles(null);
+        setshowAddFile(false); // Close the file upload section after completion
+        toast.success('successfullyAdded')
     };
+
 
     const uploadFile = async (fileValue: Blob, fileName: string, index: number) => {
         if (!fileValue) return;
@@ -99,6 +129,8 @@ const FilesManagement: React.FC = () => {
                     const updatedProgress = [...progress];
                     updatedProgress[index] = progressPercent;
                     setProgress(updatedProgress);
+                    console.log(updatedProgress);
+
                 },
                 (error) => {
                     console.error(error);
@@ -111,16 +143,53 @@ const FilesManagement: React.FC = () => {
         }
     };
 
-    // Handle file deletion
-    const handleDelete = async (fileId: string, fileName: string) => {
-        const fileRef = ref(storage, Folders.Files(fileName));
-        await deleteObject(fileRef)
-        const fileDoc = doc(filesCollectionRef, fileId)
-        await deleteDoc(fileDoc);
-        setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
-        toast.success('successfullyDeleted')
+    const handleDelete = async (fileId: string, fileUrl: string) => {
+        dispatch({
+            type: actionTypes.SET_GLOBAL_LOADING,
+            payload: { value: true },
+        });
+        dispatch({
+            type: actionTypes.HIDE_ASKING_MODAL,
+        });
+        try {
+            // Manually extract the file path from the URL (after the "/o/")
+            const filePath = decodeURIComponent(fileUrl.split('/o/')[1].split('?')[0]);
+
+            // Create a reference to the file
+            const fileRef = ref(storage, filePath);
+
+            // Delete the file from Firebase Storage
+            await deleteObject(fileRef);
+
+            // Delete the file's metadata from Firestore
+            const fileDoc = doc(filesCollectionRef, fileId);
+            await deleteDoc(fileDoc);
+
+            // Update the uploaded files state
+            setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
+
+            // Show success message
+            toast.success('File deleted successfully');
+        } catch (error) {
+            console.error("Error deleting file:", error);
+            toast.error('Error deleting file');
+        } finally {
+            dispatch({
+                type: actionTypes.SET_GLOBAL_LOADING,
+                payload: { value: false },
+            });
+        }
     };
-    console.log(uploadedFiles);
+    const showDeleteModal = (fileId: string, fileUrl: string) => {
+        dispatch({
+            type: actionTypes.SHOW_ASKING_MODAL,
+            payload: {
+                show: true,
+                message: "deleteMessage",
+                btnAction: () => handleDelete(fileId, fileUrl),
+            },
+        });
+    };
 
 
 
@@ -131,18 +200,18 @@ const FilesManagement: React.FC = () => {
             <Button
                 icon={showAddFile ? ICONS.cross : ICONS.plus}
                 text={showAddFile ? t('cancel') : t('add')}
-                onClick={() => setshowAddFile(!showAddFile)}
+                onClick={() => { setshowAddFile(!showAddFile); setAcceptedFiles([]) }}
                 btnType={showAddFile ? 'crossBtn' : 'plusBtn'}
             />
             {showAddFile &&
                 <div className="margin_top_10">
-                    <section className="file_drag_n_drop">
+                    <section className="file_drag_n_drop position_relative">
                         <div {...getRootProps({ className: 'dropzone' })}>
                             <input {...getInputProps()} />
-                            <p>{t('dragFileToUpload')}</p>
+                            {acceptedFiles.length == 0 && <p className="cursor_pointer">{t('dragFileToUpload')}</p>}
                         </div>
                         {acceptedFiles.length > 0 &&
-                            <aside>
+                            <aside className="position_absolute file_list">
                                 <h4>{t('files')}</h4>
                                 <ul>{acceptedFiles.map(file => (
                                     <li key={file.path}>
@@ -173,58 +242,61 @@ const FilesManagement: React.FC = () => {
                         </button>
                     </div>
 
-                </div>
+                </div >
             }
 
 
-            {uploadedFiles ?
-                <table className="custom_table full_width margin_top_20">
-                    <thead >
-                        <tr>
-                            <th colSpan={5}>{t('uploadedFiles')}</th>
-                        </tr>
-                        <tr>
-                            <th>#</th>
-                            <th>{t('name')}</th>
-                            <th>{t('size')}</th>
-                            <th>{t('date')}</th>
-                            <th>{t('actions')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {uploadedFiles.map((file, index) => (
-                            <tr key={file.id}>
-                                <td>{index + 1}</td>
-                                <td>
-                                    <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                        {file.name}
-                                    </a>
-                                </td>
-                                <td>{(file.size / 1024).toFixed(2)} KB</td>
-                                <td>{formatFirebaseDates(file.date)}</td>
-                                <td>
-                                    <button
-                                        onClick={() => handleDelete(file.id, file.url)}
-                                        style={styles.deleteButton}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
+            {
+                uploadedFiles ?
+                    <table className="custom_table full_width margin_top_20">
+                        <thead style={{ backgroundColor: 'orange' }}>
+                            <tr>
+                                <th colSpan={5}>{t('uploadedFiles')}</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                : <LoadingTemplateContainer>
-                    <HeadingLoadingTemplate />
-                    <HeadingLoadingTemplate />
-                    <HeadingLoadingTemplate />
-                    <HeadingLoadingTemplate />
-                    <HeadingLoadingTemplate />
-                    <HeadingLoadingTemplate />
-                </LoadingTemplateContainer>}
+                            <tr>
+                                <th>#</th>
+                                <th>{t('name')}</th>
+                                <th>{t('size')}</th>
+                                <th>{t('date')}</th>
+                                <th>{t('actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {uploadedFiles.map((file, index) => (
+                                <tr key={file.id}>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                        <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                            {file.name}
+                                        </a>
+                                    </td>
+                                    <td>{(file.size / 1024).toFixed(2)} KB</td>
+                                    <td>{formatFirebaseDates(file.date)}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => showDeleteModal(file.id, file.url)}
+                                            style={styles.deleteButton}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {uploadedFiles?.length === 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
+                        </tbody>
+                    </table>
+                    : <LoadingTemplateContainer>
+                        <HeadingLoadingTemplate />
+                        <HeadingLoadingTemplate />
+                        <HeadingLoadingTemplate />
+                        <HeadingLoadingTemplate />
+                        <HeadingLoadingTemplate />
+                        <HeadingLoadingTemplate />
+                    </LoadingTemplateContainer>
+            }
 
-            {uploadedFiles?.length === 0 && <p>No files uploaded yet.</p>}
-        </div>
+
+        </div >
     );
 };
 

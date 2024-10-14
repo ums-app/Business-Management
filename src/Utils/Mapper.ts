@@ -1,4 +1,4 @@
-import { DocumentData } from "firebase/firestore";
+import { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product, User } from "../Types/Types";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 
@@ -127,15 +127,13 @@ export const mapDocToProduct = (doc: DocumentData): Product => {
 }
 
 
-
-export const mapDocToUploadedFile = (doc: DocumentData): UploadedFile => {
-    const data = doc.data();
+export const mapDocToUploadedFile = (docSnapshot: DocumentData) => {
+    const docData = docSnapshot?.data(); // Extract data
     return {
-        id: doc.id,
-        date: data.date,
-        name: data.name,
-        size: data.size,
-        url: data.url
-    }
-}
-
+        id: docSnapshot.id, // Use the document ID
+        name: docData.name,
+        size: docData.size,
+        url: docData.url,
+        date: docData.date,
+    };
+};
