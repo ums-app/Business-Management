@@ -40,6 +40,7 @@ const ICONS = {
   brightnessHigh: "bi bi-brightness-high",
   moon: "bi bi-moon",
   arrowUpShort: "bi bi-arrow-up-short",
+  arrowDownShort: "bi bi-arrow-down-short",
   arrowDown: "bi bi-chevron-down",
   list: "bi bi-list",
   fileEarmarkPdfFill: "bi bi-file-earmark-pdf-fill",

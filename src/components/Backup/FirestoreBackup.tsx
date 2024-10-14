@@ -161,10 +161,14 @@ const BackupComponent: React.FC = () => {
 
     return (
         <div style={styles.container}>
+
             <h1 className='title'>{t('backup')}</h1>
             <div style={styles.container} >
-                <h1 className='title'>{t('save')}</h1>
-                <div className='display_flex align_items_center flex_flow_wrap justify_content_space_between   margin_right_10 margin_left_10'>
+                <div className="text-center display_flex align_items_center">
+                    <i style={styles.icon} className={ICONS.arrowDownShort}></i>
+                    <h2 style={styles.title}>{t('saveBackup')}</h2>
+                </div>
+                <div className='display_flex align_items_center  flex_flow_wrap justify_content_space_between   margin_right_10 margin_left_10'>
                     <ul className='list'>
                         {Object.keys(Collections).map((collectionKey) => (
                             <li className='display_flex margin_5' key={collectionKey} style={{ marginBottom: '10px' }}>
@@ -175,13 +179,14 @@ const BackupComponent: React.FC = () => {
                         ))}
 
                     </ul>
-                    <Button
-                        text={t('backupAll')}
-                        onClick={handleBackupAll}
-                        icon={ICONS.download}
-
-                    />
-
+                    <div className='align_self_end'>
+                        <Button
+                            text={t('backupAll')}
+                            onClick={handleBackupAll}
+                            icon={ICONS.download}
+                            btnType='align_self_end'
+                        />
+                    </div>
                 </div>
             </div>
 

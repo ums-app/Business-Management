@@ -386,7 +386,8 @@ const en = {
         uploadingData: "Uploading Data ...",
         uploadedSuccessfully: 'Uploaded Successfully',
         fileUploadAlert: "Please select a file before importing.",
-        selectedFile: "Selected file"
+        selectedFile: "Selected file",
+        saveBackup: 'Save Backup'
 
 
 
