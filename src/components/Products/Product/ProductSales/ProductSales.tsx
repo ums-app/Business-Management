@@ -1,5 +1,5 @@
 import { t } from 'i18next'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker'
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import { collection, getDocs, query, Timestamp, where } from 'firebase/firestore'
@@ -10,7 +10,7 @@ import { CustomerFactor, CustomerForSaleFactor } from '../../../../Types/Types'
 import Button from '../../../UI/Button/Button'
 import { useParams } from 'react-router-dom'
 import DisplayLogo from '../../../UI/DisplayLogo/DisplayLogo'
-import { getUserImage } from '../../../../Utils/FirebaseTools'
+import { getFactors, getUserImage } from '../../../../Utils/FirebaseTools'
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate'
 
 
@@ -32,6 +32,9 @@ const ProductSales: React.FC = () => {
     const [topBuier, settopBuier] = useState<any>()
     const [analysReady, setanalysReady] = useState(false)
     const [loading, setLoading] = useState(false)
+    useEffect(() => {
+        getProductSalesInDatePeriod()
+    }, [])
 
 
     const getProductSalesInDatePeriod = async () => {
@@ -69,6 +72,11 @@ const ProductSales: React.FC = () => {
                 console.log(docs);
                 setfactors(docs)
                 analyseData(docs)
+            } else {
+                getFactors().then(res => {
+                    setfactors(res)
+                    analyseData(res)
+                })
             }
         } catch (err) {
             console.log(err);

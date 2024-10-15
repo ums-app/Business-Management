@@ -101,7 +101,7 @@ function Login() {
                 email: yup
                     .string()
                     .email(t("invalidEmail"))
-                    .max(25, t("emailMaxWidth"))
+                    .max(50, t("emailMaxWidth"))
                     .required(`${t("email")} ${t("isRequireText")}`),
                 password: yup
                     .string()

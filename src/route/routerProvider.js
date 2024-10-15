@@ -33,7 +33,7 @@ const Consumptions = React.lazy(() => import("../components/Consumptions/Consump
 const PurchaseProducts = React.lazy(() => import("../components/PurchaseProducts/PurchaseProducts"));
 const Sales = React.lazy(() => import("../components/Sales/Sales"));
 const Dashboard = React.lazy(() => import("../components/Dashboard/Dashboard"));
-const Home = React.lazy(() => import("../components/Home/Home"));
+const Home = React.lazy(() => import("../pages/Home/Home.jsx"));
 const Settings = React.lazy(() => import("../components/Settings/Settings"));
 const FilesManagement = React.lazy(() => import("../components/FilesManagement/FilesManagement.tsx"));
 
