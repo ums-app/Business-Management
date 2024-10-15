@@ -54,14 +54,20 @@ function Customer() {
     const [notFound, setnotFound] = useState()
 
     useEffect(() => {
+
         const getData = async () => {
             try {
                 const data = await getDoc(doc(db, Collections.Customers, customerId));
+                console.log(data.exists);
+
                 if (data.exists()) {
                     const email = data.data().email
                     const url = await getUserImage(email);
+                    console.log(email);
+
                     getUserByEmail(email)
                         .then(res => {
+                            console.log(res);
                             setUser(res)
                         });
 
@@ -73,7 +79,7 @@ function Customer() {
             }
         }
         getData();
-    }, [customerId])
+    }, [, customerId])
 
     const showDeleteModal = () => {
         dispatch({
@@ -94,7 +100,7 @@ function Customer() {
             type: actionTypes.SET_SMALL_LOADING,
             payload: true
         })
-        if (user.disabled) {
+        if (user?.disabled) {
             enableUserAccountBy(user)
                 .then(res => {
                     setUser({

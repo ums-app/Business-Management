@@ -403,7 +403,7 @@ const Navbar = () => {
 
 
             <CustomeLinks to="/customer-payments" id={'customers_link'}>
-              <i className={ICONS.personVideo}></i>
+              <i className={ICONS.cash}></i>
               <span>{t("payments")}</span>
             </CustomeLinks>
             <Tooltip
