@@ -108,7 +108,7 @@ const BackupComponent: React.FC = () => {
                 setuploadingStatus(`${progress.toFixed(0)}%`)
                 const fileData = await content.files[filename].async("string");
                 const collectionName = getCollectionNameFromFilename(filename); // Implement this function
-                console.log(collectionName);
+                console.log(collectionName + " <================================");
                 await updateFirestoreCollection(collectionName, fileData);
 
             }
@@ -128,7 +128,9 @@ const BackupComponent: React.FC = () => {
 
     const updateFirestoreCollection = async (collectionName: string, data: string) => {
         const parsedData = JSON.parse(data); // Assuming the data is in JSON format
+
         for (const item of parsedData) {
+            // console.log('before update date: ', item);
             // Convert date fields
             if (item.createdDate) {
                 item.createdDate = convertToTimestamp(item.createdDate);
@@ -139,7 +141,7 @@ const BackupComponent: React.FC = () => {
             if (item.date) {
                 item.date = convertToTimestamp(item.date);
             }
-            console.log('update date: ', item);
+            // console.log('update date: ', item);
 
             const docRef = doc(db, collectionName, item.id); // Use the appropriate id field
             await setDoc(docRef, item);
@@ -148,14 +150,19 @@ const BackupComponent: React.FC = () => {
 
     // Helper function to convert date fields to Firestore Timestamps
     const convertToTimestamp = (date: string | { seconds: number; nanoseconds: number } | undefined) => {
+        // console.log("type of date: ", typeof date);
+        // console.log("date instance of: ", date instanceof Timestamp);
         if (typeof date === "string") {
             return Timestamp.fromDate(new Date(date)); // Convert from string to Timestamp
-        } else if (date instanceof Object && date !== null) {
+        } else if (date instanceof Object && date != null) {
             // Check if it's an object with seconds and nanoseconds
             if (date.seconds && date.nanoseconds) {
                 return new Timestamp(date.seconds, date.nanoseconds); // Create a Timestamp from object
             }
+        } else if (date != null && date?.seconds) {
+            return new Timestamp(date.seconds, date.nanoseconds);
         }
+        // console.log('return null');
         return null; // Return null if the date is undefined or not a valid format
     };
 

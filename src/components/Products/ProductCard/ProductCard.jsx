@@ -19,7 +19,7 @@ const ProductCard = ({ image, id, name, price, englishName, inventory, manufactu
 
     return (
         <section className="card entering-animation box_shadow" onClick={navToProductPage} ref={customeRef}>
-            <img src={image} alt={t('product') + " " + t('name')} />
+            <img src={image} className="product_img" alt={t('product') + " " + t('name')} />
             {/* <RateStar rate={rating} size={'small'} /> */}
             <div className="product-info   ">
                 <table className='full_width'>

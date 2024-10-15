@@ -12,6 +12,7 @@ import { db, storage } from '../../../constants/FirebaseConfig'
 import Collections from '../../../constants/Collections'
 import { ref, uploadBytes } from 'firebase/storage'
 import Folders from '../../../constants/Folders'
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate'
 
 function AddProduct({ updateMode = false }) {
 
@@ -35,6 +36,7 @@ function AddProduct({ updateMode = false }) {
 
     useEffect(() => {
         if (updateMode) {
+            setloading(true)
             const getData = async () => {
                 try {
                     const data = await getDoc(doc(db, Collections.Products, productId));
@@ -46,6 +48,8 @@ function AddProduct({ updateMode = false }) {
 
                 } catch (err) {
                     console.log(err);
+                } finally {
+                    setloading(false)
                 }
             }
             getData();
@@ -89,6 +93,10 @@ function AddProduct({ updateMode = false }) {
         } catch (err) {
             console.error(err);
         }
+    }
+
+    if (updateMode && loading) {
+        return <ShotLoadingTemplate />
     }
 
     return (

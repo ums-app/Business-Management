@@ -194,30 +194,32 @@ const ProductSales: React.FC = () => {
                             <span>{totalAmount}  <sup>{t('af')}</sup></span>
                         </div>
                     </div>
-                    <div className='card card_user_analyse '>
-                        <span className='bold'>{t('mostPurchased')}</span>
-                        <div className='display_flex flex_direction_column justify_content_center full_width align_items_center'>
-                            <div className='text_align_center'>
-                                <DisplayLogo imgURL={topBuier?.imageUrl} alt={'image'} />
-                                <div className='bold'>
-                                    <span> {topBuier?.customer?.name} </span>
-                                    <span> {topBuier?.customer?.lastName} </span>
+                    {topBuier?.totalAmount > 0 &&
+                        <div className='card card_user_analyse '>
+                            <span className='bold'>{t('mostPurchased')}</span>
+                            <div className='display_flex flex_direction_column justify_content_center full_width align_items_center'>
+                                <div className='text_align_center'>
+                                    <DisplayLogo imgURL={topBuier?.imageUrl} alt={'image'} />
+                                    <div className='bold'>
+                                        <span> {topBuier?.customer?.name} </span>
+                                        <span> {topBuier?.customer?.lastName} </span>
+                                    </div>
                                 </div>
+                                <table className=' margin_top_20' style={{ width: '50%', alignSelf: 'flex-start' }}>
+                                    <tbody>
+                                        <tr >
+                                            <td className='bold'> {t('total')}: </td>
+                                            <td> {topBuier?.totalElement} </td>
+                                        </tr>
+                                        <tr >
+                                            <td className='bold'> {t('totalAll')}: </td>
+                                            <td> {topBuier?.totalAmount} <sup>{t('af')}</sup></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                            <table className=' margin_top_20' style={{ width: '50%', alignSelf: 'flex-start' }}>
-                                <tbody>
-                                    <tr >
-                                        <td className='bold'> {t('total')}: </td>
-                                        <td> {topBuier?.totalElement} </td>
-                                    </tr>
-                                    <tr >
-                                        <td className='bold'> {t('totalAll')}: </td>
-                                        <td> {topBuier?.totalAmount} <sup>{t('af')}</sup></td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
-                    </div>
+                    }
                 </div>
             }
         </div>

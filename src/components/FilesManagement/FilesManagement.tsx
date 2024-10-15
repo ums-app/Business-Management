@@ -29,7 +29,8 @@ export interface UploadedFile {
 
 const FilesManagement: React.FC = () => {
     const [, dispatch] = useStateValue()
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+    // const [loading, setloading] = useState(false)
+    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>();
     const [uploading, setUploading] = useState(false);
     const [showAddFile, setshowAddFile] = useState(false)
     const [progress, setProgress] = useState<number[]>([]);
@@ -39,10 +40,15 @@ const FilesManagement: React.FC = () => {
 
     // Fetch uploaded files from Firestore on component mount
     useEffect(() => {
+
         getAllUploadedFile()
             .then(res => {
                 setUploadedFiles(res)
             })
+            .catch(() => {
+                setUploadedFiles([])
+            })
+
     }, []);
 
 
@@ -60,7 +66,7 @@ const FilesManagement: React.FC = () => {
         setUploading(true); // Start loading
         const files = [...acceptedFiles]; // Create a copy of the accepted files
 
-        const progressArray = new Array(files.length).fill(0); // Initialize progress array
+        // const progressArray = new Array(files.length).fill(0); // Initialize progress array
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -191,6 +197,27 @@ const FilesManagement: React.FC = () => {
         });
     };
 
+    const handleDownload = async (fileName: string, fileUrl: string) => {
+        try {
+            // Fetch the file blob using the Firebase Storage URL
+            const response = await fetch(fileUrl); // No need for 'no-cors' after configuring CORS
+            const blob = await response.blob();
+
+            // Create an anchor element and trigger the download
+            const downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(blob);
+            downloadLink.setAttribute('download', fileName); // Specify the file name
+
+            // Programmatically click the anchor to trigger the download
+            downloadLink.click();
+
+            // Clean up the object URL
+            window.URL.revokeObjectURL(downloadLink.href);
+        } catch (error) {
+            console.error('Download error:', error);
+            toast.error('Download failed. Please try again.');
+        }
+    };
 
 
     return (
@@ -279,6 +306,12 @@ const FilesManagement: React.FC = () => {
                                         >
                                             Delete
                                         </button>
+                                        {/* <button
+                                            onClick={() => handleDownload(file.name, file.url)}
+                                            style={styles.downloadButton}
+                                        >
+                                            Download
+                                        </button> */}
                                     </td>
                                 </tr>
                             ))}
@@ -326,6 +359,15 @@ const styles = {
         border: "none",
         borderRadius: "5px",
         cursor: "pointer",
+    },
+    downloadButton: {
+        padding: "5px 10px",
+        backgroundColor: "#28a745",  // Green color for the download button
+        color: "#fff",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer",
+        marginLeft: "10px",  // Add margin between the Delete and Download buttons
     },
 };
 

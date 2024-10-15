@@ -131,7 +131,7 @@ const EmployeeSalaries: React.FC<EmployeeSalariesProps> = ({ data, setData }) =>
         for (let monthIndex = 0; monthIndex < totalMonths.length - 1; monthIndex++) {
             // Calculate the start date of each month
             let monthStartDate = new Date(joinedDate);
-            monthStartDate.setMonth(joinedDate.getMonth() + monthIndex);
+            monthStartDate.setMonth(monthStartDate?.getMonth() + monthIndex);
 
             let applicableSalary = employee.salary; // Default to employee's current salary
 

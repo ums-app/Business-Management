@@ -36,7 +36,6 @@ function PurchaseProducts() {
     const [firstVisible, setFirstVisible] = useState(null);
     const [isPrevPageAvailable, setIsPrevPageAvailable] = useState(false); // To disable/enable previous page button
     const [searchValue, setsearchValue] = useState('');
-    const [searchValueName, setsearchValueName] = useState('')
     const [loading, setloading] = useState(false);
 
 
@@ -74,22 +73,24 @@ function PurchaseProducts() {
 
     const handleInputSearchValue = (value) => {
         setsearchValue(value);
-        if (value.length == 0) {
-            getDocsBySearchValue(value)
-        }
+        // if (value.length == 0) {
+        //     getDocsBySearchValue(value)
+        // }
 
     }
 
     // Function to get the documents based on search values (indexNumber or customer name)
-    const getDocsBySearchValue = async (value = searchValue) => {
+    const getDocsBySearchValue = async () => {
         setloading(true);
+        console.log(searchValue);
+
 
         try {
             // Dynamically build the query based on search conditions
             let queryConstraints = [orderBy("createdDate", "desc"), limit(pageSize)];
 
-            if (value.length > 0) {
-                queryConstraints.unshift(where('indexNumber', '==', Number(value)));
+            if (searchValue.length > 0) {
+                queryConstraints.unshift(where('indexNumber', '==', Number(searchValue)));
             }
 
             const firstPageQuery = query(purchasesCollectionRef, ...queryConstraints);
