@@ -2,18 +2,22 @@ import React from "react";
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels'; // Import the plugin
+import { useStateValue } from "../../context/StateProvider";
 // Register necessary components including the plugin
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ChartDataLabels);
 
 
 
 const BarChart = ({ chartData, title }) => {
+  const [global,] = useStateValue()
+  console.log(global);
+
 
   const options = {
     plugins: {
       datalabels: {
         display: true, // Show the labels
-        color: '#000', // Set label color to black
+        color: localStorage.getItem("isDark") === "true" ? '#fff' : '#000', // Set label color to black
         align: 'end', // Position the label at the end (top) of the bar
         anchor: 'end', // Anchor the label at the end of the bar
         font: {
@@ -40,7 +44,7 @@ const BarChart = ({ chartData, title }) => {
       // }],
       x: {
         ticks: {
-          color: 'black', // Color for labels on X-axis (bottom)
+          color: localStorage.getItem("isDark") === "true" ? '#fff' : '#000', // Color for labels on X-axis (bottom)
         },
       },
       y: {
