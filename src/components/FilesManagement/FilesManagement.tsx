@@ -338,9 +338,8 @@ const styles = {
         maxWidth: "100%",
         margin: "0 auto",
         padding: "20px",
-        backgroundColor: "#f9f9f9",
+        backgroundColor: "var(--bg-color)",
         borderRadius: "8px",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
     },
     uploadButton: {
         padding: "5px 20px",
