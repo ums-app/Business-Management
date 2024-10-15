@@ -134,7 +134,8 @@ const ICONS = {
   whatsapp: 'bi bi-whatsapp',
   telegram: 'bi bi-telegram',
   arrowDownload: 'bi bi-box-arrow-down',
-  arrowUpload: 'bi bi-box-arrow-up'
+  arrowUpload: 'bi bi-box-arrow-up',
+  cash: 'bi-currency-dollar'
 };
 
 export default ICONS;
