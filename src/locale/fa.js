@@ -189,7 +189,7 @@ const fa = {
         female: "زن",
         dari: "دری",
         pashto: "پشتو",
-        errorTitle: "پیغام خطا",
+        errorTitle: 'پیغام خطا',
         tryAgain: "امتحان دوباره",
         loginPageTitle: "ورود به حساب کاربری",
         emailMaxWidth: "باید حداکثر ۲۵ کاراکتر باشد",
@@ -420,7 +420,8 @@ const fa = {
         uploadedFiles: 'فایل های آپلود شده',
         theAmountOfMoneyPurchase: 'مجموعه کل خریدها',
         totalNumberOFPurchasedProduct: ' تعداد کل اجناس خرید شده',
-        purchasesStatistics: 'آمار خرید ها'
+        purchasesStatistics: 'آمار خرید ها',
+        operationFailedMsg: 'عملیات ناموفق بود لطفا دوباره امتخان کنید'
 
 
 

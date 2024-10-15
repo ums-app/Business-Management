@@ -1,12 +1,12 @@
 import { t } from 'i18next';
-import React, { useEffect, useState } from 'react'
+import React, { ReactEventHandler, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../UI/Button/Button';
 import { useStateValue } from '../../../context/StateProvider';
 import "../Sales.css"
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import ICONS from '../../../constants/Icons';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, query, runTransaction, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
@@ -20,6 +20,9 @@ import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { FactorType } from '../../../constants/FactorStatus';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
+import { deleteCustomerPaymentByFactorId, getProductById, getProducts } from '../../../Utils/FirebaseTools';
+import { Product, UpdateModeProps } from '../../../Types/Types';
+import { ProductForSale } from './AddSaleFactor';
 
 
 export const productForSale = {
@@ -36,13 +39,13 @@ export const productForSale = {
 };
 
 
-const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
+const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode }) => {
     const [{ authentication, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
     const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [saved, setsaved] = useState(false)
 
     const [customerFactor, setcustomerFactor] = useState({
@@ -73,7 +76,10 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
         if (!updateMode) {
             getTotalNumberOfFactors();
         }
-        getProducts();
+        getProducts()
+            .then(res => {
+                setProducts(res)
+            })
         addNewProdcut()
         if (updateMode) {
             setcustomerFactor(factor)
@@ -82,18 +88,11 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
 
     console.log(customerFactor);
 
-    const checkIfProductIsInList = (productId) => {
+    const checkIfProductIsInList = (productId: string) => {
         return customerFactor.productsInFactor.some(item => item.productId == productId)
     }
 
 
-
-    const getProducts = async () => {
-        const querySnapshot = await getDocs(productCollectionRef);
-        const items = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-        setProducts(items);
-        console.log(items);
-    }
 
     const addNewProdcut = () => {
         const tempArr = [...customerFactor.productsInFactor];
@@ -105,9 +104,12 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
     }
 
 
-    const handleSelectProduct = (e, index) => {
+    const handleSelectProduct = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
+
         const value = e.target.value
         const selectedProduct = products.find(item => item.id == value)
+        if (!selectedProduct) return;
+
         console.log(selectedProduct);
         customerFactor.productsInFactor[index] = {
             productId: selectedProduct.id,
@@ -127,10 +129,10 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
         })
     }
 
-    const handleChangeTotalProducts = (e, index) => {
+    const handleChangeTotalProducts = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
 
-        pr.total = e.target.value;
+        pr.total = Number(e.target.value);
         pr.totalPrice = caculateTotalPriceOfProduct(pr);
 
         customerFactor.productsInFactor[index] = pr;
@@ -141,10 +143,10 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
         })
     }
 
-    const handleChangeProductPrice = (e, index) => {
+    const handleChangeProductPrice = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
 
-        pr.pricePer = e.target.value;
+        pr.pricePer = Number(e.target.value);
         pr.totalPrice = caculateTotalPriceOfProduct(pr);
 
         customerFactor.productsInFactor[index] = pr;
@@ -155,7 +157,7 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
 
     }
 
-    const handleChangeProductDiscount = (e, index) => {
+    const handleChangeProductDiscount = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
 
         console.log(e.target.value);
@@ -168,7 +170,7 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
         })
     }
 
-    const handleChangeProductDiscountType = (e, index) => {
+    const handleChangeProductDiscountType = (e: React.ChangeEvent<HTMLSelectElement>, index: number) => {
         const pr = customerFactor.productsInFactor[index];
         pr.discount.type = e.target.value;
         pr.totalPrice = caculateTotalPriceOfProduct(pr);
@@ -181,7 +183,7 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
         console.log(pr);
     }
 
-    const caculateTotalPriceOfProduct = (product) => {
+    const caculateTotalPriceOfProduct = (product: ProductForSale) => {
         let discount = product.discount.value;
         if (product.discount.type == 'percent') {
             discount = (discount * product.pricePer) / 100;
@@ -192,7 +194,7 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
         return product.total * (product.pricePer - discount);
     }
 
-    const handleDeleteProduct = (index) => {
+    const handleDeleteProduct = (index: number) => {
         const temp = [...customerFactor.productsInFactor];
         temp.splice(index, 1);
         setcustomerFactor({
@@ -251,7 +253,11 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
             console.log('sending data to api as new factor');
             console.log(customerFactor);
             const data = await addDoc(salesCollectionRef, { ...customerFactor, totalAll: totalAll() });
+            setcustomerFactor({ ...customerFactor, id: data.id });
+            updateProductsInventory(customerFactor.productsInFactor)
             toast.success(t('successfullyAdded'));
+
+
             setsaved(true)
             // nav('/sales')
 
@@ -267,6 +273,28 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
         console.log('set loading false');
     }
 
+    // this is for updating product inventory
+    async function updateProductsInventory(productsInFactor: ProductForSale[]) {
+        const batch = writeBatch(db); // Create a batch
+
+        // Loop through each document update
+        productsInFactor.forEach(pr => {
+            const docRef = doc(db, Collections.Products, pr.productId); // Get the document reference
+            const targetProduct = products.find(item => item.id === pr.productId);
+            if (!targetProduct) return;
+            batch.update(docRef, { inventory: targetProduct?.inventory - pr.total }); // Update inventory
+        });
+
+        // Commit the batch
+        try {
+            await batch.commit();
+            console.log("Batch update successfully committed!");
+        } catch (error) {
+            console.error("Error committing batch update: ", error);
+            throw error; // Rethrow the error to handle rollback in sendCustomerFactorToAPI
+        }
+    }
+
 
 
 
@@ -277,7 +305,6 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
                 show: true,
                 message: "deleteMessage",
                 btnAction: deleteFactor,
-                id: customerFactor.id,
             },
         });
     };
@@ -294,19 +321,44 @@ const AddSaleFactorForUnknowCustomer = ({ updateMode }) => {
 
         console.log(customerFactor.id);
         const factorDoc = doc(db, Collections.Sales, customerFactor.id);
+
         try {
-            await deleteDoc(factorDoc)
-            toast.success(t('successfullyDeleted'))
-            nav(-1)
+            await runTransaction(db, async (transaction) => {
+                // Delete the factor document
+                transaction.delete(factorDoc);
+
+                // Increase product inventory
+                const productsInFactor = customerFactor.productsInFactor;
+                for (const pr of productsInFactor) {
+                    const productDoc = doc(db, Collections.Products, pr.productId);
+                    const targetProduct = products.find(item => item.id === pr.productId);
+                    if (!targetProduct) throw new Error(`Product with ID ${pr.productId} not found`);
+
+                    // Increment inventory
+                    transaction.update(productDoc, {
+                        inventory: Number(targetProduct.inventory) + Number(pr.total)
+                    });
+                }
+
+                // If there's a payment, delete the corresponding payment
+                if (customerFactor.paidAmount > 0) {
+                    deleteCustomerPaymentByFactorId(customerFactor.id, transaction); // Make sure this function is updated to use transactions
+                }
+            });
+
+            toast.success(t('successfullyDeleted'));
+            nav(-1);
         } catch (err) {
-            console.log(err);
+            toast.success(t('operationFailedMsg'))
+            console.error("Transaction failed: ", err);
         } finally {
             dispatch({
                 type: actionTypes.SET_GLOBAL_LOADING,
                 payload: { value: false },
             });
         }
-    }
+    };
+
 
     if (!customerFactor) {
         return <LoadingTemplateContainer>

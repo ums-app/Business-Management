@@ -7,7 +7,7 @@ import "../Sales.css"
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
 import ICONS from '../../../constants/Icons';
-import { Timestamp, collection, doc, getCountFromServer, runTransaction, writeBatch } from 'firebase/firestore';
+import { Timestamp, collection, deleteDoc, doc, getCountFromServer, runTransaction, writeBatch } from 'firebase/firestore';
 import { db } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
 import { Tooltip } from 'react-tooltip';
@@ -21,7 +21,7 @@ import { FactorType } from '../../../constants/FactorStatus';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { VisitorContractType } from '../../../constants/Others';
 import { CustomerFactor, CustomerPayment, Employee, Product, UpdateModeProps } from '../../../Types/Types';
-import { getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
+import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
 
 export interface ProductForSale {
     productId: string;
@@ -443,7 +443,8 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                     VisitorContractType: visitor?.visitorContractType ?? null,
                     visitorContractAmount: visitor?.visitorAmount ?? null,
                     visitorAmount: visitorAmount ?? null
-                } : null
+                } : null,
+                id: factorDocRef.id
             });
 
         } catch (err: any) {
@@ -481,6 +482,72 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
 
 
 
+
+    const showDeleteModal = () => {
+        dispatch({
+            type: actionTypes.SHOW_ASKING_MODAL,
+            payload: {
+                show: true,
+                message: "deleteMessage",
+                btnAction: deleteFactor,
+            },
+        });
+    };
+
+
+
+
+    const deleteFactor = async () => {
+        dispatch({
+            type: actionTypes.SET_GLOBAL_LOADING,
+            payload: { value: true },
+        });
+        dispatch({
+            type: actionTypes.HIDE_ASKING_MODAL,
+        });
+
+        console.log(customerFactor.id);
+        const factorDoc = doc(db, Collections.Sales, customerFactor.id);
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                // Delete the factor document
+                transaction.delete(factorDoc);
+
+                // Increase product inventory
+                const productsInFactor = customerFactor.productsInFactor;
+                for (const pr of productsInFactor) {
+                    const productDoc = doc(db, Collections.Products, pr.productId);
+                    const targetProduct = products.find(item => item.id === pr.productId);
+                    if (!targetProduct) throw new Error(`Product with ID ${pr.productId} not found`);
+
+                    // Increment inventory
+                    transaction.update(productDoc, {
+                        inventory: Number(targetProduct.inventory) + Number(pr.total)
+                    });
+                }
+
+                // If there's a payment, delete the corresponding payment
+                if (customerFactor.paidAmount > 0) {
+                    deleteCustomerPaymentByFactorId(customerFactor.id, transaction); // Make sure this function is updated to use transactions
+                }
+            });
+
+            toast.success(t('successfullyDeleted'));
+            nav(-1);
+        } catch (err) {
+            toast.success(t('operationFailedMsg'))
+            console.error("Transaction failed: ", err);
+        } finally {
+            dispatch({
+                type: actionTypes.SET_GLOBAL_LOADING,
+                payload: { value: false },
+            });
+        }
+    };
+
+
+
     if (!customerForSaleFactor) {
         nav(-1)
         return;
@@ -506,9 +573,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                     <Button
                         icon={ICONS.trash}
                         text={t("delete")}
-                        onClick={() =>
-                            toast.error('notImplementedYet')
-                        }
+                        onClick={showDeleteModal}
                     />
                 </Menu>
 

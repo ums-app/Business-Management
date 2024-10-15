@@ -1,4 +1,4 @@
-import { collection, doc, getCountFromServer, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore"
+import { collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, orderBy, query, Transaction, updateDoc, where } from "firebase/firestore"
 import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
@@ -133,6 +133,11 @@ export const getProducts = async (): Promise<Product[]> => {
         return mapDocToProduct(doc)
     });
     return items
+}
+
+export const getProductById = async (productId: string): Promise<Product> => {
+    const data = await getDoc(doc(db, Collections.Products, productId));
+    return mapDocToProduct(data)
 }
 
 
@@ -439,6 +444,50 @@ const getTotalNumberOfFactors = async () => {
     const totalDocs = snapshot.data().count;
     return totalDocs;
 }
+
+export const getCustomerPaymentByFactorId = async (factorId: string): Promise<CustomerPayment> => {
+    const q = query(
+        paymentCollectionRef,
+        where("saleId", "==", factorId),
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            return mapDocToCustomerPayment(querySnapshot.docs[0]);
+        }
+        throw new Error("not found")
+    } catch (error) {
+        throw new Error("not found")
+    }
+
+}
+
+
+export const deleteCustomerPaymentByFactorId = async (factorId: string, transaction: Transaction): Promise<void> => {
+    const q = query(
+        paymentCollectionRef,
+        where("saleId", "==", factorId),
+    );
+
+    try {
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const payment = querySnapshot.docs[0];
+            const paymentDocRef = doc(db, Collections.Payments, payment.id);
+            // Use the transaction to delete the payment document
+            transaction.delete(paymentDocRef);
+        } else {
+            throw new Error("Payment not found");
+        }
+    } catch (error) {
+        console.error("Error deleting payment by factor ID: ", error);
+        throw new Error("Payment deletion failed");
+    }
+}
+
 
 
 
