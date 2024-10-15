@@ -14,10 +14,10 @@ const Home = () => {
 
   }, []);
 
-  if (authentication?.userType == UserTypes.VISITOR) {
+  if (authentication?.userType?.toLowerCase() == UserTypes.VISITOR?.toLowerCase()) {
     return <VisitorHome />;
   }
-  if (authentication?.userType == UserTypes.CUSTOMER) {
+  if (authentication?.userType?.toLowerCase() == UserTypes.CUSTOMER?.toLowerCase()) {
     return <CustomerHome />;
   }
 

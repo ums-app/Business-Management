@@ -389,7 +389,13 @@ const en = {
         selectedFile: "Selected file",
         saveBackup: 'Save Backup',
         dragFileToUpload: 'Drag and drop some files here, or click to select files',
-        uploadedFiles: 'Uploaded Files'
+        uploadedFiles: 'Uploaded Files',
+        theAmountOfMoneyPurchase: 'Total Amount Of Purchase',
+        totalNumberOFPurchasedProduct: "Total Number Of Purchased Products",
+        totalAllPaidAmount: 'Total Paid Amount',
+        totalProducts: 'Total Products',
+        purchasesStatistics: 'Purchases Statistics'
+
 
 
 

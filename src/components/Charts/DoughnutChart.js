@@ -45,7 +45,7 @@ function DoughnutChart({ data, chartTitle, unit = '', totalAmount }) {
                     weight: 'bold', // Make the text bold
                     size: 12, // Text size
                 },
-                formatter: (value: number) => `${value} ${t(unit)}`, // Custom formatter to show the value
+                formatter: (value) => `${value} ${t(unit)}`, // Custom formatter to show the value
             },
             tooltip: {
                 enabled: true, // Tooltips still enabled for hover interaction

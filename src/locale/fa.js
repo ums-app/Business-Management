@@ -417,7 +417,11 @@ const fa = {
         selectedFile: "فایل انتخاب شده",
         saveBackup: 'ذخیره بک آپ',
         dragFileToUpload: 'فایل‌ها را به اینجا بکشید یا رها کنید یا برای انتخاب فایل‌ها کلیک کنید',
-        uploadedFiles: 'فایل های آپلود شده'
+        uploadedFiles: 'فایل های آپلود شده',
+        theAmountOfMoneyPurchase: 'مجموعه کل خریدها',
+        totalNumberOFPurchasedProduct: ' تعداد کل اجناس خرید شده',
+        purchasesStatistics: 'آمار خرید ها'
+
 
 
 
