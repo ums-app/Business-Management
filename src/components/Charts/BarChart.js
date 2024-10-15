@@ -49,7 +49,7 @@ const BarChart = ({ chartData, title }) => {
         stepSize: 10, // Control the step increments between tick marks
         // ticks: {
         //   stepSize: 10, // Adjust step increments
-        max: Math.max(...chartData.datasets[0].data) + 20,
+        max: Math.ceil((Math.max(...chartData.datasets[0].data) + 50) / 10) * 10,
       },
     },
   }
