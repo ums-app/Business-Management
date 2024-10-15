@@ -13,7 +13,7 @@ import DoughnutChart from '../../../components/Charts/DoughnutChart'
 import BarChart from '../../../components/Charts/BarChart'
 
 const VisitorHome: React.FC = () => {
-    const [{ authentication }, dispatch] = useStateValue();
+    const [{ authentication, locale }, dispatch] = useStateValue();
     const [customerFactors, setCustomerFactors] = useState<CustomerFactor[]>()
     const [customerPayments, setcustomerPayments] = useState<CustomerPayment[]>([])
     const [products, setproducts] = useState<Product[]>([])
@@ -55,7 +55,7 @@ const VisitorHome: React.FC = () => {
         getProducts().then(res => {
             setproducts(res);
         })
-    }, [])
+    }, [, locale])
 
     useEffect(() => {
         console.log('useEffect run for analysing data');
@@ -131,7 +131,7 @@ const VisitorHome: React.FC = () => {
             })
             priceDataSet.data.push(totalAmount);
             numberDataSet.data.push(totalNumber);
-            name.push(prd.name);
+            name.push(locale == 'en' ? prd.englishName : prd.name);
             color.push(Colors[index])
         })
         priceDataSet.backgroundColor = color;
