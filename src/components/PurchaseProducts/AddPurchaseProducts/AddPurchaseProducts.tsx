@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { useStateValue } from '../../../context/StateProvider';
 import { actionTypes } from '../../../context/reducer';
 import Menu from '../../UI/Menu/Menu';
+import Roles from '../../../constants/Roles';
 
 
 export interface PurchasedProduct {
@@ -40,7 +41,7 @@ export interface PurchaseFactor {
 const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
     const nav = useNavigate();
     const { purchaseProductId } = useParams();
-    const [{ PurchaseFactor }, dispatch] = useStateValue()
+    const [{ authentication, PurchaseFactor }, dispatch] = useStateValue()
     const [purchaseFactor, setPurchaseFactor] = useState<PurchaseFactor>(updateMode ? PurchaseFactor : {
         products: [{
             productName: '',
@@ -381,6 +382,12 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         }
 
     }
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
+    }
+
 
 
     return (

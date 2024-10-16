@@ -13,6 +13,7 @@ import Collections from '../../../constants/Collections'
 import { ref, uploadBytes } from 'firebase/storage'
 import Folders from '../../../constants/Folders'
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate'
+import Roles from '../../../constants/Roles'
 
 function AddProduct({ updateMode = false }) {
 
@@ -97,6 +98,11 @@ function AddProduct({ updateMode = false }) {
 
     if (updateMode && loading) {
         return <ShotLoadingTemplate />
+    }
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
     }
 
     return (

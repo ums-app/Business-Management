@@ -24,6 +24,7 @@ import DisplayLogo from "../../UI/DisplayLogo/DisplayLogo"
 import CustomerPayments from './CsutomerPayments/CustomerPayments';
 import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
 import AvatarLoadingTemplate from '../../UI/LoadingTemplate/AvatarLoadingTemplate';
+import Roles from '../../../constants/Roles.js';
 
 
 // components for tabs
@@ -163,10 +164,11 @@ function Customer() {
     };
 
 
-
-
     console.log(customer);
 
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        navigate('/')
+    }
 
     if (notFound) {
         return <NotFound />;

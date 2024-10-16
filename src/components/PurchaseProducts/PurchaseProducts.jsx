@@ -18,11 +18,12 @@ import { pageSizes } from '../../constants/Others';
 import Pagination from '../UI/Pagination/Pagination';
 import { Tooltip } from 'react-tooltip';
 import ICONS from '../../constants/Icons';
+import Roles from '../../constants/Roles';
 
 
 function PurchaseProducts() {
     const nav = useNavigate();
-    const [, dispatch] = useStateValue()
+    const [{ authentication }, dispatch] = useStateValue()
     const [purchases, setPurchases] = useState();
     const [factors, setFactors] = useState()
     const purchasesCollectionRef = collection(db, Collections.Purchases);
@@ -282,6 +283,12 @@ function PurchaseProducts() {
             </LoadingTemplateContainer>
         );
     }
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
+    }
+
 
 
     return (

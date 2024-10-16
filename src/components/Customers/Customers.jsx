@@ -6,6 +6,8 @@ import CustomersManagment from './CustomersManagement/CustomersManagment'
 import ShortListedCustomers from './ShortListedCustomers/ShortListedCustomers'
 import TabMenu from '../UI/TabMenu/TabMenu'
 import { useStateValue } from '../../context/StateProvider'
+import Roles from '../../constants/Roles'
+import { useNavigate } from 'react-router-dom'
 
 
 // components for tabs
@@ -21,13 +23,13 @@ function Customers() {
     const [displayComponent, setDisplayComponent] = useState(
         { component: components.CustomersManagment.component, componentName: "CustomersManagement" }
     );
+    const nav = useNavigate();
 
     const [{ authentication },] = useStateValue();
 
-
-
-
-
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
+    }
 
     return (
         <div className='employee'>

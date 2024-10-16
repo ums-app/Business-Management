@@ -242,6 +242,10 @@ input {
   padding-left: 10px;
 }
 
+.margin_auto {
+  margin: auto;
+}
+
 
 .margin_5 {
   margin: 5px;

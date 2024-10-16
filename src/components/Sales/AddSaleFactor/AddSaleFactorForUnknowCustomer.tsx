@@ -23,6 +23,7 @@ import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { deleteCustomerPaymentByFactorId, getProductById, getProducts } from '../../../Utils/FirebaseTools';
 import { Product, UpdateModeProps } from '../../../Types/Types';
 import { ProductForSale } from './AddSaleFactor';
+import Roles from '../../../constants/Roles';
 
 
 export const productForSale = {
@@ -43,7 +44,6 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
     const [{ authentication, factor }, dispatch] = useStateValue()
     const nav = useNavigate();
     const [showPrintModal, setshowPrintModal] = useState(false);
-    const productCollectionRef = collection(db, Collections.Products)
     const salesCollectionRef = collection(db, Collections.Sales);
     const [products, setProducts] = useState<Product[]>([]);
     const [saved, setsaved] = useState(false)
@@ -366,6 +366,9 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
         </LoadingTemplateContainer>
     }
 
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
+    }
 
 
     return (

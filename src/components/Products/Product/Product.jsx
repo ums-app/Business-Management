@@ -36,7 +36,7 @@ function Product() {
     const { productId } = useParams();
     const navigate = useNavigate()
     const [product, setproduct] = useState()
-
+    const [{ authentication },] = useStateValue()
     const [, dispatch] = useStateValue()
     const [displayComponent, setDisplayComponent] = usePersistentComponent(
         components,
@@ -110,6 +110,12 @@ function Product() {
             });
         }
     };
+
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        navigate('/')
+    }
 
 
     return (

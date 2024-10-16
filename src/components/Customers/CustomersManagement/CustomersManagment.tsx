@@ -370,7 +370,7 @@ const CustomersManagment: React.FC = () => {
                                 >
                                     <td>{index + 1}</td>
                                     <td>
-                                        <div className='user_profile_img' >
+                                        <div className='user_profile_img margin_auto' >
                                             <img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' />
                                         </div>
                                     </td>

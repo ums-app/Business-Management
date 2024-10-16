@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { t } from 'i18next'
 import Button from '../UI/Button/Button'
-import { toast } from 'react-toastify'
 import { db } from '../../constants/FirebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom'
@@ -10,12 +9,14 @@ import HeadingMenuTemplate from "../UI/LoadingTemplate/HeadingMenuTemplate"
 import ShotLoadingTemplate from "../UI/LoadingTemplate/ShotLoadingTemplate"
 import ButtonLoadingTemplate from "../UI/LoadingTemplate/ButtonLoadingTemplate"
 import { getUserImage } from '../../Utils/FirebaseTools.ts'
+import { useStateValue } from '../../context/StateProvider.js';
+import Roles from '../../constants/Roles.js';
 
 
 
 function Employees() {
     const nav = useNavigate();
-
+    const [{ authentication },] = useStateValue()
     const [employees, setEmployees] = useState();
     const employeesCollectionRef = collection(db, 'Employees');
     const [imageUrls, setImageUrls] = useState();
@@ -33,6 +34,13 @@ function Employees() {
 
         fetchData();
     }, []);
+
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
+    }
+
 
 
     useEffect(() => {
@@ -90,29 +98,12 @@ function Employees() {
     }
 
 
-
-    const sendDataToAPI = () => {
-        toast.success("data added")
-    }
-
     return (
         <div>
             <Button
                 text={t('add') + " " + t('employee')}
                 onClick={() => nav("add")}
             />
-
-
-
-            <div className='display_flex justify_content_space_between align_items_center'>
-                {/* {employees.map(item => {
-                    return <div className='margin_10'>
-                        {item.name}
-                    </div>
-                })} */}
-            </div>
-
-
             <h1 className='margin_10 title'>{t('employees')}</h1>
 
             <div className='table_container '>

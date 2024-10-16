@@ -17,6 +17,8 @@ import LoadingTemplateContainer from "../UI/LoadingTemplate/LoadingTemplateConta
 import HeadingLoadingTemplate from "../UI/LoadingTemplate/HeadingLoadingTemplate";
 import { useStateValue } from "../../context/StateProvider";
 import { actionTypes } from "../../context/reducer";
+import Roles from "../../constants/Roles";
+import { useNavigate } from "react-router-dom";
 
 
 export interface UploadedFile {
@@ -37,6 +39,8 @@ const FilesManagement: React.FC = () => {
     const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
     // Firestore collection reference
     const filesCollectionRef = collection(db, Collections.Files);
+    const [{ authentication },] = useStateValue();
+    const nav = useNavigate();
 
     // Fetch uploaded files from Firestore on component mount
     useEffect(() => {
@@ -218,6 +222,10 @@ const FilesManagement: React.FC = () => {
             toast.error('Download failed. Please try again.');
         }
     };
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
+    }
 
 
     return (

@@ -1,7 +1,7 @@
 const Roles = {
   SUPER_ADMIN: "SUPER_ADMIN",
   ADMIN: "ADMIN",
-  STUDENT: "STUDENT",
-  TEACHER: "TEACHER",
+  VISITOR: "VISITOR",
+  TEACHER: "CUSTOMER",
 };
 export default Roles;

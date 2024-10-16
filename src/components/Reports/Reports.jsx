@@ -4,6 +4,8 @@ import SalesReport from './SalesReport/SalesReport';
 import ConsumptionsReport from './ConsumptionsReport/ConsumptionsReport';
 import { t } from 'i18next';
 import { useStateValue } from '../../context/StateProvider';
+import { useNavigate } from 'react-router-dom';
+import Roles from '../../constants/Roles';
 
 
 
@@ -19,8 +21,13 @@ function Reports() {
     const [displayComponent, setDisplayComponent] = useState(
         { component: components.SalesReport.component, componentName: components.SalesReport.componentName }
     );
+    const navigate = useNavigate();
 
     const [{ authentication }, dispatch] = useStateValue();
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        navigate('/')
+    }
 
     return (
         <div>

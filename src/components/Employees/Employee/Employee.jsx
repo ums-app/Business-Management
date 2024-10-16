@@ -152,11 +152,9 @@ function Employee() {
         }
     };
 
-
-
-
-    console.log(employee);
-
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        navigate('/')
+    }
 
     if (notFound) {
         return <NotFound />;

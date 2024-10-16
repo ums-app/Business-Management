@@ -22,6 +22,7 @@ import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { VisitorContractType } from '../../../constants/Others';
 import { CustomerFactor, CustomerPayment, Employee, Product, UpdateModeProps } from '../../../Types/Types';
 import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
+import Roles from '../../../constants/Roles';
 
 export interface ProductForSale {
     productId: string;
@@ -480,9 +481,6 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         }
     }
 
-
-
-
     const showDeleteModal = () => {
         dispatch({
             type: actionTypes.SHOW_ASKING_MODAL,
@@ -493,8 +491,6 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
             },
         });
     };
-
-
 
 
     const deleteFactor = async () => {
@@ -546,11 +542,13 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         }
     };
 
-
-
     if (!customerForSaleFactor) {
         nav(-1)
         return;
+    }
+
+    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        nav('/')
     }
 
 
