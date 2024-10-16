@@ -12,6 +12,7 @@ import { actionTypes, getAuthInfoFromLocalStorage } from "../../context/reducer"
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import Collections from "../../constants/Collections";
 import { getUserByEmail } from "../../Utils/FirebaseTools";
+import { getDecryptedItem } from "../../Utils/Encryption";
 
 function Layout() {
   const navigate = useNavigate();
@@ -70,17 +71,24 @@ function Layout() {
     // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && localStorage.length > 0) {
+        // Prepare an empty object to hold the decrypted values
         const localStorageAuthObj = {
           isAuthenticated: true,
-          name: localStorage.getItem("name"),
-          lastname: localStorage.getItem("lastname"),
-          email: localStorage.getItem("email"),
-          userId: localStorage.getItem("userId"),
-          originalEntityId: localStorage.getItem("originalEntityId"),
-          imageURL: localStorage.getItem("imageURL"),
-          userType: localStorage.getItem("userType"),
-          roles: localStorage.getItem("roles") ? localStorage.getItem("roles")?.split(",") : [],
         };
+
+        // Decrypt each item stored in localStorage
+        for (let i = 0; i < localStorage.length; i++) {
+          const encryptedKey = localStorage.key(i);
+          const decryptedItem = getDecryptedItem(encryptedKey);
+
+          if (decryptedItem) {
+            // Store the decrypted value in the object, using the decrypted key
+            localStorageAuthObj[decryptedItem.key] = decryptedItem.value;
+          }
+        }
+
+        // For roles, we need to handle splitting as it was stored as a string
+        localStorageAuthObj.roles = localStorageAuthObj.roles ? localStorageAuthObj.roles.split(",") : [];
 
         // Dispatch only if the authentication state changes
         dispatch({
@@ -88,7 +96,7 @@ function Layout() {
           payload: localStorageAuthObj,
         });
       } else {
-        // Redirect if the user is not authenticated
+        // If user is not authenticated or localStorage is empty, redirect and dispatch logout
         dispatch({
           type: actionTypes.LOGOUT,
         });

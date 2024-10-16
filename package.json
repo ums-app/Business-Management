@@ -17,6 +17,7 @@
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.2",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "crypto-js": "^4.2.0",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.5.0",
     "formik": "^2.4.5",
@@ -68,6 +69,7 @@
     ]
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "typescript": "^4.9.5"
   }
 }

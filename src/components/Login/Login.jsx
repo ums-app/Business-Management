@@ -15,6 +15,7 @@ import { getUserByEmail, getUserImage } from '../../Utils/FirebaseTools.ts';
 import Collections from '../../constants/Collections';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { actionTypes } from '../../context/reducer';
+import { encryptData } from '../../Utils/Encryption.ts';
 
 function Login() {
     const [, dispatch] = useStateValue();
@@ -35,14 +36,23 @@ function Login() {
                     .then(user => {
                         setSubmitting(true);
                         if (!user.disabled) {
-                            localStorage.setItem('name', user.name);
-                            localStorage.setItem('lastname', user.lastName);
-                            localStorage.setItem('email', user.email);
-                            localStorage.setItem('originalEntityId', user.originalEntityId);
-                            localStorage.setItem('userType', user.userType);
-                            localStorage.setItem('userId', user.id);
-                            localStorage.setItem('roles', user?.roles?.join(','));
-                            localStorage.setItem('locale', 'fa')
+                            // Encrypt and store each item in localStorage
+                            const itemsToStore = {
+                                name: user.name,
+                                lastname: user.lastName,
+                                email: user.email,
+                                originalEntityId: user.originalEntityId,
+                                userType: user.userType,
+                                userId: user.id,
+                                roles: user?.roles?.join(','), // Encrypt as comma-separated string
+                                locale: 'fa',
+                            };
+
+                            // Loop through each item and encrypt the key-value pair
+                            Object.entries(itemsToStore).forEach(([key, value]) => {
+                                const { encryptedKey, encryptedValue } = encryptData(key, value);
+                                localStorage.setItem(encryptedKey, encryptedValue);
+                            });
 
                             console.log('dispatching data');
                             dispatch({
@@ -56,7 +66,7 @@ function Login() {
                                     userId: user.id,
                                     roles: user?.roles,
                                 }
-                            })
+                            });
                             console.log('nav to home');
                             navigate("/");
                         } else {
