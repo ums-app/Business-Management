@@ -25,6 +25,7 @@ import EmployeeSalaries from './EmployeeSalaries/EmployeeSalaries';
 import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
 import AvatarLoadingTemplate from "../../UI/LoadingTemplate/AvatarLoadingTemplate"
 import { VisitorContractType } from '../../../constants/Others.js';
+import Roles from '../../../constants/Roles.js';
 
 
 // components for tabs
@@ -152,9 +153,10 @@ function Employee() {
         }
     };
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        navigate('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
+
 
     if (notFound) {
         return <NotFound />;

@@ -166,9 +166,10 @@ function Customer() {
 
     console.log(customer);
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        navigate('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
+
 
     if (notFound) {
         return <NotFound />;

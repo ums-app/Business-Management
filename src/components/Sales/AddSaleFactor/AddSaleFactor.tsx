@@ -23,6 +23,7 @@ import { VisitorContractType } from '../../../constants/Others';
 import { CustomerFactor, CustomerPayment, Employee, Product, UpdateModeProps } from '../../../Types/Types';
 import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
 import Roles from '../../../constants/Roles';
+import NotFound from '../../../pages/NotFound/NotFound';
 
 export interface ProductForSale {
     productId: string;
@@ -91,6 +92,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         currentRemainedAmount: 0,
         previousRemainedAmount: 0,
     }))
+
 
     useEffect(() => {
         settotalAmountOfCustomerPayments(totalAmountOfAllCustomerPayments());
@@ -547,13 +549,15 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         return;
     }
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
-    }
+
 
 
 
     console.log(customerFactor);
+
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
+    }
 
 
     return (

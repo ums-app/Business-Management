@@ -8,6 +8,7 @@ import TabMenu from '../UI/TabMenu/TabMenu'
 import { useStateValue } from '../../context/StateProvider'
 import Roles from '../../constants/Roles'
 import { useNavigate } from 'react-router-dom'
+import NotFound from '../../pages/NotFound/NotFound'
 
 
 // components for tabs
@@ -23,13 +24,13 @@ function Customers() {
     const [displayComponent, setDisplayComponent] = useState(
         { component: components.CustomersManagment.component, componentName: "CustomersManagement" }
     );
-    const nav = useNavigate();
 
     const [{ authentication },] = useStateValue();
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
+
 
     return (
         <div className='employee'>

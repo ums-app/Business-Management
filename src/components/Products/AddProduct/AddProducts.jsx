@@ -14,6 +14,8 @@ import { ref, uploadBytes } from 'firebase/storage'
 import Folders from '../../../constants/Folders'
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate'
 import Roles from '../../../constants/Roles'
+import NotFound from '../../../pages/NotFound/NotFound'
+import { useStateValue } from '../../../context/StateProvider'
 
 function AddProduct({ updateMode = false }) {
 
@@ -34,6 +36,7 @@ function AddProduct({ updateMode = false }) {
 
     const [fileURL, setfileURL] = useState('');
     const [fileValue, setFileValue] = useState()
+    const [{ authentication },] = useStateValue()
 
     useEffect(() => {
         if (updateMode) {
@@ -101,10 +104,9 @@ function AddProduct({ updateMode = false }) {
     }
 
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
-
     return (
         <div className='add_product'>
             <h1 className='title'>{updateMode ? t('update') : t('add')} {t('product')}</h1>

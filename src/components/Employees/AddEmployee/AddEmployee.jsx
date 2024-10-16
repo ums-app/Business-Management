@@ -21,6 +21,9 @@ import { ref, uploadBytes } from 'firebase/storage';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { UserTypes, VisitorContractType } from '../../../constants/Others';
 import { jalaliToGregorian } from 'shamsi-date-converter';
+import NotFound from '../../../pages/NotFound/NotFound.jsx';
+import Roles from '../../../constants/Roles.js';
+import { useStateValue } from '../../../context/StateProvider.js';
 
 
 function AddEmployee({ updateMode = false }) {
@@ -31,6 +34,7 @@ function AddEmployee({ updateMode = false }) {
     const [loading, setloading] = useState(false)
     const [fileURL, setfileURL] = useState('');
     const [fileValue, setFileValue] = useState()
+    const [{ authentication },] = useStateValue()
 
 
     const [formData, setformData] = useState({
@@ -176,6 +180,11 @@ function AddEmployee({ updateMode = false }) {
             throw new Error('Failed to upload image'); // Throw the error to handle it in the calling function
         }
     };
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
+    }
 
 
 

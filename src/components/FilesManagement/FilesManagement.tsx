@@ -19,6 +19,7 @@ import { useStateValue } from "../../context/StateProvider";
 import { actionTypes } from "../../context/reducer";
 import Roles from "../../constants/Roles";
 import { useNavigate } from "react-router-dom";
+import NotFound from "../../pages/NotFound/NotFound";
 
 
 export interface UploadedFile {
@@ -223,10 +224,9 @@ const FilesManagement: React.FC = () => {
         }
     };
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
-
 
     return (
         <div style={styles.container}>

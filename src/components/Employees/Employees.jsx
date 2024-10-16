@@ -11,6 +11,7 @@ import ButtonLoadingTemplate from "../UI/LoadingTemplate/ButtonLoadingTemplate"
 import { getUserImage } from '../../Utils/FirebaseTools.ts'
 import { useStateValue } from '../../context/StateProvider.js';
 import Roles from '../../constants/Roles.js';
+import NotFound from '../../pages/NotFound/NotFound.jsx';
 
 
 
@@ -34,13 +35,6 @@ function Employees() {
 
         fetchData();
     }, []);
-
-
-
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
-    }
-
 
 
     useEffect(() => {
@@ -85,6 +79,11 @@ function Employees() {
             fetchImages();
         }
     }, [employees]);
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
+    }
 
 
     if (!employees || !imageUrls) {

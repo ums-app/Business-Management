@@ -21,12 +21,14 @@ import { FactorType } from '../../constants/FactorStatus';
 import { CustomerFactor, ProductForSale, Suggestion } from '../../Types/Types';
 import { mapDocToCustomerFactor } from '../../Utils/Mapper';
 import { formatFirebaseDates } from '../../Utils/DateTimeUtils';
+import NotFound from '../../pages/NotFound/NotFound';
+import Roles from '../../constants/Roles';
 
 
 
 const Sales: React.FC = () => {
     const nav = useNavigate();
-    const [, dispatch] = useStateValue()
+    const [{ authentication }, dispatch] = useStateValue()
     const salesCollectionRef = collection(db, Collections.Sales);
     const [showSelectCustomerModal, setShowSelectCustomerModal] = useState(false)
     const [factors, setFactors] = useState<CustomerFactor[]>()
@@ -361,11 +363,6 @@ const Sales: React.FC = () => {
         }
     };
 
-    console.log("current-page: ", currentPage);
-    console.log('last visible item: ', lastVisible);
-
-
-
 
     const getTotalProdcuts = (products: ProductForSale[]) => {
         let total = 0;
@@ -385,6 +382,9 @@ const Sales: React.FC = () => {
 
 
 
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
+    }
 
 
     if (!factors) {

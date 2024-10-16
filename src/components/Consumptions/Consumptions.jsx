@@ -5,6 +5,9 @@ import Withdrawals from './Withdrawals/Withdrawals';
 import ConstantConsumptions from './ConstantConsumptions/ConstantConsumptions';
 import { t } from 'i18next';
 import TabMenu from '../UI/TabMenu/TabMenu';
+import NotFound from '../../pages/NotFound/NotFound';
+import { useStateValue } from '../../context/StateProvider';
+import Roles from '../../constants/Roles';
 
 // components for tabs
 const components = {
@@ -17,6 +20,12 @@ function Consumptions() {
     const [displayComponent, setDisplayComponent] = useState(
         { component: components.RetailConsumptions.component, componentName: "RetailConsumptions" }
     );
+    const [{ authentication },] = useStateValue()
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
+    }
 
     return (
         <div>

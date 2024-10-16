@@ -15,6 +15,7 @@ import { useStateValue } from '../../../context/StateProvider';
 import { actionTypes } from '../../../context/reducer';
 import Menu from '../../UI/Menu/Menu';
 import Roles from '../../../constants/Roles';
+import NotFound from '../../../pages/NotFound/NotFound';
 
 
 export interface PurchasedProduct {
@@ -384,11 +385,9 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
     }
 
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
-
-
 
     return (
         <div className='full_width fade_in'>

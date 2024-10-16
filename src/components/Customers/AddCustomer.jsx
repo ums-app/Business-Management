@@ -21,6 +21,9 @@ import avatar from "../../assets/img/profile_avatar.png"
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import { mapDocToEmployee } from '../../Utils/Mapper.ts'
 import { UserTypes, VisitorContractType } from '../../constants/Others.js'
+import NotFound from '../../pages/NotFound/NotFound.jsx'
+import Roles from '../../constants/Roles.js'
+import { useStateValue } from '../../context/StateProvider.js'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -29,6 +32,7 @@ function AddCustomer({ updateMode = false }) {
     const usersCollectionRef = collection(db, Collections.Users);
     const [fileURL, setfileURL] = useState('');
     const [fileValue, setFileValue] = useState()
+    const [{ authentication },] = useStateValue()
 
 
     const [formData, setformData] = useState({
@@ -149,6 +153,11 @@ function AddCustomer({ updateMode = false }) {
     }
 
     console.log(formData);
+
+
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
+    }
 
     if (updateMode && formData.name.length == 0) {
         return <LoadingTemplateContainer>

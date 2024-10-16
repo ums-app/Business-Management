@@ -24,6 +24,7 @@ import { deleteCustomerPaymentByFactorId, getProductById, getProducts } from '..
 import { Product, UpdateModeProps } from '../../../Types/Types';
 import { ProductForSale } from './AddSaleFactor';
 import Roles from '../../../constants/Roles';
+import NotFound from '../../../pages/NotFound/NotFound';
 
 
 export const productForSale = {
@@ -366,8 +367,8 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
         </LoadingTemplateContainer>
     }
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
 
 

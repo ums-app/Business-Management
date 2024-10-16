@@ -7,6 +7,8 @@ import AccountSettings from "./AccountSettings/AccountSettings";
 import SystemSettings from "./SystemSettings/SystemSettings";
 import usePersistentComponent from "../../Hooks/usePersistentComponent";
 import FirestoreBackup from "../Backup/FirestoreBackup";
+import NotFound from "../../pages/NotFound/NotFound";
+import Roles from "../../constants/Roles";
 
 const components = {
   accountSettings: { componentName: "AccountSettings", component: AccountSettings },
@@ -22,6 +24,10 @@ function Settings() {
   );
 
   console.log(authentication)
+
+  if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+    return <NotFound />
+  }
 
   return (
     <div className="settings " id="settings">

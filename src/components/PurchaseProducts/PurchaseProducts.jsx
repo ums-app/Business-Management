@@ -19,6 +19,7 @@ import Pagination from '../UI/Pagination/Pagination';
 import { Tooltip } from 'react-tooltip';
 import ICONS from '../../constants/Icons';
 import Roles from '../../constants/Roles';
+import NotFound from '../../pages/NotFound/NotFound';
 
 
 function PurchaseProducts() {
@@ -284,11 +285,9 @@ function PurchaseProducts() {
         );
     }
 
-
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        nav('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
-
 
 
     return (
