@@ -18,6 +18,8 @@ import { useStateValue } from '../../../context/StateProvider';
 import { toast } from 'react-toastify';
 import ICONS from '../../../constants/Icons';
 import { t } from 'i18next';
+import NotFound from '../../../pages/NotFound/NotFound';
+import Roles from '../../../constants/Roles';
 
 
 
@@ -113,8 +115,8 @@ function Product() {
 
 
 
-    if (!authentication.roles.includes(Roles.ADMIN) || !authentication.roles.includes(Roles.SUPER_ADMIN)) {
-        navigate('/')
+    if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
+        return <NotFound />
     }
 
 

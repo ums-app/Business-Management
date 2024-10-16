@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
-import axiosClient from "../../../axios/axios";
 
 function RestrictWarning({ confirmHandler }) {
   // const navigate = useNavigate();
@@ -24,23 +23,23 @@ function RestrictWarning({ confirmHandler }) {
     });
   };
 
-  const submit = (values) => {
-    setloading(true);
-    // API call with axios
-    axiosClient
-      .post(APIEndpoints.login.checkPassword, values)
-      .then((res) => {
-        toast.success(res);
-        confirmHandler();
-        closeModal();
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      })
-      .finally(() => {
-        setloading(false); // Set submitting to false at the end regardless of outcome
-      });
-  };
+  // const submit = (values) => {
+  //   setloading(true);
+  //   // API call with axios
+  //   axiosClient
+  //     .post(APIEndpoints.login.checkPassword, values)
+  //     .then((res) => {
+  //       toast.success(res);
+  //       confirmHandler();
+  //       closeModal();
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.response.data.message);
+  //     })
+  //     .finally(() => {
+  //       setloading(false); // Set submitting to false at the end regardless of outcome
+  //     });
+  // };
 
   return (
     <div className="restrict_warning">
@@ -57,7 +56,7 @@ function RestrictWarning({ confirmHandler }) {
             .min(5, t("passwordMinWidth"))
             .required(`${t("passwordPlaceholder")} ${t("isRequireText")}`),
         })}
-        onSubmit={submit}
+      // onSubmit={submit}
       >
         {({ isSubmitting }) => (
           <Form className="display_flex flex_direction_column align_items_center">
@@ -85,7 +84,7 @@ function RestrictWarning({ confirmHandler }) {
               className="error_msg"
             />
             <Button
-              onClick={submit}
+              // onClick={submit}
               btnType={"submit"}
               text={t("confirm")}
               title={t("confirm")}

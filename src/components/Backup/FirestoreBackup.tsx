@@ -8,8 +8,6 @@ import Button from '../UI/Button/Button';
 import ICONS from '../../constants/Icons';
 import { t } from 'i18next';
 import SmallSpinner from '../UI/Loading/SmallSpinner';
-import { InputGroup, FormControl, Alert } from 'react-bootstrap';
-import { BiArrowToBottom } from 'react-icons/bi'; // Icon from react-icons
 
 
 interface BackupState {
@@ -229,8 +227,8 @@ const BackupComponent: React.FC = () => {
 
                 {importLoading && <span style={styles.loadingText}>{uploadingStatus} {t('uploadingData')}</span>}
 
-                {feedbackMessage && <Alert variant="success" style={styles.alert}>{feedbackMessage}</Alert>}
-                {errorMessage && <Alert variant="danger" style={styles.alert}>{errorMessage}</Alert>}
+                {feedbackMessage && <p style={styles.alert}>{feedbackMessage}</p>}
+                {errorMessage && <p style={{ ...styles.alert, color: 'red' }}>{errorMessage}</p>}
             </div>
 
         </div >
