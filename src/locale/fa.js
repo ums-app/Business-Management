@@ -217,7 +217,6 @@ const fa = {
         bashad: "باشد",
         total: "تعداد",
         collection: "مجموعه",
-
         codeNumbder: "کد نمبر",
         notEmptyMsg: "نباید خالی باشد",
         new: "جدید",
@@ -425,6 +424,7 @@ const fa = {
         totalPaymentForSalary: 'مجموعه بردگی ها بابت معاش',
         totalPaymentForSales: 'مجموعه بردگی ها بابت فروشات',
         totalPurchaseAmount: "جمع کل خرید",
+        factoryExpenses: "مصارف کارخانه"
 
 
 

@@ -19,3 +19,10 @@ export const UserTypes = {
     VISITOR: 'VISITOR',
     CUSTOMER: 'CUSTOMER',
 }
+
+
+export const CurrencyType = {
+    USD: 'USD',
+    AFN: "AFN",
+    EUR: "EUR"
+}

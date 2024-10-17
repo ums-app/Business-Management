@@ -16,6 +16,7 @@ import { actionTypes } from '../../../context/reducer';
 import Menu from '../../UI/Menu/Menu';
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
+import { CurrencyType } from '../../../constants/Others';
 
 
 export interface PurchasedProduct {
@@ -26,7 +27,8 @@ export interface PurchasedProduct {
     customsCosts: number,
     additionalCosts: number,
     total: number,
-    pricePer: number
+    pricePer: number,
+    factoryExpenses: number,
 }
 
 export interface PurchaseFactor {
@@ -35,7 +37,8 @@ export interface PurchaseFactor {
     totalAmount: number;
     indexNumber: number,
     totalPackage: number,
-    createdDate: Timestamp | Date
+    createdDate: Timestamp | Date,
+    currency: string
 }
 
 
@@ -52,14 +55,16 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
             additionalCosts: 0,
             totalPackage: 0,
             totalNumber: 0,
-            pricePer: 0
+            pricePer: 0,
+            factoryExpenses: 0
 
         }],
         createdDate: new Date(),
         indexNumber: 0,
         totalAmount: 0,
         totalProducts: 0,
-        totalPackage: 0
+        totalPackage: 0,
+        currency: CurrencyType.USD
     });
     const [products, setproducts] = useState<Product[]>([])
     const purchasedProductCollectionRef = collection(db, Collections.Purchases);
@@ -99,7 +104,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
             additionalCosts: 0,
             totalPackage: 0,
             totalNumber: 0,
-            pricePer: 0
+            pricePer: 0,
+            factoryExpenses: 0
 
         });
         setPurchaseFactor({
@@ -131,7 +137,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                 additionalCosts: 0,
                 totalPackage: 0,
                 totalNumber: 0,
-                pricePer: 0
+                pricePer: 0,
+                factoryExpenses: 0
             };
             setPurchaseFactor({
                 ...purchaseFactor,
@@ -228,9 +235,25 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         })
 
     }
+    const handleChangefactoryExpenses = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const prods = [...purchaseFactor?.products]
+        prods[index] = {
+            ...prods[index],
+            factoryExpenses: Number(e.target.value)
+        };
+        //total
+        prods[index] = {
+            ...prods[index],
+            total: handleTotalEachRow(prods[index])
+        }
+        setPurchaseFactor({
+            ...purchaseFactor,
+            products: prods,
+        })
 
+    }
     const handleTotalEachRow = (product: PurchasedProduct): number => {
-        return product.additionalCosts + product.customsCosts + (product.pricePer * product.totalNumber);
+        return product.additionalCosts + product.factoryExpenses + product.customsCosts + (product.pricePer * product.totalNumber);
     }
 
     const summarize = (type: string): number => {
@@ -247,6 +270,9 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                 return total;
             case 'additionalCosts':
                 purchaseFactor.products.forEach(item => total += item.additionalCosts)
+                return total;
+            case 'factoryExpenses':
+                purchaseFactor.products.forEach(item => total += item.factoryExpenses)
                 return total;
             case 'totalAll':
                 purchaseFactor.products.forEach(item => total += item.total)
@@ -446,7 +472,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                 <div className='overflow_x_scroll'>
                     <table className='custom_table full_width'>
                         <thead>
-                            <tr>
+                            <tr style={{ fontSize: '14px', color: '#fff' }}>
                                 <th>{t('number')}</th>
                                 <th>{t("name")}</th>
                                 <th>{t("total")} {t('package')}</th>
@@ -454,6 +480,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                 <th>{t('pricePer')}</th>
                                 <th>{t('totalPurchaseAmount')}</th>
                                 <th>{t('customsFees')}</th>
+                                <th>{t('factoryExpenses')}</th>
                                 <th>{t('additionalCosts')}</th>
                                 <th>{t("totalAll")}</th>
                                 <th>{t("actions")}</th>
@@ -484,10 +511,11 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.totalPackage} onChange={e => handleChangeTotalPackage(e, index)} /></td>
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.totalNumber} onChange={e => handleChangeTotalNumber(e, index)} /></td>
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.pricePer} onChange={e => handleChangePricePer(e, index)} /></td>
-                                        <td>{item.total}</td>
-                                        <td><input type="number" name="" style={{ width: '100px' }} value={item.customsCosts} onChange={e => handleChangeCustomsCosts(e, index)} /></td>
-                                        <td><input type="number" name="" style={{ width: '100px' }} value={item.additionalCosts} onChange={e => handleChangeAdditionalCosts(e, index)} /></td>
                                         <td>{item.pricePer * item.totalNumber}</td>
+                                        <td><input type="number" name="" style={{ width: '100px' }} value={item.customsCosts} onChange={e => handleChangeCustomsCosts(e, index)} /></td>
+                                        <td><input type="number" name="" style={{ width: '100px' }} value={item.factoryExpenses} onChange={e => handleChangefactoryExpenses(e, index)} /></td>
+                                        <td><input type="number" name="" style={{ width: '100px' }} value={item.additionalCosts} onChange={e => handleChangeAdditionalCosts(e, index)} /></td>
+                                        <td>{item.total}</td>
                                         <td>
                                             <Button
                                                 icon={ICONS.trash}
@@ -513,12 +541,13 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                 <table className='custom_table full_width margin_top_20'>
                     <thead style={{ background: 'orange' }}>
                         <tr>
-                            <th colSpan={5}>{t('summarize')}</th>
+                            <th colSpan={6}>{t('summarize')}</th>
                         </tr>
                         <tr>
                             <td>{t("total")} {t('package')}</td>
                             <td>{t('total')}</td>
                             <td>{t('customsFees')}</td>
+                            <td>{t('factoryExpenses')}</td>
                             <td>{t('additionalCosts')}</td>
                             <td>{t("totalAll")}</td>
                         </tr>
@@ -528,6 +557,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                             <td> {summarize('package')}</td>
                             <td>{summarize('totalProduct')}</td>
                             <td>{summarize('customsFees')}</td>
+                            <td>{summarize('factoryExpenses')}</td>
                             <td>{summarize('additionalCosts')}</td>
                             <td>{summarize('totalAll')}</td>
                         </tr>

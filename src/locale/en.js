@@ -395,7 +395,8 @@ const en = {
         totalAllPaidAmount: 'Total Paid Amount',
         totalProducts: 'Total Products',
         purchasesStatistics: 'Purchases Statistics',
-        totalPurchaseAmount: 'Total Purchase Amount'
+        totalPurchaseAmount: 'Total Purchase Amount',
+        factoryExpenses: "Factory Expenses",
 
 
 
