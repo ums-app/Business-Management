@@ -473,7 +473,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                     <table className='custom_table full_width'>
                         <thead>
                             <tr style={{ fontSize: '14px', color: '#fff' }}>
-                                <th>{t('number')}</th>
+                                <th>#</th>
                                 <th>{t("name")}</th>
                                 <th>{t("total")} {t('package')}</th>
                                 <th>{t('total')}</th>

@@ -502,7 +502,7 @@ const Sales: React.FC = () => {
                     <table className="full_width custom_table table_row_hover">
                         <thead >
                             <tr>
-                                <th>{t('number')}</th>
+                                <th>#</th>
                                 <th>{t('indexNumber')}</th>
                                 <th>{t('name')}</th>
                                 <th>{t('lastName')}</th>

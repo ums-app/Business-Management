@@ -353,7 +353,7 @@ function PurchaseProducts() {
                     <table className="full_width custom_table table_row_hover">
                         <thead >
                             <tr>
-                                <th>{t('number')}</th>
+                                <th>#</th>
                                 <th>{t('indexNumber')}</th>
                                 <th>{t('createdDate')}</th>
                                 <th>{t("total")} {t('package')}</th>
