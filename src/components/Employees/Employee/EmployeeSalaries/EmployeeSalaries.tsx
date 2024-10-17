@@ -62,7 +62,8 @@ const EmployeeSalaries: React.FC<EmployeeSalariesProps> = ({ data, setData }) =>
                     let total = 0;
                     res.filter(item => item.type == EmployeePaymentType.SALARY)
                         .forEach(item => total += item.amount);
-                    setTotalPayments(total)
+
+                    setTotalPayments(total);
                 })
 
     }, [employeeId]);
@@ -146,7 +147,7 @@ const EmployeeSalaries: React.FC<EmployeeSalariesProps> = ({ data, setData }) =>
                 }
             }
 
-            total += applicableSalary;
+            total += Number(applicableSalary);
             const endDate = new Date();
             const nextDate = totalMonths[monthIndex + 1];
             endDate.setFullYear(nextDate.year);

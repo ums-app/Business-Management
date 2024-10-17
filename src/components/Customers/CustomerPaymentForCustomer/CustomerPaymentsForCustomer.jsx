@@ -75,10 +75,7 @@ function CustomerPaymentsForCustomer() {
 
                         </tbody>
                     </table>
-
-
                 </div>
-
             </div>
 
             <div className='table_container margin_top_20 input'>

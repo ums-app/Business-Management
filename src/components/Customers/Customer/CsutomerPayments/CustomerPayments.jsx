@@ -303,7 +303,7 @@ function CustomerPayments() {
                                 key={pay.id}
                             >
                                 <td>{index + 1}</td>
-                                <td>{pay?.checkNumber}</td>
+                                <td>{Number(pay?.checkNumber).toFixed(0)}</td>
                                 <td>{formatFirebaseDates(pay.date)}</td>
                                 <td>{pay.by}</td>
                                 <td>{pay.amount}</td>

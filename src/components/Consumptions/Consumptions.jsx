@@ -11,7 +11,7 @@ import Roles from '../../constants/Roles';
 
 // components for tabs
 const components = {
-    RetailConsumptions: { componentName: "RetailConsumption", component: RetailConsumptions, },
+    RetailConsumptions: { componentName: "RetailConsumptions", component: RetailConsumptions, },
     MajorConsumptions: { componentName: "MajorConsumptions", component: MajorConsumptions },
     Withdrawals: { componentName: "Withdrawals", component: Withdrawals },
     ConstantConsumptions: { componentName: "ConstantConsumptions", component: ConstantConsumptions },
