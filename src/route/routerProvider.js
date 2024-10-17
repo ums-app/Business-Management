@@ -14,7 +14,7 @@ import Depot from "../components/Depot/Depot.tsx";
 import CustomerPaymentsForCustomer from "../components/Customers/CustomerPaymentForCustomer/CustomerPaymentsForCustomer.jsx";
 import CustomerFactorsForCustomer from "../components/Customers/CustomerFactorsForCustomer/CustomerFactorsForCustomer.jsx";
 import FactorPrintForUsers from "../components/Sales/FactorPrintForUsers/FactorPrintForUsers.jsx";
-import CustomerFactorsForVisitor from "../components/Employees/CustomerFactorsForVisitor/CustomerFactorsForVisitor.jsx";
+import CustomerFactorsForVisitor from "../components/Employees/CustomerFactorsForVisitor/CustomerFactorsForVisitor.tsx";
 import EmployeePaymentsForEmployee from "../components/Employees/EmployeePaymentsForEmployee/EmployeePaymentsForEmployee.tsx";
 import EmployeeCustomersForEmployee from "../components/Employees/EmployeeCustomersForEmployee/EmployeeCustomersForEmployee.jsx";
 import EmployeeSalariesForEmployee from "../components/Employees/EmployeeSalariesForEmployee/EmployeeSalariesForEmployee.tsx";

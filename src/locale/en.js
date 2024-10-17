@@ -394,7 +394,8 @@ const en = {
         totalNumberOFPurchasedProduct: "Total Number Of Purchased Products",
         totalAllPaidAmount: 'Total Paid Amount',
         totalProducts: 'Total Products',
-        purchasesStatistics: 'Purchases Statistics'
+        purchasesStatistics: 'Purchases Statistics',
+        totalPurchaseAmount: 'Total Purchase Amount'
 
 
 

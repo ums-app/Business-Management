@@ -423,7 +423,10 @@ const fa = {
         purchasesStatistics: 'آمار خرید ها',
         operationFailedMsg: 'عملیات ناموفق بود لطفا دوباره امتخان کنید',
         totalPaymentForSalary: 'مجموعه بردگی ها بابت معاش',
-        totalPaymentForSales: 'مجموعه بردگی ها بابت فروشات'
+        totalPaymentForSales: 'مجموعه بردگی ها بابت فروشات',
+        totalPurchaseAmount: "جمع کل خرید",
+
+
 
 
 

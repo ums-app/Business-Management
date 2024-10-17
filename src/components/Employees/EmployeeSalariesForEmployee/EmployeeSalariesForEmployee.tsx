@@ -24,6 +24,7 @@ import { toast } from 'react-toastify';
 import { Employee, salaryHistory } from '../../../Types/Types.ts';
 import { useStateValue } from '../../../context/StateProvider.js';
 import NotFound from '../../../pages/NotFound/NotFound.jsx';
+import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus.jsx';
 
 interface EmployeeSalariesProps {
     data: Employee;
@@ -41,8 +42,8 @@ interface MonthlySalaries {
 
 const EmployeeSalariesForEmployee: React.FC<EmployeeSalariesProps> = () => {
     const [monthlySalaries, setMonthlySalaries] = useState<MonthlySalaries[]>([]);
-    const [totalPayments, setTotalPayments] = useState<number>();
-    const [totalSalaries, setTotalSalaries] = useState<number>();
+    const [totalPayments, setTotalPayments] = useState<number>(0);
+    const [totalSalaries, setTotalSalaries] = useState<number>(0);
     const [{ authentication }, dispatch] = useStateValue()
     const [data, setdata] = useState<Employee>()
     const [notFound, setNotFound] = useState<boolean>(false)
@@ -236,6 +237,13 @@ const EmployeeSalariesForEmployee: React.FC<EmployeeSalariesProps> = () => {
                         <div className=' padding_right_10 padding_left_10  border_radius_6  margin_left_10 margin_right_10'>
                             <span>{t('paidAmount')}: </span>
                             <span>{totalPayments}</span>
+                        </div>
+                        <div className=' padding_right_10 padding_left_10  border_radius_6  margin_left_10 margin_right_10'>
+                            <span>{t('remainedAmount')}: </span>
+                            <span>
+                                {Math.abs(totalSalaries - totalPayments)}
+                                <MoneyStatus number={(totalSalaries - totalPayments) * -1} />
+                            </span>
                         </div>
 
                     </div>

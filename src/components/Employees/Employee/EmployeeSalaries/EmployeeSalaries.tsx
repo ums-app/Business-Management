@@ -24,12 +24,12 @@ import Collections from '../../../../constants/Collections.js';
 import { toast } from 'react-toastify';
 import { Employee, salaryHistory } from '../../../../Types/Types.ts';
 
-interface EmployeeSalariesProps {
+export interface EmployeeSalariesProps {
     data: Employee;
     setData: Function,
 }
 
-interface MonthlySalaries {
+export interface MonthlySalaries {
     date: Date,
     persianDate: string,
     endDate: Date,

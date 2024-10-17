@@ -452,6 +452,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                 <th>{t("total")} {t('package')}</th>
                                 <th>{t('total')}</th>
                                 <th>{t('pricePer')}</th>
+                                <th>{t('totalPurchaseAmount')}</th>
                                 <th>{t('customsFees')}</th>
                                 <th>{t('additionalCosts')}</th>
                                 <th>{t("totalAll")}</th>
@@ -483,9 +484,10 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.totalPackage} onChange={e => handleChangeTotalPackage(e, index)} /></td>
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.totalNumber} onChange={e => handleChangeTotalNumber(e, index)} /></td>
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.pricePer} onChange={e => handleChangePricePer(e, index)} /></td>
+                                        <td>{item.total}</td>
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.customsCosts} onChange={e => handleChangeCustomsCosts(e, index)} /></td>
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.additionalCosts} onChange={e => handleChangeAdditionalCosts(e, index)} /></td>
-                                        <td>{item.total}</td>
+                                        <td>{item.pricePer * item.totalNumber}</td>
                                         <td>
                                             <Button
                                                 icon={ICONS.trash}

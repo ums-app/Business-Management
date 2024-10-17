@@ -145,14 +145,13 @@ export const getProductById = async (productId: string): Promise<Product> => {
 
 
 // Function to get a document by its ID
-export async function getEmployeeById(docId: string): Promise<Employee | null> {
+export async function getEmployeeById(docId: string): Promise<Employee> {
     const docRef = doc(employeesCollectionRef, docId);
     const docSnap = await getDoc(docRef);
-
     if (docSnap.exists()) {
         return mapDocToEmployee(docSnap);
     } else {
-        return null;  // Return null if no document found
+        throw new Error('Not found')
     }
 }
 
