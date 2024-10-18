@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore'
+import { addDoc, collection, doc, Timestamp } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { Partner } from '../../../Types/Types'
 import { useStateValue } from '../../../context/StateProvider'
@@ -13,8 +13,11 @@ import { jalaliToGregorian } from 'shamsi-date-converter'
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker'
 import { getPartners } from '../../../Utils/FirebaseTools'
 import { isGcsTfliteModelOptions } from 'firebase-admin/lib/machine-learning/machine-learning-api-client'
+import { db } from '../../../constants/FirebaseConfig'
+import Collections from '../../../constants/Collections'
 
 export interface Consumption {
+    id: string,
     createdDate: Timestamp | Date,
     amount: number,
     type: string,
@@ -29,6 +32,7 @@ const AddConsumptions: React.FC = () => {
     const nav = useNavigate();
     const [{ authentication },] = useStateValue();
     const [consumption, setconsumption] = useState<Consumption>({
+        id: '',
         amount: 0,
         createdDate: new Date(),
         date: new Date(),
@@ -39,6 +43,7 @@ const AddConsumptions: React.FC = () => {
     })
     const [loading, setloading] = useState(false)
     const [partners, setpartners] = useState<Partner[]>([]);
+    const consumptionCollectionRef = collection(db, Collections.Consumptions);
 
     useEffect(() => {
         getPartners().then(res => {
@@ -47,30 +52,35 @@ const AddConsumptions: React.FC = () => {
     }, [])
 
 
-    const sendDataToAPI = async (values, { setSubmitting }) => {
+    const sendDataToAPI = async () => {
+        if (consumption.type.length == 0 || consumption.amount == 0 || (consumption.type == ConsumptionsType.WITHDRAW && !consumption.to)) {
+            toast.error('pleaseFillTheForm');
+            return;
+        }
 
-        console.log(values);
+        try {
+            addDoc(consumptionCollectionRef, consumption)
+            toast.success('successfullyAdded')
+            nav(-1)
+        } catch (err) {
+            console.log(err);
 
+        }
+
+
+        console.log(consumption);
     }
 
 
     const handleFormChanges = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-
         const temp = { ...consumption };
         temp[name] = value;
-
         setconsumption(temp)
-
     }
 
-
-
-
     console.log(consumption);
-
-
 
 
     return (
@@ -84,7 +94,7 @@ const AddConsumptions: React.FC = () => {
                 <Formik
                     initialValues={consumption}
                     validationSchema={Schema}
-                    onSubmit={sendDataToAPI}
+                    // onSubmit={sendDataToAPI}
                     enableReinitialize={true}
                 >
                     <Form
@@ -103,7 +113,7 @@ const AddConsumptions: React.FC = () => {
                                     // onChange={e => console.log(e.target.value)}
 
                                     >
-                                        <option value={undefined}></option>
+                                        <option value={''}></option>
                                         <option value={ConsumptionsType.RETAIL_CONSUMPTION}>{t('retailConsumptions')}</option>
                                         <option value={ConsumptionsType.CONSTANT_CONSUMPTION}>{t('constantConsumptions')}</option>
                                         <option value={ConsumptionsType.MAJOR_CONSUMPTION}>{t('majorConsumptions')}</option>
@@ -180,7 +190,7 @@ const AddConsumptions: React.FC = () => {
                                             as='select'
                                             className="input"
                                         >
-                                            <option value={undefined}></option>
+                                            <option value={''}></option>
                                             {partners.map(partner => {
                                                 return <option value={partner.id}>{partner.name} {partner.lastName}</option>
                                             })}
@@ -215,8 +225,9 @@ const AddConsumptions: React.FC = () => {
                         <div className=' margin_top_10 margin_left_10 margin_right_10'>
                             <Button
                                 text={t('save')}
-                                type={'submit'}
+                                // type={'submit'}
                                 loading={loading}
+                                onClick={sendDataToAPI}
                             />
                         </div>
                     </Form>
@@ -243,7 +254,7 @@ const Schema = yup.object().shape({
     descriptions: yup
         .string()
         .min(3, `${t("descriptions")} ${t("isShortText")}`)
-        .max(30, `${t("descriptions")} ${t("isLongText")}`)
+        .max(300, `${t("descriptions")} ${t("isLongText")}`)
         .required(`${t("descriptions")} ${t("isRequireText")}`),
     date: yup
         .date()
@@ -251,8 +262,6 @@ const Schema = yup.object().shape({
     amount: yup
         .number()
         .required(`${t("amount")} ${t("isRequireText")}`),
-    to: yup.object().notRequired(),
-    registrar: yup.string().required()
 
 
 });

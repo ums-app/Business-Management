@@ -18,6 +18,7 @@ export const UserTypes = {
     EMPLOYEE: 'EMPLOYEE',
     VISITOR: 'VISITOR',
     CUSTOMER: 'CUSTOMER',
+    PARTNER: 'PARTNER'
 }
 
 

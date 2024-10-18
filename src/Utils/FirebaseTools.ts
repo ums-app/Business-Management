@@ -1,12 +1,13 @@
-import { collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, orderBy, query, Transaction, updateDoc, where } from "firebase/firestore"
+import { collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, orderBy, query, Timestamp, Transaction, updateDoc, where } from "firebase/firestore"
 import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Partner, Product, User } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToPartner, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
+import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToPartner, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
+import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
 
 
 
@@ -17,8 +18,9 @@ const paymentCollectionRef = collection(db, Collections.Payments);
 const usersCollectionRef = collection(db, Collections.Users);
 const employeePaymentsCollectionRef = collection(db, Collections.EmployeePayments);
 const employeesCollectionRef = collection(db, Collections.Employees);
-const filesCollectionRef = collection(db, Collections.Files)
-const partnersCollectionRef = collection(db, Collections.Partners)
+const filesCollectionRef = collection(db, Collections.Files);
+const partnersCollectionRef = collection(db, Collections.Partners);
+const consumptionCollectionRef = collection(db, Collections.Consumptions);
 
 export const checkIfEmailIsAlreadyExist = async (email: string): Promise<Boolean> => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -155,6 +157,46 @@ export const getPartnerById = async (partnerId: string): Promise<Partner> => {
     const data = await getDoc(doc(db, Collections.Products, partnerId));
     return mapDocToPartner(data)
 }
+
+
+
+//  =========================== consumptions service =================================
+
+export const getConsumptionsByType = async (type: string): Promise<Consumption[]> => {
+    const q = query(
+        consumptionCollectionRef,
+        where("type", "==", type),
+        orderBy("date", "asc")
+    );
+    const querySnapshot = await getDocs(q);
+    const items: Consumption[] = querySnapshot.docs.map((doc) => {
+        return mapDocToConsumptions(doc)
+    });
+    return items
+}
+
+export const getTodayConsumptions = async (): Promise<Consumption[]> => {
+    const date = new Date();
+    // Get the start and end of today
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+    const q = query(
+        consumptionCollectionRef,
+        where("date", ">=", Timestamp.fromDate(startOfDay)), // Start of today
+        where("date", "<=", Timestamp.fromDate(endOfDay)),   // End of today
+        orderBy("date", "asc")
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    // Map the documents to Consumption items
+    return querySnapshot.docs.map((doc) => mapDocToConsumptions(doc));
+};
+
+
+
+
+
 
 
 

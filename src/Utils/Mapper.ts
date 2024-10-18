@@ -1,6 +1,7 @@
 import { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Partner, Product, User } from "../Types/Types";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
+import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
 
 
 // ==>   in this file we are going to map the DocumentData object to appropriate data object using mapper function  <== //
@@ -151,5 +152,20 @@ export const mapDocToPartner = (docSnapshot: DocumentData): Partner => {
         lastName: docData.lastName,
         name: docData.name,
         phoneNumber: docData.phoneNumber
+    };
+};
+
+
+export const mapDocToConsumptions = (docSnapshot: DocumentData): Consumption => {
+    const docData = docSnapshot?.data(); // Extract data
+    return {
+        id: docSnapshot.id, // Use the document ID
+        amount: docData.amount,
+        createdDate: docData.createdDate,
+        date: docData.date,
+        descriptions: docData.descriptions,
+        registrar: docData.registrar,
+        to: docData.to,
+        type: docData.type
     };
 };

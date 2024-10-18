@@ -1,4 +1,4 @@
-.add_employee .add_form .form_inputs {
+p.add_employee .add_form .form_inputs {
     display: grid;
     grid-template-columns: repeat(3, 1fr)
 }
