@@ -102,12 +102,14 @@ export interface Employee {
 
 export interface Partner {
     id: string,
+    email: string,
+    password: string,
     name: string,
     lastName: string
     createdDate: Date | Timestamp,
     joinedDate: Date | Timestamp,
     phoneNumber: string,
-    initialCapital: string,
+    initialCapital: number,
     capitalHistory: capitalHistory[],
 
 }
