@@ -11,14 +11,14 @@ import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 const DailyConsumptions: React.FC = () => {
     const nav = useNavigate();
     const [consumptions, setConsumptions] = useState<Consumption[]>([])
-    const [loading, setloading] = useState(false)
+    const [loading, setloading] = useState(true)
 
 
     useEffect(() => {
         getTodayConsumptions()
             .then(res => {
                 setConsumptions(res)
-            })
+            }).finally(() => setloading(false))
 
     }, [])
 
