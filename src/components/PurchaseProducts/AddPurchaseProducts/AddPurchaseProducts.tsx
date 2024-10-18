@@ -17,6 +17,8 @@ import Menu from '../../UI/Menu/Menu';
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
 import { CurrencyType } from '../../../constants/Others';
+import { Tooltip } from 'react-tooltip';
+import Circle from '../../UI/Loading/Circle';
 
 
 export interface PurchasedProduct {
@@ -411,6 +413,12 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
     }
 
 
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
+
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />
     }
@@ -520,7 +528,17 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                             <Button
                                                 icon={ICONS.trash}
                                                 onClick={() => removeRow(index)}
+                                                btnType={'crossBtn'}
+                                                id={'delete_row' + index}
                                             />
+                                            <Tooltip
+                                                anchorSelect={"#delete_row" + index}
+                                                place="right"
+                                                className="toolTip_style"
+                                            >
+                                                {t("delete")}
+                                            </Tooltip>
+
                                         </td>
                                     </tr>
                                 )

@@ -24,6 +24,7 @@ import { jalaliToGregorian } from 'shamsi-date-converter';
 import NotFound from '../../../pages/NotFound/NotFound.jsx';
 import Roles from '../../../constants/Roles.js';
 import { useStateValue } from '../../../context/StateProvider.js';
+import Circle from '../../UI/Loading/Circle.jsx';
 
 
 function AddEmployee({ updateMode = false }) {
@@ -180,6 +181,12 @@ function AddEmployee({ updateMode = false }) {
             throw new Error('Failed to upload image'); // Throw the error to handle it in the calling function
         }
     };
+
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
 
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {

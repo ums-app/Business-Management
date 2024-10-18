@@ -21,6 +21,8 @@ import EmployeeSalariesForEmployee from "../components/Employees/EmployeeSalarie
 import PersonalInformationForEmployee from "../components/Employees/PersonalInformationForEmployee/PersonalInformationForEmployee.tsx";
 import PersonalInformationForCustomer from "../components/Customers/PeronsalInformationForCustomer/PersonalInformationForCustomer.jsx";
 import AddConsumptions from "../components/Consumptions/AddConsumptions/AddConsumptions.tsx";
+import Partners from "../components/Partners/Partners.tsx";
+import AddPartner from "../components/Partners/AddPartner/AddPartner.tsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -153,6 +155,15 @@ const browserRouter = createBrowserRouter([
         path: "/customers/:customerId/update",
         element: <AddCustomer updateMode={true} />,
       },
+      {
+        path: "/partners",
+        element: <Partners />,
+      },
+      {
+        path: "/partners/add",
+        element: <AddPartner />,
+      },
+
       {
         path: "/employees",
         element: <Employees />,

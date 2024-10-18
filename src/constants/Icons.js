@@ -135,7 +135,8 @@ const ICONS = {
   telegram: 'bi bi-telegram',
   arrowDownload: 'bi bi-box-arrow-down',
   arrowUpload: 'bi bi-box-arrow-up',
-  cash: 'bi-currency-dollar'
+  cash: 'bi-currency-dollar',
+  diagram: 'bi bi-diagram-3-fill'
 };
 
 export default ICONS;

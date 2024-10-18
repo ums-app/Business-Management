@@ -23,6 +23,7 @@ import { mapDocToCustomerFactor } from '../../Utils/Mapper';
 import { formatFirebaseDates } from '../../Utils/DateTimeUtils';
 import NotFound from '../../pages/NotFound/NotFound';
 import Roles from '../../constants/Roles';
+import Circle from '../UI/Loading/Circle';
 
 
 
@@ -380,6 +381,11 @@ const Sales: React.FC = () => {
         return total;
     }
 
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
 
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {

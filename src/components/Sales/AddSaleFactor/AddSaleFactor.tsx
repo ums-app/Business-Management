@@ -24,6 +24,7 @@ import { CustomerFactor, CustomerPayment, Employee, Product, UpdateModeProps } f
 import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
+import Circle from '../../UI/Loading/Circle';
 
 export interface ProductForSale {
     productId: string;
@@ -550,10 +551,10 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
     }
 
 
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
 
-
-
-    console.log(customerFactor);
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />

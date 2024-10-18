@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import RetailConsumptions from './RetailConsumptions/RetailConsumptions';
 import MajorConsumptions from './MajorConsumptions/MajorConsumptions';
 import Withdrawals from './Withdrawals/Withdrawals';
@@ -9,6 +9,7 @@ import NotFound from '../../pages/NotFound/NotFound';
 import { useStateValue } from '../../context/StateProvider';
 import Roles from '../../constants/Roles';
 import DailyConsumptions from './DailyConsumptions/DailyConsumptions';
+import Circle from '../UI/Loading/Circle';
 
 // components for tabs
 const components = {
@@ -23,6 +24,11 @@ function Consumptions() {
         { component: components.DailyConsumptions.component, componentName: components.DailyConsumptions.componentName }
     );
     const [{ authentication },] = useStateValue()
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />

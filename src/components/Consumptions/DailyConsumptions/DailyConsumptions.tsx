@@ -7,6 +7,7 @@ import { Consumption } from '../AddConsumptions/AddConsumptions';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 import { getTodayConsumptions } from '../../../Utils/FirebaseTools';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
+import HeadingLoadingTemplate from '../../UI/LoadingTemplate/HeadingLoadingTemplate';
 
 const DailyConsumptions: React.FC = () => {
     const nav = useNavigate();
@@ -22,6 +23,13 @@ const DailyConsumptions: React.FC = () => {
 
     }, [])
 
+
+    const totalAll = (): number => {
+        let total = 0;
+        consumptions.forEach(item => total += Number(item.amount))
+        return total;
+    }
+
     return (
         <div>
             <p className='title'>{t('dailyConsumptions')}</p>
@@ -33,7 +41,16 @@ const DailyConsumptions: React.FC = () => {
                 />
             </div>
 
+
             <div className='margin_top_20'>
+                {loading ? <HeadingLoadingTemplate /> :
+                    <div className='full_width  display_flex justify_content_end'>
+                        <div>
+                            <span>{t('totalAll')}: </span>
+                            <span>{totalAll()}</span>
+                        </div>
+                    </div>
+                }
                 {loading ? <ShotLoadingTemplate /> :
                     <table className='custom_table full_width'>
                         <thead style={{ backgroundColor: 'orange' }}>

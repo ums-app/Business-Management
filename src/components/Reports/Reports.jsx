@@ -7,6 +7,7 @@ import { useStateValue } from '../../context/StateProvider';
 import { useNavigate } from 'react-router-dom';
 import Roles from '../../constants/Roles';
 import NotFound from '../../pages/NotFound/NotFound';
+import Circle from '../UI/Loading/Circle';
 
 
 
@@ -23,6 +24,12 @@ function Reports() {
         { component: components.SalesReport.component, componentName: components.SalesReport.componentName }
     );
     const [{ authentication }, dispatch] = useStateValue();
+
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
 
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {

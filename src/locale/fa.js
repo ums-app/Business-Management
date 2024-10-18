@@ -434,6 +434,7 @@ const fa = {
         WITHDRAW_CONSUMPTION: 'برداشت',
         RETAIL_CONSUMPTION: 'مصارف چکنه',
         CONSTANT_CONSUMPTION: 'مصارف ثابت',
+        partners: 'سهامداران'
 
 
 

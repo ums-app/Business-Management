@@ -24,6 +24,7 @@ import { UserTypes, VisitorContractType } from '../../constants/Others.js'
 import NotFound from '../../pages/NotFound/NotFound.jsx'
 import Roles from '../../constants/Roles.js'
 import { useStateValue } from '../../context/StateProvider.js'
+import Circle from '../UI/Loading/Circle.jsx'
 
 function AddCustomer({ updateMode = false }) {
     const nav = useNavigate();
@@ -153,6 +154,11 @@ function AddCustomer({ updateMode = false }) {
     }
 
     console.log(formData);
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
 
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {

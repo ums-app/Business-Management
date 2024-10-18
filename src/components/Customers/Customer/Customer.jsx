@@ -26,6 +26,7 @@ import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplat
 import AvatarLoadingTemplate from '../../UI/LoadingTemplate/AvatarLoadingTemplate';
 import Roles from '../../../constants/Roles.js';
 import { UserTypes } from '../../../constants/Others.js';
+import Circle from '../../UI/Loading/Circle.jsx';
 
 
 // components for tabs
@@ -166,6 +167,12 @@ function Customer() {
 
 
     console.log(customer);
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN) && authentication.userType != UserTypes.VISITOR) {
         return <NotFound />

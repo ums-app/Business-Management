@@ -92,12 +92,12 @@ function Login() {
                 setError(err.message);
             })
             .finally(() => {
-                setLoading(false);
-                setSubmitting(false);
-                dispatch({
-                    type: actionTypes.SET_SMALL_LOADING,
-                    payload: false
-                })
+                // setLoading(false);
+                // setSubmitting(false);
+                // dispatch({
+                //     type: actionTypes.SET_SMALL_LOADING,
+                //     payload: false
+                // })
             })
     }
 

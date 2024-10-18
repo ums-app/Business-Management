@@ -16,6 +16,7 @@ import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate'
 import Roles from '../../../constants/Roles'
 import NotFound from '../../../pages/NotFound/NotFound'
 import { useStateValue } from '../../../context/StateProvider'
+import Circle from '../../UI/Loading/Circle'
 
 function AddProduct({ updateMode = false }) {
 
@@ -101,6 +102,12 @@ function AddProduct({ updateMode = false }) {
 
     if (updateMode && loading) {
         return <ShotLoadingTemplate />
+    }
+
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
     }
 
 

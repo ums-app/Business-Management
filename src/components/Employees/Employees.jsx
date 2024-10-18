@@ -12,6 +12,7 @@ import { getUserImage } from '../../Utils/FirebaseTools.ts'
 import { useStateValue } from '../../context/StateProvider.js';
 import Roles from '../../constants/Roles.js';
 import NotFound from '../../pages/NotFound/NotFound.jsx';
+import Circle from '../UI/Loading/Circle.jsx';
 
 
 
@@ -79,6 +80,12 @@ function Employees() {
             fetchImages();
         }
     }, [employees]);
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
 
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {

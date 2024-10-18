@@ -9,6 +9,7 @@ import { useStateValue } from '../../context/StateProvider'
 import Roles from '../../constants/Roles'
 import { useNavigate } from 'react-router-dom'
 import NotFound from '../../pages/NotFound/NotFound'
+import Circle from '../UI/Loading/Circle'
 
 
 // components for tabs
@@ -26,6 +27,13 @@ function Customers() {
     );
 
     const [{ authentication },] = useStateValue();
+
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />

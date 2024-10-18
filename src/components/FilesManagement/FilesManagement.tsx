@@ -20,6 +20,7 @@ import { actionTypes } from "../../context/reducer";
 import Roles from "../../constants/Roles";
 import { useNavigate } from "react-router-dom";
 import NotFound from "../../pages/NotFound/NotFound";
+import Circle from "../UI/Loading/Circle";
 
 
 export interface UploadedFile {
@@ -63,6 +64,7 @@ const FilesManagement: React.FC = () => {
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
         multiple: true, // Allow multiple files
+
     });
 
     const handleUpload = async () => {
@@ -223,6 +225,12 @@ const FilesManagement: React.FC = () => {
             toast.error('Download failed. Please try again.');
         }
     };
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />

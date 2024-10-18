@@ -174,7 +174,21 @@ const Navbar = () => {
             >
               {t("products")}
             </Tooltip>
-
+            {authentication.roles.includes('SUPER_ADMIN') &&
+              <>
+                <CustomeLinks CustomeLinks to="/partners" id={'partners_link'}>
+                  <i className={ICONS.diagram}></i>
+                  <span>{t("partners")}</span>
+                </CustomeLinks>
+                <Tooltip
+                  anchorSelect="#partners_link"
+                  place="left"
+                  className="toolTip_style"
+                >
+                  {t("partners")}
+                </Tooltip>
+              </>
+            }
 
             <CustomeLinks to="/employees" id={'employees_link'}>
               <i className={ICONS.peopleFill}></i>
@@ -241,7 +255,8 @@ const Navbar = () => {
 
 
       {/* for customer */}
-      {UserTypes?.VISITOR?.toLowerCase() == authentication?.userType?.toLowerCase() &&
+      {
+        UserTypes?.VISITOR?.toLowerCase() == authentication?.userType?.toLowerCase() &&
         <div className="navbar_menu position_absolute">
           <ul className="navbar_content">
             <CustomeLinks to="/" id={'home_link'} >
@@ -360,7 +375,8 @@ const Navbar = () => {
 
 
       {/* for customer */}
-      {UserTypes.CUSTOMER?.toLowerCase() == authentication?.userType?.toLowerCase() &&
+      {
+        UserTypes.CUSTOMER?.toLowerCase() == authentication?.userType?.toLowerCase() &&
         <div className="navbar_menu position_absolute">
           <ul className="navbar_content">
             <CustomeLinks to="/" id={'home_link'} >

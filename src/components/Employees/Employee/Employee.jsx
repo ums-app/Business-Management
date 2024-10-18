@@ -26,6 +26,7 @@ import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplat
 import AvatarLoadingTemplate from "../../UI/LoadingTemplate/AvatarLoadingTemplate"
 import { VisitorContractType } from '../../../constants/Others.js';
 import Roles from '../../../constants/Roles.js';
+import Circle from '../../UI/Loading/Circle.jsx';
 
 
 // components for tabs
@@ -144,7 +145,7 @@ function Employee() {
             navigate("/employees");
             toast.success('successfullyDeleted')
         } catch (err) {
-            toast.success(err.message)
+            toast.error(err.message)
         } finally {
             dispatch({
                 type: actionTypes.SET_GLOBAL_LOADING,
@@ -152,6 +153,12 @@ function Employee() {
             });
         }
     };
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />

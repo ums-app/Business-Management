@@ -25,6 +25,7 @@ import { Product, UpdateModeProps } from '../../../Types/Types';
 import { ProductForSale } from './AddSaleFactor';
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
+import Circle from '../../UI/Loading/Circle';
 
 
 export const productForSale = {
@@ -366,6 +367,12 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
             <ShotLoadingTemplate />
         </LoadingTemplateContainer>
     }
+
+
+    if (!authentication.isAuthenticated) {
+        return <Circle />; // or return null; for no UI during loading
+    }
+
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />

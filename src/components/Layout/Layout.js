@@ -109,11 +109,7 @@ function Layout() {
   }, [dispatch, navigate]);
 
 
-
-
-
-
-
+  console.log('before laout getrendered: ', authentication);
 
 
   return (
