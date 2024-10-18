@@ -9,5 +9,7 @@ export default {
     Payments: 'Payments',
     EmployeePayments: 'EmployeePayments',
     Files: 'Files',
+    Consumptions: 'Consumptions',
+    Partners: 'Partners'
 
 }

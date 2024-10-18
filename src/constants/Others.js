@@ -26,3 +26,11 @@ export const CurrencyType = {
     AFN: "AFN",
     EUR: "EUR"
 }
+
+
+export const ConsumptionsType = {
+    MAJOR_CONSUMPTION: 'MAJOR_CONSUMPTION',
+    RETAIL_CONSUMPTION: 'RETAIL_CONSUMPTION',
+    CONSTANT_CONSUMPTION: 'CONSTANT_CONSUMPTION',
+    WITHDRAW: 'WIDTHRAW'
+}

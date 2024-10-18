@@ -1,5 +1,5 @@
 import { DocumentData, DocumentSnapshot } from "firebase/firestore";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product, User } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Partner, Product, User } from "../Types/Types";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 
 
@@ -135,5 +135,21 @@ export const mapDocToUploadedFile = (docSnapshot: DocumentData) => {
         size: docData.size,
         url: docData.url,
         date: docData.date,
+    };
+};
+
+
+
+export const mapDocToPartner = (docSnapshot: DocumentData): Partner => {
+    const docData = docSnapshot?.data(); // Extract data
+    return {
+        id: docSnapshot.id, // Use the document ID
+        capitalHistory: docData.capitalHistory,
+        createdDate: docData.createdDate,
+        joinedDate: docData.joinedDate,
+        initialCapital: docData.initialCapital,
+        lastName: docData.lastName,
+        name: docData.name,
+        phoneNumber: docData.phoneNumber
     };
 };

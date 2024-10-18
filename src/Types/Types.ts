@@ -99,6 +99,25 @@ export interface Employee {
     visitorContractType: string;
 }
 
+
+export interface Partner {
+    id: string,
+    name: string,
+    lastName: string
+    createdDate: Date | Timestamp,
+    joinedDate: Date | Timestamp,
+    phoneNumber: string,
+    initialCapital: string,
+    capitalHistory: capitalHistory[],
+
+}
+
+export interface capitalHistory {
+    date: Timestamp | Date,
+    amount: number
+}
+
+
 export interface salaryHistory {
     date: Timestamp | Date,
     amount: number

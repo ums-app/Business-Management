@@ -3,9 +3,9 @@ import { db, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Product, User } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Partner, Product, User } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
+import { mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToPartner, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 
 
@@ -18,6 +18,7 @@ const usersCollectionRef = collection(db, Collections.Users);
 const employeePaymentsCollectionRef = collection(db, Collections.EmployeePayments);
 const employeesCollectionRef = collection(db, Collections.Employees);
 const filesCollectionRef = collection(db, Collections.Files)
+const partnersCollectionRef = collection(db, Collections.Partners)
 
 export const checkIfEmailIsAlreadyExist = async (email: string): Promise<Boolean> => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -139,6 +140,22 @@ export const getProductById = async (productId: string): Promise<Product> => {
     const data = await getDoc(doc(db, Collections.Products, productId));
     return mapDocToProduct(data)
 }
+
+//  =========================== partner service =================================
+
+export const getPartners = async (): Promise<Partner[]> => {
+    const querySnapshot = await getDocs(partnersCollectionRef);
+    const items: Partner[] = querySnapshot.docs.map((doc) => {
+        return mapDocToPartner(doc)
+    });
+    return items
+}
+
+export const getPartnerById = async (partnerId: string): Promise<Partner> => {
+    const data = await getDoc(doc(db, Collections.Products, partnerId));
+    return mapDocToPartner(data)
+}
+
 
 
 //  ========================== employee service ==================================

@@ -424,7 +424,14 @@ const fa = {
         totalPaymentForSalary: 'مجموعه بردگی ها بابت معاش',
         totalPaymentForSales: 'مجموعه بردگی ها بابت فروشات',
         totalPurchaseAmount: "جمع کل خرید",
-        factoryExpenses: "مصارف کارخانه"
+        factoryExpenses: "مصارف کارخانه",
+        dailyConsumptions: "مصارف روزانه",
+        toAccount: 'به حساب',
+        todayConsumptions: 'مصارف امروز',
+        registrar: 'کارمند ثبت کننده',
+        withdraw: 'برداشت',
+
+
 
 
 

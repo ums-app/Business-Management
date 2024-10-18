@@ -397,6 +397,10 @@ const en = {
         purchasesStatistics: 'Purchases Statistics',
         totalPurchaseAmount: 'Total Purchase Amount',
         factoryExpenses: "Factory Expenses",
+        dailyConsumptions: "Daily Consumptions",
+        toAccount: "To Account",
+        registrar: "Registrar",
+        withdraw: 'Withdraw'
 
 
 

@@ -8,9 +8,11 @@ import TabMenu from '../UI/TabMenu/TabMenu';
 import NotFound from '../../pages/NotFound/NotFound';
 import { useStateValue } from '../../context/StateProvider';
 import Roles from '../../constants/Roles';
+import DailyConsumptions from './DailyConsumptions/DailyConsumptions';
 
 // components for tabs
 const components = {
+    DailyConsumptions: { componentName: 'DailyConsumptions', component: DailyConsumptions },
     RetailConsumptions: { componentName: "RetailConsumptions", component: RetailConsumptions, },
     MajorConsumptions: { componentName: "MajorConsumptions", component: MajorConsumptions },
     Withdrawals: { componentName: "Withdrawals", component: Withdrawals },
@@ -18,10 +20,9 @@ const components = {
 };
 function Consumptions() {
     const [displayComponent, setDisplayComponent] = useState(
-        { component: components.RetailConsumptions.component, componentName: "RetailConsumptions" }
+        { component: components.DailyConsumptions.component, componentName: components.DailyConsumptions.componentName }
     );
     const [{ authentication },] = useStateValue()
-
 
     if (!authentication.roles.includes(Roles.ADMIN) && !authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />
@@ -33,6 +34,17 @@ function Consumptions() {
             {/* the navbar of the profile page */}
 
             <TabMenu>
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.DailyConsumptions?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent({ component: components?.DailyConsumptions.component, componentName: components.DailyConsumptions.componentName })}
+                >
+                    {t("dailyConsumptions")}
+                </li>
                 <li
                     className={
                         displayComponent?.componentName ==
