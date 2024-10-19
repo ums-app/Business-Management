@@ -194,11 +194,13 @@ const AddPartner: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
             initialValues={formData}
             validationSchema={EmployeeSchema}
             onSubmit={sendDataToAPI}
+            enableReinitialize={true}
         >
             <div className='add_employee padding_bottom_10'>
                 <Button
                     text={t('back')}
                     onClick={() => nav(-1)}
+
                 />
                 <h1 className='title'>{updateMode ? t('update') : t('add')} {t('partner')}</h1>
                 <Form className="add_form display_flex flex_direction_column"

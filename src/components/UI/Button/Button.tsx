@@ -7,7 +7,7 @@ import { ButtonProps } from "../../../Types/Types";
 
 
 
-const Button: React.FC<ButtonProps> = ({ id = '', btnType = null, isLock = undefined, isConfirmed = null, type = 'button', title, onClick, text, loading = null, icon = null, }) => {
+const Button: React.FC<ButtonProps> = ({ id = '', btnType = 'btn', isLock = undefined, isConfirmed = null, type = 'button', title, onClick, text, loading = null, icon = null, }) => {
   return (
     <div className="btn_container">
       {isLock ? <span
@@ -18,15 +18,19 @@ const Button: React.FC<ButtonProps> = ({ id = '', btnType = null, isLock = undef
         {isConfirmed && <i className={"bi " + ICONS.thick}></i>}
       </span> : null}
       <button
-        className={"btn " + btnType}
+        className={btnType}
         onClick={onClick}
         title={title}
         disabled={isLock}
         type={type}
         id={id}
       >
+
+
         <i className={"bi " + icon}></i>
-        {text}
+
+        <span className="text">{text}</span>
+
 
       </button>
       {loading && <ButtonLoading />}

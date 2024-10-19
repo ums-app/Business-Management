@@ -9,9 +9,13 @@ import { useStateValue } from '../../context/StateProvider'
 import NotFound from '../../pages/NotFound/NotFound'
 import Circle from '../UI/Loading/Circle'
 import Roles from '../../constants/Roles'
+import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
+import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
+import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
+import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
 
 const Partners: React.FC = () => {
-    const [partners, setpartners] = useState<Partner[]>([])
+    const [partners, setpartners] = useState<Partner[]>()
     const [imageUrls, setImageUrls] = useState({});
     const nav = useNavigate();
     const [{ authentication }, dispatch] = useStateValue()
@@ -28,8 +32,10 @@ const Partners: React.FC = () => {
 
     useEffect(() => {
         const fetchImages = async () => {
+            if (!partners) return;
             const newImageUrls = {};
             await Promise.all(
+
                 partners.map(async (item) => {
                     try {
                         const url = await getUserImage(item.email);
@@ -60,6 +66,18 @@ const Partners: React.FC = () => {
     if (!authentication.roles.includes(Roles.SUPER_ADMIN)) {
         return <NotFound />
     }
+
+
+    if (!partners || !imageUrls) {
+        return (
+            <LoadingTemplateContainer>
+                <ButtonLoadingTemplate />
+                <HeadingMenuTemplate />
+                <ShotLoadingTemplate />
+            </LoadingTemplateContainer>
+        );
+    }
+
 
 
     return (
