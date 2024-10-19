@@ -15,6 +15,9 @@ import { db } from '../../../constants/FirebaseConfig'
 import { toast } from 'react-toastify'
 import ICONS from '../../../constants/Icons'
 import { Tooltip } from 'react-tooltip'
+import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker'
+import { jalaliToGregorian } from 'shamsi-date-converter'
+import { date } from 'yup'
 
 
 interface DisplayConsumptionsProps {
@@ -23,8 +26,10 @@ interface DisplayConsumptionsProps {
 
 const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = ConsumptionsType.RETAIL_CONSUMPTION }) => {
     const [consumptions, setconsumptions] = useState<Consumption[]>([])
+    const [filtered, setFiltered] = useState<Consumption[]>([])
     const [loading, setLoading] = useState(true)
     const [{ authentication }, dispatch] = useStateValue()
+    const [range, setrange] = useState<Date[]>([])
 
     const getComponent = (type: string) => {
         switch (type) {
@@ -45,6 +50,7 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
             .then(res => {
                 console.log(res);
                 setconsumptions(res)
+                setFiltered(res)
             })
             .finally(() => setLoading(false))
 
@@ -98,8 +104,57 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
         return total;
     }
 
+    const getProductSalesInDatePeriod = async () => {
+        const dates: Date[] = range.map(item => new Date(jalaliToGregorian(item.year, item.month.number, item.day).join('/')))
+        let consumps: Consumption[] = consumptions;
+        console.log(dates);
+
+        if (range.length == 1) {
+            console.log(range);
+
+            consumps = consumps.filter(item => {
+                const elementDate = item.date.toDate(); // Convert Firebase Timestamp to JS Date
+
+                // Create a range for the entire day, accounting for time (start of day to end of day)
+                const startOfDay = new Date(dates[0].setHours(0, 0, 0, 0));  // Start of the day (00:00:00)
+                const endOfDay = new Date(dates[0].setHours(23, 59, 59, 999)); // End of the day (23:59:59)
+
+                // Check if the element's date falls within the entire day
+                return elementDate >= startOfDay && elementDate <= endOfDay;
+            });
+        }
+
+
+        if (range.length >= 2) {
+            console.log(range);
+
+            consumps = consumps.filter(item => {
+                console.log(item.date.toDate());
+
+                const elementDate = item.date.toDate(); // Convert Firebase Timestamp to JS Date
+                return elementDate >= dates[0] && elementDate <= dates[1];
+            })
+        }
+
+        setFiltered(consumps)
+
+    }
+
+
     return (
         <div>
+            <div className='text_align_center margin_top_20 margin_bottom_10'>
+                {/* <span>{t('chooseDatePeriod')}: </span> */}
+                <CustomDatePicker
+                    range
+                    onChange={(e: any) => setrange(e)}
+                    placeholder={t('chooseDatePeriod')}
+                />
+                <Button
+                    text={t('apply')}
+                    onClick={getProductSalesInDatePeriod}
+                />
+            </div>
             <div className='margin_top_20'>
                 {loading ? <HeadingLoadingTemplate /> :
                     <div className='full_width  display_flex justify_content_end'>
@@ -125,13 +180,13 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
                             </tr>
                         </thead>
                         <tbody>
-                            {consumptions.map((item, index) => {
+                            {filtered.map((item, index) => {
                                 return <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>{formatFirebaseDates(item.createdDate)}</td>
                                     <td>{item.amount}</td>
                                     <td>{t(item.type)}</td>
-                                    {type == ConsumptionsType.WITHDRAW && <td>{item.to}</td>}
+                                    {type == ConsumptionsType.WITHDRAW && <td>{item.to?.name} {item.to?.lastName}</td>}
                                     <td>{item.registrar}</td>
                                     <td>{item.descriptions}</td>
                                     <td>

@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { Partner } from '../../../Types/Types'
-import { getPartners } from '../../../Utils/FirebaseTools';
+import { getPartnerById, getPartners } from '../../../Utils/FirebaseTools';
+import { useParams } from 'react-router-dom';
 
-const Partner: React.FC = () => {
-    const [partners, setpartners] = useState<Partner[]>([]);
-
+const PartnerPage: React.FC = () => {
+    const [partner, setpartner] = useState<Partner>();
+    const { partnerId } = useParams();
 
     useEffect(() => {
-        getPartners()
-            .then(res => {
-                setpartners(res)
-            })
-
-    }, [])
+        if (partnerId) {
+            getPartnerById(partnerId)
+                .then(res => {
+                    setpartner(res)
+                })
+        }
+    }, [partnerId])
 
     return (
-        <div>Partner</div>
+        <div>Partner: {partner?.name} {partner?.lastName}</div>
     )
 }
 
-export default Partner
+export default PartnerPage

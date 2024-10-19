@@ -30,7 +30,7 @@ function EmployeePayments() {
     const [userPayment, setUserPayment] = useState({
         amount: 0,
         createdDate: Timestamp.fromDate(new Date()),
-        by: authentication.email,
+        by: `${authentication.name} ${authentication.lastname}`,
         employeeId: employeeId,
         date: Timestamp.fromDate(new Date()),
         type: EmployeePaymentType.SALARY
@@ -60,7 +60,6 @@ function EmployeePayments() {
                 toast.error(t('type') + " " + t("isRequireText"))
                 return
             }
-
             console.log('sending payment doc: ', userPayment.amount);
             const added = await addDoc(paymentsCollectionRef, userPayment);
             setPayments([{ ...userPayment, id: added.id }, ...payments])
@@ -88,8 +87,6 @@ function EmployeePayments() {
             },
         });
     };
-
-
 
     const handleDeletePayment = async (id, index) => {
         dispatch({
@@ -269,7 +266,7 @@ function EmployeePayments() {
                         <tr>
                             <th>{t('number')}</th>
                             <th>{t('createdDate')}</th>
-                            <th>{t('employee')}</th>
+                            <th>{t('registrar')}</th>
                             <th>{t('paidAmount')}</th>
                             <th>{t('receipt')} {t('purpose')}</th>
                             <th>{t('actions')}</th>

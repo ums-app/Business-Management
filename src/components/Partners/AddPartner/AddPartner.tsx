@@ -1,11 +1,11 @@
-import { ErrorMessage, Field, Formik } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react'
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { jalaliToGregorian } from 'shamsi-date-converter';
 import { addDoc, collection, doc, getDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import Button from '../../UI/Button/Button';
 import { t } from 'i18next';
-import { Form, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Circle from '../../UI/Loading/Circle';
 import Roles from '../../../constants/Roles';
 import { useStateValue } from '../../../context/StateProvider';
@@ -170,9 +170,6 @@ const AddPartner: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
             throw new Error('Failed to upload image'); // Throw the error to handle it in the calling function
         }
     };
-
-
-
 
 
     if (!authentication.isAuthenticated) {

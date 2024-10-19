@@ -67,14 +67,19 @@ const AddConsumptions: React.FC = () => {
 
         }
 
-
         console.log(consumption);
     }
 
 
     const handleFormChanges = (e) => {
         const name = e.target.name;
-        const value = e.target.value;
+        let value = e.target.value;
+
+        if (name == 'to') {
+            value = partners.find(item => item.id == value)
+        }
+
+
         const temp = { ...consumption };
         temp[name] = value;
         setconsumption(temp)

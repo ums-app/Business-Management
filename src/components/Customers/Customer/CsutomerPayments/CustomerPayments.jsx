@@ -30,7 +30,7 @@ function CustomerPayments() {
     const [userPayment, setUserPayment] = useState({
         amount: 0,
         createdDate: Timestamp.fromDate(new Date()), // Avoid direct use of new Date()
-        by: authentication.email,
+        by: `${authentication.name} ${authentication.lastname}`,
         saleId: null,
         customerId: customerId,
         date: Timestamp.fromDate(new Date()), // Same here
@@ -289,7 +289,7 @@ function CustomerPayments() {
                             <th>{t('number')}</th>
                             <th>{t('checkNumber')}</th>
                             <th>{t('createdDate')}</th>
-                            <th>{t('employee')}</th>
+                            <th>{t('registrar')}</th>
                             <th>{t('paidAmount')}</th>
                             {authentication?.roles?.includes('ADMIN') || authentication?.roles?.includes('SUPER_ADMIN') &&
                                 <th>{t('actions')}</th>

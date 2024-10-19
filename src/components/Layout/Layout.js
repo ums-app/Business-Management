@@ -20,6 +20,7 @@ function Layout() {
   const checkInterval = 5 * 60 * 1000;  // 5 minutes in milliseconds
   // switch between light or dark mode
   const [isDark, setIsDark] = useState(localStorage.getItem("isDark") === "true");
+  const [loading, setloading] = useState(true)
 
   const darkModeHandler = () => {
     localStorage.setItem("isDark", !isDark);
@@ -69,7 +70,9 @@ function Layout() {
 
   useEffect(() => {
     // Listen to Firebase auth state changes
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+
       if (user && localStorage.length > 0) {
         // Prepare an empty object to hold the decrypted values
         const localStorageAuthObj = {
@@ -102,12 +105,15 @@ function Layout() {
         });
         navigate('/login');
       }
+      setloading(false)
     });
 
     // Cleanup listener when component unmounts
     return () => unsubscribe();
   }, [dispatch, navigate]);
 
+
+  if (loading) return <Circle />
 
   console.log('before laout getrendered: ', authentication);
 

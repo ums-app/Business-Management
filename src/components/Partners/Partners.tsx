@@ -83,26 +83,24 @@ const Partners: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {partners?.map((emp, index) => {
+                        {partners?.map((prt, index) => {
                             return <tr
                                 className=" cursor_pointer hover"
-                                onClick={() => nav('/employees/' + emp.id)}
-                                key={emp.id}
+                                onClick={() => nav('/partners/' + prt.id)}
+                                key={prt.id}
                             >
                                 <td>{index + 1}</td>
-                                <td><img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' /></td>
-                                <td>{emp.name}</td>
-                                <td>{emp.lastName}</td>
-                                <td>{emp.phoneNumber}</td>
-                                <td>{formatFirebaseDates(emp.joinedDate)}</td>
-
+                                <td><img src={imageUrls[prt.email]} alt={t('user') + " " + t('image')} className='user_profile_img' /></td>
+                                <td>{prt.name}</td>
+                                <td>{prt.lastName}</td>
+                                <td>{prt.phoneNumber}</td>
+                                <td>{formatFirebaseDates(prt.joinedDate)}</td>
                             </tr>
                         })
                         }
                         {partners?.length == 0 && <tr>
                             <td colSpan={6}>{t('notExist')}</td>
                         </tr>}
-
 
                     </tbody>
                 </table>

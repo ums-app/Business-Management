@@ -431,7 +431,7 @@ const fa = {
         registrar: 'کارمند ثبت کننده',
         withdraw: 'برداشت',
         MAJOR_CONSUMPTION: 'مصارف عمده',
-        WITHDRAW_CONSUMPTION: 'برداشت',
+        WITHDRAW: 'برداشت',
         RETAIL_CONSUMPTION: 'مصارف چکنه',
         CONSTANT_CONSUMPTION: 'مصارف ثابت',
         partners: 'سهامداران',

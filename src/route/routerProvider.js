@@ -23,6 +23,7 @@ import PersonalInformationForCustomer from "../components/Customers/PeronsalInfo
 import AddConsumptions from "../components/Consumptions/AddConsumptions/AddConsumptions.tsx";
 import Partners from "../components/Partners/Partners.tsx";
 import AddPartner from "../components/Partners/AddPartner/AddPartner.tsx";
+import Partner from "../components/Partners/Partner/Partner.tsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -162,6 +163,16 @@ const browserRouter = createBrowserRouter([
       {
         path: "/partners/add",
         element: <AddPartner />,
+      },
+
+      {
+        path: "/partners/:partnerId/update",
+        element: <AddPartner updateMode={true} />,
+      },
+
+      {
+        path: "/partners/:partnerId",
+        element: <Partner />,
       },
 
       {

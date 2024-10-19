@@ -154,8 +154,14 @@ export const getPartners = async (): Promise<Partner[]> => {
 }
 
 export const getPartnerById = async (partnerId: string): Promise<Partner> => {
-    const data = await getDoc(doc(db, Collections.Products, partnerId));
-    return mapDocToPartner(data)
+    const docRef = doc(partnersCollectionRef, partnerId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return mapDocToPartner(docSnap);
+    } else {
+        throw new Error('Not found')
+    }
+
 }
 
 
