@@ -100,7 +100,7 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
 
     const totalAll = (): number => {
         let total = 0;
-        consumptions.forEach(item => total += Number(item.amount))
+        filtered.forEach(item => total += Number(item.amount))
         return total;
     }
 
@@ -127,12 +127,15 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
 
         if (range.length >= 2) {
             console.log(range);
+            const startDay = new Date(dates[0].setHours(0, 0, 0, 0));
+            const endDay = new Date(dates[1].setHours(23, 59, 59, 999));
 
             consumps = consumps.filter(item => {
                 console.log(item.date.toDate());
 
+
                 const elementDate = item.date.toDate(); // Convert Firebase Timestamp to JS Date
-                return elementDate >= dates[0] && elementDate <= dates[1];
+                return elementDate >= startDay && elementDate <= endDay;
             })
         }
 
@@ -158,8 +161,8 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
             <div className='margin_top_20'>
                 {loading ? <HeadingLoadingTemplate /> :
                     <div className='full_width  display_flex justify_content_end'>
-                        <div>
-                            <span>{t('totalAll')}: </span>
+                        <div className='input '>
+                            <span className='bold'>{t('totalAll')}: </span>
                             <span>{totalAll()}</span>
                         </div>
                     </div>
