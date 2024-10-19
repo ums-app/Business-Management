@@ -14,6 +14,7 @@ import Roles from '../../constants/Roles.js';
 import NotFound from '../../pages/NotFound/NotFound.jsx';
 import Circle from '../UI/Loading/Circle.jsx';
 import BtnTypes from '../../constants/BtnTypes.js';
+import DisplayLogo from '../UI/DisplayLogo/DisplayLogo.jsx';
 
 
 
@@ -136,7 +137,9 @@ function Employees() {
                                 key={emp.id}
                             >
                                 <td>{index + 1}</td>
-                                <td><img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' /></td>
+                                <td>
+                                    <DisplayLogo imgURL={imageUrls[emp.email]} height='60px' width='60px' alt={t('user') + " " + t('image')} />
+                                </td>
                                 <td>{emp.name}</td>
                                 <td>{emp.lastName}</td>
                                 <td>{emp.jobTitle} </td>

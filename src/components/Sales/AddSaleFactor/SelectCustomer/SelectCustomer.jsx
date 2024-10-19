@@ -18,6 +18,7 @@ import ICONS from '../../../../constants/Icons';
 import Button from '../../../UI/Button/Button';
 import { actionTypes } from '../../../../context/reducer';
 import { useStateValue } from '../../../../context/StateProvider';
+import DisplayLogo from '../../../UI/DisplayLogo/DisplayLogo.jsx';
 
 
 function SelectCustomer() {
@@ -388,9 +389,7 @@ function SelectCustomer() {
                                 >
                                     <td>{index + 1}</td>
                                     <td>
-                                        <div className='user_profile_img' >
-                                            <img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' />
-                                        </div>
+                                        <DisplayLogo imgURL={imageUrls[emp.email]} height='60px' width='60px' alt={t('user') + " " + t('image')} />
                                     </td>
                                     <td>{emp.name}</td>
                                     <td>{emp.lastName}</td>

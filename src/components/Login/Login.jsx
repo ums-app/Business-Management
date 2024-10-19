@@ -16,6 +16,7 @@ import Collections from '../../constants/Collections';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { actionTypes } from '../../context/reducer';
 import { encryptData } from '../../Utils/Encryption.ts';
+import BtnTypes from '../../constants/BtnTypes.js';
 
 function Login() {
     const [, dispatch] = useStateValue();
@@ -92,8 +93,8 @@ function Login() {
                 setError(err.message);
             })
             .finally(() => {
-                // setLoading(false);
-                // setSubmitting(false);
+                setLoading(false);
+                setSubmitting(false);
                 // dispatch({
                 //     type: actionTypes.SET_SMALL_LOADING,
                 //     payload: false
@@ -174,8 +175,8 @@ function Login() {
 
                                 <Button
                                     text={loading ? t("signInLoading") : t("signInBtn")}
-                                    btnType={'submit'}
-                                    type={'loginBtn'}
+                                    btnType={BtnTypes.modern}
+                                    type={'submit'}
                                 />
                             </div>
                         </Form>

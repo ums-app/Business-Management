@@ -209,7 +209,7 @@ const PartnerPage: React.FC = () => {
 
                 {/* User Profile Image */}
                 <div className=" display_flex align_items_center" >
-                    <h1>
+                    <h1 className='margin_right_10 margin_left_10'>
                         {partner?.name}{" "}
                         {partner?.lastName}
                     </h1>
@@ -243,8 +243,6 @@ const PartnerPage: React.FC = () => {
                 >
                     {t("withdrawals")}
                 </li>
-
-
 
             </TabMenu>
 

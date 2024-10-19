@@ -34,7 +34,7 @@
 :root {
   --main-color: #F09819;
   --gen-color: #F09819;
-  --gen-color-hover: #3785fac3;
+  /* --gen-color-hover: #3785fac3; */
   --gen-color-hover: #f096199a;
 }
 

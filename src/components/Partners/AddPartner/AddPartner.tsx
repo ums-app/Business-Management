@@ -192,7 +192,7 @@ const AddPartner: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
     return (
         <Formik
             initialValues={formData}
-            validationSchema={EmployeeSchema}
+            // validationSchema={EmployeeSchema}
             onSubmit={sendDataToAPI}
             enableReinitialize={true}
         >
@@ -205,11 +205,11 @@ const AddPartner: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
                 <h1 className='title'>{updateMode ? t('update') : t('add')} {t('partner')}</h1>
                 <Form className="add_form display_flex flex_direction_column"
                     onChange={e => {
-                        const name = e.target.name
-                        formData[name] = e.target.value;
-                        setformData({ ...formData, })
+                        const { name, value } = e.target;
+                        setformData(prev => ({ ...prev, [name]: value }));
                     }}
                 >
+
                     {/* Here you can select Profile Student img */}
                     <div className="add_img_profile">
                         <img

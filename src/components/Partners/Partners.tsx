@@ -13,6 +13,8 @@ import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateConta
 import ButtonLoadingTemplate from '../UI/LoadingTemplate/ButtonLoadingTemplate'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import HeadingMenuTemplate from '../UI/LoadingTemplate/HeadingMenuTemplate'
+import BtnTypes from '../../constants/BtnTypes'
+import DisplayLogo from '../UI/DisplayLogo/DisplayLogo'
 
 const Partners: React.FC = () => {
     const [partners, setpartners] = useState<Partner[]>()
@@ -85,6 +87,7 @@ const Partners: React.FC = () => {
             <Button
                 text={t('add') + " " + t('partner')}
                 onClick={() => nav("add")}
+                btnType={BtnTypes.modern}
             />
             <h1 className='margin_10 title'>{t('partners')}</h1>
 
@@ -108,7 +111,9 @@ const Partners: React.FC = () => {
                                 key={prt.id}
                             >
                                 <td>{index + 1}</td>
-                                <td><img src={imageUrls[prt.email]} alt={t('user') + " " + t('image')} className='user_profile_img' /></td>
+                                <td>
+                                    <DisplayLogo imgURL={imageUrls[prt.email]} height='60px' width='60px' alt={t('user') + " " + t('image')} />
+                                </td>
                                 <td>{prt.name}</td>
                                 <td>{prt.lastName}</td>
                                 <td>{prt.phoneNumber}</td>

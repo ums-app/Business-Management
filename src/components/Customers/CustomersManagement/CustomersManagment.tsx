@@ -16,6 +16,7 @@ import { getUserImage } from '../../../Utils/FirebaseTools.ts';
 import { CustomerForSaleFactor, Employee, ImageUrls, Suggestion } from '../../../Types/Types.ts';
 import { mapDocToCustomer, mapDocToEmployee } from '../../../Utils/Mapper.ts';
 import BtnTypes from '../../../constants/BtnTypes.js';
+import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo.jsx';
 
 
 
@@ -372,9 +373,7 @@ const CustomersManagment: React.FC = () => {
                                 >
                                     <td>{index + 1}</td>
                                     <td>
-                                        <div className='user_profile_img margin_auto' >
-                                            <img src={imageUrls[emp.email]} alt={t('user') + " " + t('image')} className='user_profile_img' />
-                                        </div>
+                                        <DisplayLogo imgURL={imageUrls[emp.email]} height='60px' width='60px' alt={t('user') + " " + t('image')} />
                                     </td>
                                     <td>{emp.name}</td>
                                     <td>{emp.lastName}</td>

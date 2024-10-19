@@ -20,6 +20,7 @@ import { Tooltip } from 'react-tooltip';
 import ICONS from '../../constants/Icons';
 import Roles from '../../constants/Roles';
 import NotFound from '../../pages/NotFound/NotFound';
+import BtnTypes from '../../constants/BtnTypes';
 
 
 function PurchaseProducts() {
@@ -295,6 +296,7 @@ function PurchaseProducts() {
             <Button
                 text={t('add') + " " + t('purchases')}
                 onClick={() => nav("add")}
+                btnType={BtnTypes.modern}
             />
 
             <h1 className='margin_10 title'>{t('purchases')}</h1>
@@ -350,44 +352,46 @@ function PurchaseProducts() {
                     </div>
                 </div>
                 {loading ? <ShotLoadingTemplate /> :
-                    <table className="full_width custom_table table_row_hover">
-                        <thead >
-                            <tr>
-                                <th>#</th>
-                                <th>{t('indexNumber')}</th>
-                                <th>{t('createdDate')}</th>
-                                <th>{t("total")} {t('package')}</th>
-                                <th>{t('total')} {t('products')}</th>
-                                <th>{t('totalAll')}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {factors?.map((purchase, index) => {
-                                return <tr
-                                    className=" cursor_pointer hover"
-                                    onClick={() => {
-                                        dispatch({
-                                            type: actionTypes.ADD_PURCHASE_FACTOR,
-                                            payload: purchase
-                                        })
-                                        nav('/purchase-products/' + purchase.id)
-                                    }}
-                                    key={purchase.id}
-                                >
-                                    <td>{index + 1}</td>
-                                    <td>{purchase.indexNumber}</td>
-                                    <td>{formatFirebaseDates(purchase.createdDate)}</td>
-                                    <td>{purchase.totalPackage} </td>
-                                    <td>{purchase.totalProducts}</td>
-                                    <td>{purchase.totalAmount}</td>
+                    <div className="full_width overflow_x_scroll">
+                        <table className="full_width custom_table table_row_hover">
+                            <thead >
+                                <tr>
+                                    <th>#</th>
+                                    <th>{t('indexNumber')}</th>
+                                    <th>{t('createdDate')}</th>
+                                    <th>{t("total")} {t('package')}</th>
+                                    <th>{t('total')} {t('products')}</th>
+                                    <th>{t('totalAll')}</th>
                                 </tr>
-                            })
-                            }
-                            {factors?.length == 0 && <tr>
-                                <td colSpan={6}>{t('notExist')}</td>
-                            </tr>}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {factors?.map((purchase, index) => {
+                                    return <tr
+                                        className=" cursor_pointer hover"
+                                        onClick={() => {
+                                            dispatch({
+                                                type: actionTypes.ADD_PURCHASE_FACTOR,
+                                                payload: purchase
+                                            })
+                                            nav('/purchase-products/' + purchase.id)
+                                        }}
+                                        key={purchase.id}
+                                    >
+                                        <td>{index + 1}</td>
+                                        <td>{purchase.indexNumber}</td>
+                                        <td>{formatFirebaseDates(purchase.createdDate)}</td>
+                                        <td>{purchase.totalPackage} </td>
+                                        <td>{purchase.totalProducts}</td>
+                                        <td>{purchase.totalAmount}</td>
+                                    </tr>
+                                })
+                                }
+                                {factors?.length == 0 && <tr>
+                                    <td colSpan={6}>{t('notExist')}</td>
+                                </tr>}
+                            </tbody>
+                        </table>
+                    </div>
                 }
 
             </div>

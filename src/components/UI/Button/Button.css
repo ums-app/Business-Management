@@ -213,3 +213,13 @@
 .btn:active {
   /* transform: scale(0.95); */
 }
+
+
+
+
+@media (max-width:768px) {
+  button {
+    font-size: 12px !important;
+  }
+
+}

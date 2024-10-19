@@ -291,49 +291,51 @@ const FilesManagement: React.FC = () => {
 
             {
                 uploadedFiles ?
-                    <table className="custom_table full_width margin_top_20">
-                        <thead style={{ backgroundColor: 'orange' }}>
-                            <tr>
-                                <th colSpan={5}>{t('uploadedFiles')}</th>
-                            </tr>
-                            <tr>
-                                <th>#</th>
-                                <th>{t('name')}</th>
-                                <th>{t('size')}</th>
-                                <th>{t('date')}</th>
-                                <th>{t('actions')}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {uploadedFiles.map((file, index) => (
-                                <tr key={file.id}>
-                                    <td>{index + 1}</td>
-                                    <td>
-                                        <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                            {file.name}
-                                        </a>
-                                    </td>
-                                    <td>{(file.size / 1024).toFixed(2)} KB</td>
-                                    <td>{formatFirebaseDates(file.date)}</td>
-                                    <td>
-                                        <button
-                                            onClick={() => showDeleteModal(file.id, file.url)}
-                                            style={styles.deleteButton}
-                                        >
-                                            Delete
-                                        </button>
-                                        {/* <button
+                    <div className="full_width overflow_x_scroll">
+                        <table className="custom_table full_width margin_top_20">
+                            <thead style={{ backgroundColor: 'orange' }}>
+                                <tr>
+                                    <th colSpan={5}>{t('uploadedFiles')}</th>
+                                </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>{t('name')}</th>
+                                    <th>{t('size')}</th>
+                                    <th>{t('date')}</th>
+                                    <th>{t('actions')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {uploadedFiles.map((file, index) => (
+                                    <tr key={file.id}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                                {file.name}
+                                            </a>
+                                        </td>
+                                        <td>{(file.size / 1024).toFixed(2)} KB</td>
+                                        <td>{formatFirebaseDates(file.date)}</td>
+                                        <td>
+                                            <button
+                                                onClick={() => showDeleteModal(file.id, file.url)}
+                                                style={styles.deleteButton}
+                                            >
+                                                {t('delete')}
+                                            </button>
+                                            {/* <button
                                             onClick={() => handleDownload(file.name, file.url)}
                                             style={styles.downloadButton}
                                         >
                                             Download
                                         </button> */}
-                                    </td>
-                                </tr>
-                            ))}
-                            {uploadedFiles?.length === 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {uploadedFiles?.length === 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
                     : <LoadingTemplateContainer>
                         <HeadingLoadingTemplate />
                         <HeadingLoadingTemplate />

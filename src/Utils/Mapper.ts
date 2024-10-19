@@ -151,7 +151,9 @@ export const mapDocToPartner = (docSnapshot: DocumentData): Partner => {
         initialCapital: docData.initialCapital,
         lastName: docData.lastName,
         name: docData.name,
-        phoneNumber: docData.phoneNumber
+        phoneNumber: docData.phoneNumber,
+        email: docData.email,
+        password: docData.password
     };
 };
 

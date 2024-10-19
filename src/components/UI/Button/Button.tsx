@@ -9,7 +9,7 @@ import { ButtonProps } from "../../../Types/Types";
 
 const Button: React.FC<ButtonProps> = ({ id = '', btnType = 'btn', isLock = undefined, isConfirmed = null, type = 'button', title, onClick, text, loading = null, icon = null, }) => {
   return (
-    <div className="btn_container">
+    <div className="btn_container display_flex align_items_center">
       {isLock ? <span
         id="lock_button"
         className="display_flex justify_content_center align_items_center"

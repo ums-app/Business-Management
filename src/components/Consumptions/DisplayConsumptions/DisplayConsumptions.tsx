@@ -161,57 +161,59 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
             <div className='margin_top_20'>
                 {loading ? <HeadingLoadingTemplate /> :
                     <div className='full_width  display_flex justify_content_end'>
-                        <div className='input '>
+                        <div className='input display_flex justify_content_end'>
                             <span className='bold'>{t('totalAll')}: </span>
                             <span>{totalAll()}</span>
                         </div>
                     </div>
                 }
                 {loading ? <ShotLoadingTemplate /> :
-                    <table className='custom_table full_width'>
-                        <thead style={{ backgroundColor: 'orange' }}>
-                            <tr><th colSpan={type == ConsumptionsType.WITHDRAW ? 8 : 7}>{getComponent(type)}</th></tr>
-                            <tr>
-                                <th>#</th>
-                                <th>{t('createdDate')}</th>
-                                <th>{t('amount')}</th>
-                                <th>{t('type')}</th>
-                                {type == ConsumptionsType.WITHDRAW && <th>{t('toAccount')}</th>}
-                                <th>{t('registrar')}</th>
-                                <th>{t('descriptions')}</th>
-                                <th>{t('actions')}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered.map((item, index) => {
-                                return <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td>{formatFirebaseDates(item.createdDate)}</td>
-                                    <td>{item.amount}</td>
-                                    <td>{t(item.type)}</td>
-                                    {type == ConsumptionsType.WITHDRAW && <td>{item.to?.name} {item.to?.lastName}</td>}
-                                    <td>{item.registrar}</td>
-                                    <td>{item.descriptions}</td>
-                                    <td>
-                                        <Button
-                                            icon={ICONS.trash}
-                                            onClick={() => showDeleteModal(item.id, index)}
-                                            btnType={'crossBtn'}
-                                            id={'delete_row' + index}
-                                        />
-                                        <Tooltip
-                                            anchorSelect={"#delete_row" + index}
-                                            place="right"
-                                            className="toolTip_style"
-                                        >
-                                            {t("delete")}
-                                        </Tooltip>
-                                    </td>
+                    <div className="full_width overflow_x_scroll">
+                        <table className='custom_table full_width'>
+                            <thead style={{ backgroundColor: 'orange' }}>
+                                <tr><th colSpan={type == ConsumptionsType.WITHDRAW ? 8 : 7}>{getComponent(type)}</th></tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>{t('createdDate')}</th>
+                                    <th>{t('amount')}</th>
+                                    <th>{t('type')}</th>
+                                    {type == ConsumptionsType.WITHDRAW && <th>{t('toAccount')}</th>}
+                                    <th>{t('registrar')}</th>
+                                    <th>{t('descriptions')}</th>
+                                    <th>{t('actions')}</th>
                                 </tr>
-                            })}
-                            {consumptions.length == 0 && <tr><td colSpan={type == ConsumptionsType.WITHDRAW ? 8 : 7}>{t('notExist')}</td></tr>}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {filtered.map((item, index) => {
+                                    return <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{formatFirebaseDates(item.createdDate)}</td>
+                                        <td>{item.amount}</td>
+                                        <td>{t(item.type)}</td>
+                                        {type == ConsumptionsType.WITHDRAW && <td>{item.to?.name} {item.to?.lastName}</td>}
+                                        <td>{item.registrar}</td>
+                                        <td>{item.descriptions}</td>
+                                        <td>
+                                            <Button
+                                                text={t('delete')}
+                                                onClick={() => showDeleteModal(item.id, index)}
+                                                btnType={'crossBtn'}
+                                                id={'delete_row' + index}
+                                            />
+                                            <Tooltip
+                                                anchorSelect={"#delete_row" + index}
+                                                place="right"
+                                                className="toolTip_style"
+                                            >
+                                                {t("delete")}
+                                            </Tooltip>
+                                        </td>
+                                    </tr>
+                                })}
+                                {consumptions.length == 0 && <tr><td colSpan={type == ConsumptionsType.WITHDRAW ? 8 : 7}>{t('notExist')}</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
                 }
             </div>
         </div>

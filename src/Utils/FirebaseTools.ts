@@ -8,6 +8,7 @@ import { FactorType } from "../constants/FactorStatus";
 import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToPartner, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
+import { ConsumptionsType } from "../constants/Others";
 
 
 
@@ -198,6 +199,21 @@ export const getTodayConsumptions = async (): Promise<Consumption[]> => {
     // Map the documents to Consumption items
     return querySnapshot.docs.map((doc) => mapDocToConsumptions(doc));
 };
+
+export const getConsumptionsWithdrawOfPartner = async (partnerId: string): Promise<Consumption[]> => {
+    const q = query(
+        consumptionCollectionRef,
+        where("type", "==", ConsumptionsType.WITHDRAW),
+        where("to", "==", partnerId),
+        orderBy("date", "asc")
+    );
+    const querySnapshot = await getDocs(q);
+    const items: Consumption[] = querySnapshot.docs.map((doc) => {
+        return mapDocToConsumptions(doc)
+    });
+    return items
+}
+
 
 
 

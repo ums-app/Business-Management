@@ -25,6 +25,7 @@ import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFac
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
 import Circle from '../../UI/Loading/Circle';
+import BtnTypes from '../../../constants/BtnTypes';
 
 export interface ProductForSale {
     productId: string;
@@ -601,8 +602,8 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 <h1 className='title'>{updateMode ? t('update') : t('add')}  {t('factor')} {t('sale')}</h1>
 
                 <div
-                    className='customer_information display_flex align_items_center justify_content_space_between margin_top_20 full_width'>
-                    <DisplayLogo imgURL={customerImage} alt={customerForSaleFactor?.name} />
+                    className='customer_information display_flex align_items_center justify_content_space_between flex_flow_wrap margin_top_20 full_width'>
+                    <DisplayLogo imgURL={customerImage} alt={customerForSaleFactor?.name} className='' />
                     <div className='display_flex'>
                         <span className='bold'>{t('name')}:</span>
                         <span className='info_value'> {customerForSaleFactor?.name}</span>
@@ -697,9 +698,9 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                                         <td>{prInFactor.totalPrice}</td>
                                         <td>
                                             <Button
-                                                icon={ICONS.trash}
+                                                text={t('delete')}
+                                                btnType={BtnTypes.danger}
                                                 onClick={() => handleDeleteProduct(index)}
-                                                btnType={'crossBtn'}
                                                 id={'delete_row'}
                                             />
                                             <Tooltip
