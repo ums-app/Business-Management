@@ -32,9 +32,10 @@
 /* End of Fonts */
 
 :root {
-  --main-color: #3785fa;
-  --gen-color: #3785fa;
+  --main-color: #F09819;
+  --gen-color: #F09819;
   --gen-color-hover: #3785fac3;
+  --gen-color-hover: #f096199a;
 }
 
 /* Dark or Light Themes */
@@ -43,12 +44,14 @@
   --gen-main-bg: #f3f4f9;
   --navbar-bg: #fff;
   --text-color: #000;
-  --btn-bg-color: #6dc7f1f3;
+  /* --btn-bg-color: #6dc7f1f3; */
+
   --show-color: #22222283;
   --border-color: #2222226f;
   --input-box-color: #fff;
   --light-dark: #fff;
-  --table_hover: #3785fabf;
+  /* --table_hover: #3785fabf; */
+  --table_hover: #f096199c;
   --loading-template-bg: #e7e7e9;
 }
 
@@ -792,7 +795,7 @@ th .btn i {
   color: var(--text-color);
   background-color: var(--light-dark);
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--gen-color-hover) !important;
   appearance: none;
   border-radius: 4px;
   min-width: 270px;
@@ -802,7 +805,7 @@ th .btn i {
 }
 
 .input:focus {
-  border-color: #86b7fe;
+  border-color: var(--table_hover);
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
 }

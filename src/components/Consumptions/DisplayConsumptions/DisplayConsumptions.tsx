@@ -143,7 +143,7 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
 
     return (
         <div>
-            <div className='text_align_center margin_top_20 margin_bottom_10'>
+            <div className='display_flex justify_content_center align_items_center full_width margin_top_20 margin_bottom_10'>
                 {/* <span>{t('chooseDatePeriod')}: </span> */}
                 <CustomDatePicker
                     range

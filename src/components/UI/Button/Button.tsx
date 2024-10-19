@@ -18,7 +18,7 @@ const Button: React.FC<ButtonProps> = ({ id = '', btnType = 'btn', isLock = unde
         {isConfirmed && <i className={"bi " + ICONS.thick}></i>}
       </span> : null}
       <button
-        className={btnType}
+        className={"btn_common cursor_pointer " + btnType}
         onClick={onClick}
         title={title}
         disabled={isLock}

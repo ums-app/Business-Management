@@ -301,7 +301,7 @@ function PurchaseProducts() {
 
             <div className='table_container '>
                 <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
-                    <div className='search_bar display_flex'>
+                    <div className='search_bar display_flex align_items_center'>
                         <div className='position_relative'>
                             <input type="text" placeholder={t('indexNumber')} onChange={e => handleInputSearchValue(e.target.value)} id='searchBox' />
                             <Tooltip

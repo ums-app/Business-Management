@@ -158,6 +158,7 @@ function EmployeePayments() {
             <Button
                 text={t('add') + " " + t('receipt')}
                 onClick={() => setShowPaymentModal(true)}
+                btnType='button_modern'
             />
 
             <Modal show={showPaymentModal} modalClose={() => setShowPaymentModal(false)}>
@@ -234,7 +235,7 @@ function EmployeePayments() {
                             </tr>
                         </tbody>
                     </table>
-                    <div className='margin_top_20'>
+                    <div className='margin_top_20 display_flex'>
                         <Button
                             text={t('save')}
                             type={'plusBtn'}

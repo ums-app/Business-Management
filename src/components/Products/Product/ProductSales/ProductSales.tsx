@@ -162,7 +162,7 @@ const ProductSales: React.FC = () => {
 
     return (
         <div>
-            <div className='text_align_center margin_top_20'>
+            <div className='text_align_center margin_top_20 display_flex align_items_center justify_content_center'>
                 {/* <span>{t('chooseDatePeriod')}: </span> */}
                 <CustomDatePicker
                     range

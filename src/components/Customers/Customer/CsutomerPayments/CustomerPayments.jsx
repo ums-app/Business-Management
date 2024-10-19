@@ -18,6 +18,7 @@ import { toast } from 'react-toastify';
 import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
 import ICONS from '../../../../constants/Icons';
 import { Tooltip } from 'react-tooltip';
+import BtnTypes from '../../../../constants/BtnTypes.js';
 
 function CustomerPayments() {
     const [{ authentication }, dispatch] = useStateValue()
@@ -312,7 +313,7 @@ function CustomerPayments() {
                                         <Button
                                             icon={ICONS.trash}
                                             onClick={() => showDeleteModal(pay.id, index)}
-                                            type={'crossBtn'}
+                                            btnType={BtnTypes.danger}
                                         />
                                         <Tooltip
                                             anchorSelect="#delete_row"

@@ -15,6 +15,7 @@ import Collections from '../../../constants/Collections';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
 import { Tooltip } from 'react-tooltip';
+import BtnTypes from '../../../constants/BtnTypes';
 
 const DailyConsumptions: React.FC = () => {
     const nav = useNavigate();
@@ -88,6 +89,7 @@ const DailyConsumptions: React.FC = () => {
                     icon={ICONS.plus}
                     text={t('add')}
                     onClick={() => nav('add')}
+                    btnType={BtnTypes.modern}
                 />
             </div>
 

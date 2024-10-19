@@ -24,6 +24,7 @@ import { formatFirebaseDates } from '../../Utils/DateTimeUtils';
 import NotFound from '../../pages/NotFound/NotFound';
 import Roles from '../../constants/Roles';
 import Circle from '../UI/Loading/Circle';
+import BtnTypes from '../../constants/BtnTypes';
 
 
 
@@ -408,17 +409,20 @@ const Sales: React.FC = () => {
 
     return (
         <div className='fade_in'>
-            <Button
-                text={t('add') + " " + t('factor') + " " + t('sale')}
-                // onClick={() => nav("/customers")}
-                onClick={() => setShowSelectCustomerModal(true)}
-            />
-            <Button
-                text={t('add') + " " + t('sundryFactor')}
-                // onClick={() => nav("/customers")}
-                onClick={() => nav('add-custom')}
-                btnType={"margin_10"}
-            />
+            <div className='display_flex'>
+                <Button
+                    text={t('add') + " " + t('factor') + " " + t('sale')}
+                    // onClick={() => nav("/customers")}
+                    onClick={() => setShowSelectCustomerModal(true)}
+                    btnType={BtnTypes.modern}
+                />
+                <Button
+                    text={t('add') + " " + t('sundryFactor')}
+                    // onClick={() => nav("/customers")}
+                    onClick={() => nav('add-custom')}
+                    btnType={BtnTypes.modern}
+                />
+            </div>
             <Modal show={showSelectCustomerModal} modalClose={() => setShowSelectCustomerModal(false)}>
                 <SelectCustomer />
             </Modal>
@@ -427,7 +431,7 @@ const Sales: React.FC = () => {
 
 
             <div className='search_pagination display_flex flex_flow_wrap justify_content_space_between input align_items_center'>
-                <div className='search_bar display_flex'>
+                <div className='search_bar display_flex align_items_center'>
                     <div className='position_relative'>
                         <input
                             type="text"

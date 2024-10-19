@@ -15,6 +15,7 @@ import { db } from '../../../constants/FirebaseConfig.js';
 import { getUserImage } from '../../../Utils/FirebaseTools.ts';
 import { CustomerForSaleFactor, Employee, ImageUrls, Suggestion } from '../../../Types/Types.ts';
 import { mapDocToCustomer, mapDocToEmployee } from '../../../Utils/Mapper.ts';
+import BtnTypes from '../../../constants/BtnTypes.js';
 
 
 
@@ -278,6 +279,7 @@ const CustomersManagment: React.FC = () => {
             <Button
                 text={t('add') + " " + t('customer')}
                 onClick={() => nav('add')}
+                btnType={BtnTypes.modern}
             />
 
 

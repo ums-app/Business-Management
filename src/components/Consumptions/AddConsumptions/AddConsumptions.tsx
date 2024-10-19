@@ -15,6 +15,7 @@ import { getPartners } from '../../../Utils/FirebaseTools'
 import { isGcsTfliteModelOptions } from 'firebase-admin/lib/machine-learning/machine-learning-api-client'
 import { db } from '../../../constants/FirebaseConfig'
 import Collections from '../../../constants/Collections'
+import BtnTypes from '../../../constants/BtnTypes'
 
 export interface Consumption {
     id: string,
@@ -94,7 +95,8 @@ const AddConsumptions: React.FC = () => {
                 <Button
                     text={t('back')}
                     onClick={() => nav(-1)}
-                    btnType={" margin_bottom_10"}
+
+                    btnType={BtnTypes.modern}
                 />
                 <Formik
                     initialValues={consumption}

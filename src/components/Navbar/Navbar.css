@@ -113,6 +113,7 @@
   position: relative;
   color: var(--gen-color);
   background: #0f9bf93e;
+  background: #f0961933;
 }
 
 .navbar_menu .active span,

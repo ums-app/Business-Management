@@ -13,6 +13,7 @@ import { useStateValue } from '../../context/StateProvider.js';
 import Roles from '../../constants/Roles.js';
 import NotFound from '../../pages/NotFound/NotFound.jsx';
 import Circle from '../UI/Loading/Circle.jsx';
+import BtnTypes from '../../constants/BtnTypes.js';
 
 
 
@@ -109,6 +110,7 @@ function Employees() {
             <Button
                 text={t('add') + " " + t('employee')}
                 onClick={() => nav("add")}
+                btnType={BtnTypes.modern}
             />
             <h1 className='margin_10 title'>{t('employees')}</h1>
 

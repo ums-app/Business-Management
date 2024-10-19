@@ -39,7 +39,10 @@ const BreadCrumbs = () => {
         })}
       </div>
 
-      <Button icon={ICONS.back} onClick={goBack} id={'back_button'} />
+      <Button
+        icon={localStorage.getItem('locale') == 'fa' ? ICONS.arrowLeft : ICONS.arrowRight}
+        onClick={goBack}
+        id={'back_button'} />
 
       <Tooltip
         anchorSelect="#back_button"

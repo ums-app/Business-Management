@@ -26,10 +26,10 @@ const MessageBox = ({
       <div className="btn_conatainer">
         <Button
           text={firstBtn?.btnText}
-          type={firstBtn.btnType}
+          btnType={firstBtn.btnType}
           onClick={firstBtn?.onClick}
         />
-        <Button text={secondBtn?.btnText} type={secondBtn.btnType} onClick={secondBtn?.onClick} />
+        <Button text={secondBtn?.btnText} btnType={secondBtn.btnType} onClick={secondBtn?.onClick} />
       </div>
     </div>
   )
