@@ -16,9 +16,7 @@ const DailyLogs: React.FC = () => {
                 setlogs(res)
             })
             .finally(() => setloading(false))
-
-
-    })
+    }, [])
 
 
 

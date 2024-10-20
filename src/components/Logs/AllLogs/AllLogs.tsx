@@ -23,7 +23,7 @@ const AllLogs: React.FC = () => {
                 setFiltered(res)
             })
             .finally(() => setloading(false))
-    })
+    }, [])
 
 
     const getProductSalesInDatePeriod = async () => {
