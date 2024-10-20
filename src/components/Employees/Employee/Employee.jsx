@@ -18,7 +18,7 @@ import HeadingMenuTemplate from '../../UI/LoadingTemplate/HeadingMenuTemplate';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { toast } from 'react-toastify';
 import DisplayLogo from '../../UI/DisplayLogo/DisplayLogo';
-import { disableUserAccountBy, enableUserAccountBy, getUserByEmail, getUserImage } from '../../../Utils/FirebaseTools.ts';
+import { disableUserAccountBy, enableUserAccountBy, getUserByEmail, getUserImage, sendLog } from '../../../Utils/FirebaseTools.ts';
 import EmployeePayments from './EmployeePayments/EmployeePayments';
 import EmployeeFee from './EmployeeFee/EmployeeFee';
 import EmployeeSalaries from './EmployeeSalaries/EmployeeSalaries';
