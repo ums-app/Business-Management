@@ -8,6 +8,7 @@ import Button from '../UI/Button/Button';
 import ICONS from '../../constants/Icons';
 import { t } from 'i18next';
 import SmallSpinner from '../UI/Loading/SmallSpinner';
+import BtnTypes from '../../constants/BtnTypes';
 
 
 interface BackupState {
@@ -189,7 +190,7 @@ const BackupComponent: React.FC = () => {
                             text={t('backupAll')}
                             onClick={handleBackupAll}
                             icon={ICONS.download}
-                            btnType='align_self_end'
+                            btnType={BtnTypes.modern}
                         />
                     </div>
                 </div>
@@ -216,7 +217,6 @@ const BackupComponent: React.FC = () => {
 
                     <Button
                         onClick={handleImport}
-                        style={styles.button}
                         disabled={importLoading}
                         isLock={importLoading}
                         text={importLoading ? t('uploadingData') : t('upload')}

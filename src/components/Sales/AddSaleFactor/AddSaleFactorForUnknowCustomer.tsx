@@ -286,10 +286,10 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
 
                 // 4. Log the successful transaction
                 const log: Log = {
-                    message: `${t('successfullyAdded')} ${t('factor')} : ${factorDocRef.id}`,
                     createdDate: new Date(),
                     registrar: `${authentication.name} ${authentication.lastname}`, // Track the current user
-                    title: `${t('successfullyAdded')} ${t('factor')}`,
+                    title: `${t('factor')} ${t('successfullyAdded')}`,
+                    message: `${t('factor')} : ${factorDocRef.id} ${t('successfullyAdded')} `,
                     data: sanitizedLog
                 };
                 await sendLog(log); // Outside the transaction
@@ -371,8 +371,8 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
             const log: Log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('successfullyDeleted')} ${t('factor')}`,
-                message: `${t('successfullyDeleted')} ${t('factor')} : ${customerFactor.id}`,
+                title: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
+                message: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
                 data: sanitizedLog
             };
 

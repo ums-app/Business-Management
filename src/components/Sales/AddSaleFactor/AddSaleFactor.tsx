@@ -379,7 +379,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
 
     const sendCustomerFactorToAPI = async () => {
         if (updateMode) {
-            toast.error('youAreNotAllowedToChangeTheFactor');
+            toast.error(t('youAreNotAllowedToChangeTheFactor'));
             return;
         }
 
@@ -399,10 +399,10 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         try {
             // Calculate the visitor amount if a visitor contract is defined
             let visitorAmount = 0;
-            if (visitor && visitor.visitorContractType === VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
+            if (visitor?.visitorContractType === VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
                 visitorAmount = getTotalProductsOfFactor() * visitor.visitorAmount;
-            } else if (visitor && visitor.visitorContractType === VisitorContractType.PERCENT) {
-                visitorAmount = (totalAll() * Number(visitor?.visitorAmount) / 100);
+            } else if (visitor?.visitorContractType === VisitorContractType.PERCENT) {
+                visitorAmount = (totalAll() * Number(visitor.visitorAmount)) / 100;
             }
 
             // Build visitor account data conditionally
@@ -413,27 +413,27 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 visitorAmount: visitorAmount ?? null
             } : undefined;
 
-            const factorData = {
-                ...customerFactor,
-                paidAmount: userPayment.amount,
-                totalAll: totalAll(),
-                ...(visitorAccount ? { visitorAccount } : {}), // Include visitorAccount if defined
-                currentRemainedAmount: remainedAmount(),
-                previousRemainedAmount: Math.abs(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()).toFixed(2),
-                totalRemainedAmount: Math.abs((totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()) + remainedAmount()).toFixed(2)
-            };
+            let factorId; // Define factorId outside the transaction
 
             // Using a Firestore transaction
             await runTransaction(db, async (transaction) => {
                 // Add the factor to the sales collection
-                const factorDocRef = doc(collection(db, Collections.Sales));
-                transaction.set(factorDocRef, factorData);
+                const factorDocRef = doc(collection(db, Collections.Sales)); // Create the document reference
+                factorId = factorDocRef.id; // Store the factor ID
+                transaction.set(factorDocRef, {
+                    ...customerFactor,
+                    paidAmount: userPayment.amount,
+                    totalAll: totalAll(),
+                    ...(visitorAccount ? { visitorAccount } : {}), // Include visitorAccount if defined
+                    currentRemainedAmount: remainedAmount(),
+                    previousRemainedAmount: Math.abs(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()).toFixed(2),
+                    totalRemainedAmount: Math.abs((totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()) + remainedAmount()).toFixed(2)
+                });
 
                 // If payment is made, store it in the payments collection
                 if (userPayment.amount > 0) {
-                    console.log('sending payment doc: ', userPayment.amount);
                     const paymentDocRef = doc(collection(db, Collections.Payments));
-                    transaction.set(paymentDocRef, { ...userPayment, saleId: factorDocRef.id });
+                    transaction.set(paymentDocRef, { ...userPayment, saleId: factorId });
                 }
 
                 // Update the product inventory for all products in the factor
@@ -448,14 +448,15 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                     });
                 }
             });
+
             const sanitizedCustomerFactor = Object.fromEntries(Object.entries(customerFactor).filter(([_, v]) => v != null));
 
             // Logging the successful operation
             const log: Log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('successfullyAdded')} ${t('factor')}`,
-                message: `${t('successfullyAdded')} ${t('factor')} : ${customerFactor.id}`,
+                title: `${t('factor')} ${t('successfullyAdded')}`,
+                message: `${t('factor')} : ${factorId} ${t('successfullyAdded')} `,
                 data: sanitizedCustomerFactor
             };
 
@@ -469,13 +470,8 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 ...customerFactor,
                 paidAmount: userPayment.amount,
                 totalAll: totalAll(),
-                visitorAccount: visitor ? {
-                    visitorId: visitor?.id ?? null,
-                    VisitorContractType: visitor?.visitorContractType ?? null,
-                    visitorContractAmount: visitor?.visitorAmount ?? null,
-                    visitorAmount: visitorAmount ?? null
-                } : null,
-                id: factorDocRef.id // Set the newly created factor's ID
+                visitorAccount: visitorAccount || null,
+                id: factorId // Set the newly created factor's ID
             });
 
         } catch (err: any) {
@@ -489,6 +485,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
             console.log('loading finished');
         }
     };
+
 
 
 
@@ -543,8 +540,8 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 const log: Log = {
                     createdDate: new Date(),
                     registrar: `${authentication.name} ${authentication.lastname}`,
-                    title: `${t('successfullyDeleted')} ${t('factor')}`,
-                    message: `${t('successfullyDeleted')} ${t('factor')} : ${customerFactor.id}`,
+                    title: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
+                    message: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
                     data: customerFactor,
                 };
                 const sanitizedLog = Object.fromEntries(Object.entries(log).filter(([_, v]) => v != null));

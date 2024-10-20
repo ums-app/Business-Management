@@ -439,7 +439,8 @@ const fa = {
         initialCapital: 'سرمایه اولیه',
         events: 'رویدادها',
         event: 'رویداد',
-        dailyEvents: 'رویدادهای روزانه'
+        dailyEvents: 'رویدادهای روزانه',
+        successfullyDeleted: 'موفقانه حذف شد'
 
 
 
