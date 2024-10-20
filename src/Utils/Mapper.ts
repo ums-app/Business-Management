@@ -1,5 +1,5 @@
 import { DocumentData, DocumentSnapshot } from "firebase/firestore";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Partner, Product, User } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Log, Partner, Product, User } from "../Types/Types";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
 
@@ -169,5 +169,17 @@ export const mapDocToConsumptions = (docSnapshot: DocumentData): Consumption => 
         registrar: docData.registrar,
         to: docData.to,
         type: docData.type
+    };
+};
+
+export const mapDocToLog = (docSnapshot: DocumentData): Log => {
+    const docData = docSnapshot?.data(); // Extract data
+    return {
+        id: docSnapshot.id, // Use the document ID
+        createdDate: docData.createdDate,
+        message: docData.message,
+        rgistrar: docData.registrar,
+        title: docData.title,
+        data: docData.data
     };
 };

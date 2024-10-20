@@ -227,4 +227,14 @@ export interface DoughnutDataSet {
 }
 
 
+export interface Log {
+    id: string,
+    title: string,
+    createdDate: Date | Timestamp,
+    registrar: string,
+    message: string,
+    data: any
+}
+
+
 

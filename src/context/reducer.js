@@ -34,7 +34,9 @@ function getLocale() {
   document.body.classList.add("rtl");
   let locale = "fa";
   if (localStorage.length > 0) {
-    locale = localStorage.getItem("locale");
+    if (localStorage.getItem("locale"))
+      locale = localStorage.getItem("locale");
+
     i18n.changeLanguage(locale);
     if (locale === "en") {
       document.body.classList.remove("rtl");
@@ -43,6 +45,8 @@ function getLocale() {
   }
   document.documentElement.dir = locale === "en" ? "ltr" : "rtl";
   document.documentElement.lang = locale === "en" ? "en" : "fa";
+  console.log('locale in reducer ', locale);
+
   return locale;
 }
 
@@ -63,10 +67,9 @@ export const initialState = {
     imageURL: null,
     roles: [],
   },
-  locale: getLocale(),
+  locale: 'fa',
   askingModal: { show: false, message: "", btnAction: null, id: null },
   confirmModal: { show: false, message: "", iconType: "" },
-  relations: [],
   globalLoading: false,
   navbarCollapse: false,
   customerForSaleFactor: null

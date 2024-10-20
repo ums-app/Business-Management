@@ -54,7 +54,7 @@ function Login() {
                                 const { encryptedKey, encryptedValue } = encryptData(key, value);
                                 localStorage.setItem(encryptedKey, encryptedValue);
                             });
-
+                            localStorage.setItem('locale', 'fa')
                             console.log('dispatching data');
                             dispatch({
                                 type: actionTypes.SET_AUTHENTICATION,

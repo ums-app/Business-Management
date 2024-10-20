@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { RouterProvider } from "react-router-dom"
 import browserRouter from "./route/routerProvider"
 import "./App.css"
@@ -14,7 +14,11 @@ import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
 import RestrictWarning from "./components/UI/RestrictWarning/RestrictWarning"
 import Circle from "./components/UI/Loading/Circle"
-
+import { onMessage } from "firebase/messaging"
+import { getToken } from 'firebase/messaging';
+import { doc, setDoc } from 'firebase/firestore';
+import { db, messaging } from "./constants/FirebaseConfig"
+import Collections from "./constants/Collections"
 
 const App: React.FC = () => {
   const [{ askingModal, locale, restrictWarning, confirmModal, globalLoading }, dispatch] = useStateValue();
@@ -30,6 +34,68 @@ const App: React.FC = () => {
       type: actionTypes.HIDE_CONFIRM_MODAL,
     })
   }
+  const [{ authentication },] = useStateValue();
+  const [fcmToken, setFcmToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Request permission to send notifications
+    const requestPermission = async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          // Get the FCM token
+          const token = await getToken(messaging, {
+            vapidKey: 'YOUR_VAPID_KEY' // Replace with your Firebase project VAPID key
+          });
+
+          if (token) {
+            setFcmToken(token);
+
+            // Store the FCM token in Firestore for the Super_Admin
+            const superAdminRef = doc(db, Collections.Users, authentication.userId);
+            await setDoc(superAdminRef, { fcmToken: token }, { merge: true });
+
+            console.log('FCM Token stored:', token);
+          }
+        } else {
+          console.log('Notification permission denied');
+        }
+      } catch (error) {
+        console.error('Error getting FCM token:', error);
+      }
+    };
+
+    requestPermission();
+  }, []);
+
+  useEffect(() => {
+    const handleIncomingMessage = () => {
+      onMessage(messaging, (payload) => {
+        console.log('Message received. ', payload);
+        // Display notification in the app
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+        });
+      });
+    };
+
+    handleIncomingMessage();
+  }, []);
+
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/firebase-messaging-sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((err) => {
+          console.error('Service Worker registration failed:', err);
+        });
+    }
+
+  }, [])
 
   return (
     <div id="ums_app">

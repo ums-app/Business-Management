@@ -136,7 +136,8 @@ const ICONS = {
   arrowDownload: 'bi bi-box-arrow-down',
   arrowUpload: 'bi bi-box-arrow-up',
   cash: 'bi-currency-dollar',
-  diagram: 'bi bi-diagram-3-fill'
+  diagram: 'bi bi-diagram-3-fill',
+  logs: 'bi bi-layout-text-sidebar'
 };
 
 export default ICONS;

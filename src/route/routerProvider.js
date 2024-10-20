@@ -24,6 +24,7 @@ import AddConsumptions from "../components/Consumptions/AddConsumptions/AddConsu
 import Partners from "../components/Partners/Partners.tsx";
 import AddPartner from "../components/Partners/AddPartner/AddPartner.tsx";
 import Partner from "../components/Partners/Partner/Partner.tsx";
+import Logs from "../components/Logs/Logs.tsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -195,6 +196,11 @@ const browserRouter = createBrowserRouter([
       {
         path: "/files",
         element: <FilesManagement />,
+      },
+
+      {
+        path: "/events",
+        element: <Logs />,
       },
       {
         path: "/settings",

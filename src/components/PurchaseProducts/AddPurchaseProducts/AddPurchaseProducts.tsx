@@ -19,6 +19,7 @@ import NotFound from '../../../pages/NotFound/NotFound';
 import { CurrencyType } from '../../../constants/Others';
 import { Tooltip } from 'react-tooltip';
 import Circle from '../../UI/Loading/Circle';
+import BtnTypes from '../../../constants/BtnTypes';
 
 
 export interface PurchasedProduct {
@@ -526,9 +527,9 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                         <td>{item.total}</td>
                                         <td>
                                             <Button
-                                                icon={ICONS.trash}
+                                                text={t('delete')}
                                                 onClick={() => removeRow(index)}
-                                                btnType={'crossBtn'}
+                                                btnType={BtnTypes.danger}
                                                 id={'delete_row' + index}
                                             />
                                             <Tooltip
@@ -549,7 +550,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                         </tbody>
                         <Button
                             icon={ICONS.plus}
-                            btnType=' margin_top_10'
+                            btnType={BtnTypes.success}
                             onClick={addNewRow}
                         />
                     </table>
@@ -583,7 +584,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                 </table>
                 <Button
                     icon={ICONS.plus}
-                    btnType=' margin_top_10'
+                    // btnType={BtnTypes.standard}
                     onClick={sendDateToAPI}
                     text={t('save')}
                 />

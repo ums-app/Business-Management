@@ -436,7 +436,10 @@ const fa = {
         CONSTANT_CONSUMPTION: 'مصارف ثابت',
         partners: 'سهامداران',
         partner: 'سهامدار',
-        initialCapital: 'سرمایه اولیه'
+        initialCapital: 'سرمایه اولیه',
+        events: 'رویدادها',
+        event: 'رویداد',
+        dailyEvents: 'رویدادهای روزانه'
 
 
 

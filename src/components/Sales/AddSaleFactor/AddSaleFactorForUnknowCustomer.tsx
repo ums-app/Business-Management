@@ -20,9 +20,9 @@ import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { FactorType } from '../../../constants/FactorStatus';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { deleteCustomerPaymentByFactorId, getProductById, getProducts } from '../../../Utils/FirebaseTools';
-import { Product, UpdateModeProps } from '../../../Types/Types';
-import { ProductForSale } from './AddSaleFactor';
+import { deleteCustomerPaymentByFactorId, getProductById, getProducts, sendLog } from '../../../Utils/FirebaseTools';
+import { Log, Product, UpdateModeProps } from '../../../Types/Types';
+import { ProductForSale, userPayment } from './AddSaleFactor';
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
 import Circle from '../../UI/Loading/Circle';
@@ -63,7 +63,7 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
         indexNumber: 0,
         type: FactorType.SUNDRY_FACTOR,
         by: authentication.email,
-        totalAll: 0
+        totalAll: 0,
     })
 
     useEffect(() => {
@@ -229,74 +229,89 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
             return;
         }
 
-
-        if (customerFactor.customer.name.trim().length == 0) {
-            toast.error(t('name') + " " + t('notEmptyMsg'))
+        if (customerFactor.customer.name.trim().length === 0) {
+            toast.error(t('name') + " " + t('notEmptyMsg'));
             return;
         }
         if (remainedAmount() > 0) {
-            toast.error(t('paidAmount') + " " + t('notEmptyMsg'))
-            return
+            toast.error(t('paidAmount') + " " + t('notEmptyMsg'));
+            return;
+        }
+        if (customerFactor.productsInFactor.length === 0 || customerFactor.productsInFactor[0].total === 0) {
+            toast.error(t('products') + " " + t('notEmptyMsg'));
+            return;
         }
 
-        if (customerFactor.productsInFactor.length == 0 ||
-            customerFactor.productsInFactor[0].total == 0
-        ) {
-            toast.error(t('products') + " " + t('notEmptyMsg'))
-            return
-        }
         console.log('set loading');
         dispatch({
             type: actionTypes.SET_SMALL_LOADING,
-            payload: true
-        })
+            payload: true,
+        });
 
         try {
+            await runTransaction(db, async (transaction) => {
+                console.log('sending data to api as new factor');
+                console.log(customerFactor);
 
-            console.log('sending data to api as new factor');
-            console.log(customerFactor);
-            const data = await addDoc(salesCollectionRef, { ...customerFactor, totalAll: totalAll() });
-            setcustomerFactor({ ...customerFactor, id: data.id });
-            updateProductsInventory(customerFactor.productsInFactor)
+                // 1. Add a new factor document to the sales collection
+                const factorDocRef = doc(collection(db, Collections.Sales));
+                transaction.set(factorDocRef, { ...customerFactor, totalAll: totalAll() });
+
+                // 2. Add a payment document to the payments collection
+                if (customerFactor.paidAmount > 0) {
+                    const paymentDocRef = doc(collection(db, Collections.Payments)); // Assuming you are using 'payments' collection
+                    const userPay: userPayment = {
+                        amount: customerFactor.paidAmount,
+                        createdDate: customerFactor.createdDate,
+                        customerId: null,
+                        date: customerFactor.createdDate,
+                        saleId: factorDocRef.id, // Reference to the sale/factor
+                        by: `${authentication.name} ${authentication.lastname}`,
+                    };
+                    transaction.set(paymentDocRef, userPay);
+                }
+
+                // 3. Update inventory for products in the factor
+                for (const pr of customerFactor.productsInFactor) {
+                    const productDocRef = doc(db, Collections.Products, pr.productId);
+                    const targetProduct = products.find((item) => item.id === pr.productId);
+                    if (!targetProduct) throw new Error(`Product with ID ${pr.productId} not found`);
+
+                    // Decrease inventory in the transaction
+                    transaction.update(productDocRef, {
+                        inventory: Number(targetProduct.inventory) - Number(pr.total),
+                    });
+                }
+                const sanitizedLog = Object.fromEntries(Object.entries(customerFactor).filter(([_, v]) => v != null));
+
+                // 4. Log the successful transaction
+                const log: Log = {
+                    message: `${t('successfullyAdded')} ${t('factor')} : ${factorDocRef.id}`,
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`, // Track the current user
+                    title: `${t('successfullyAdded')} ${t('factor')}`,
+                    data: sanitizedLog
+                };
+                await sendLog(log); // Outside the transaction
+                setcustomerFactor({ ...customerFactor, id: factorDocRef.id }); // Update local factor state with the ID
+            });
+
             toast.success(t('successfullyAdded'));
-
-
-            setsaved(true)
-            // nav('/sales')
+            setsaved(true);
+            // nav('/sales'); // Uncomment if you want to navigate after the operation
 
         } catch (err) {
-            console.log(err);
-            toast.error(err)
+            console.error("Transaction failed: ", err);
+            toast.error(t('operationFailedMsg'));
         } finally {
             dispatch({
                 type: actionTypes.SET_SMALL_LOADING,
-                payload: false
-            })
+                payload: false,
+            });
         }
+
         console.log('set loading false');
-    }
-
-    // this is for updating product inventory
-    async function updateProductsInventory(productsInFactor: ProductForSale[]) {
-        const batch = writeBatch(db); // Create a batch
-
-        // Loop through each document update
-        productsInFactor.forEach(pr => {
-            const docRef = doc(db, Collections.Products, pr.productId); // Get the document reference
-            const targetProduct = products.find(item => item.id === pr.productId);
-            if (!targetProduct) return;
-            batch.update(docRef, { inventory: targetProduct?.inventory - pr.total }); // Update inventory
-        });
-
-        // Commit the batch
-        try {
-            await batch.commit();
-            console.log("Batch update successfully committed!");
-        } catch (error) {
-            console.error("Error committing batch update: ", error);
-            throw error; // Rethrow the error to handle rollback in sendCustomerFactorToAPI
-        }
-    }
+    };
 
 
 
@@ -345,14 +360,27 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
 
                 // If there's a payment, delete the corresponding payment
                 if (customerFactor.paidAmount > 0) {
-                    deleteCustomerPaymentByFactorId(customerFactor.id, transaction); // Make sure this function is updated to use transactions
+                    console.log('delete the factor payments factor id:', customerFactor.id);
+                    // Await the result of deleting the payment
+                    await deleteCustomerPaymentByFactorId(customerFactor.id, transaction);
                 }
             });
+            // Remove undefined or null values
+            const sanitizedLog = Object.fromEntries(Object.entries(customerFactor).filter(([_, v]) => v != null));
 
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('successfullyDeleted')} ${t('factor')}`,
+                message: `${t('successfullyDeleted')} ${t('factor')} : ${customerFactor.id}`,
+                data: sanitizedLog
+            };
+
+            await sendLog(log);
             toast.success(t('successfullyDeleted'));
             nav(-1);
         } catch (err) {
-            toast.success(t('operationFailedMsg'))
+            toast.error(t('operationFailedMsg'))
             console.error("Transaction failed: ", err);
         } finally {
             dispatch({

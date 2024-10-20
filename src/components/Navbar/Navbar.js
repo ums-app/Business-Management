@@ -115,7 +115,6 @@ const Navbar = () => {
               {t("purchases")}
             </Tooltip>
 
-
             <CustomeLinks to="/consumptions" id={'consumptions_link'}>
               <i className={ICONS.consumptions}></i>
               <span>{t('consumptions')}</span>
@@ -212,6 +211,18 @@ const Navbar = () => {
               className="toolTip_style"
             >
               {t("customers")}
+            </Tooltip>
+            {authentication?.roles?.includes('SUPER_ADMIN') &&
+              <CustomeLinks to="/events" id={'settings_link'}>
+                <i className={ICONS.logs}></i>
+                <span>{t("events")}</span>
+              </CustomeLinks>}
+            <Tooltip
+              anchorSelect="#settings_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("events")}
             </Tooltip>
             <CustomeLinks to="/settings" id={'settings_link'}>
               <i className={ICONS.gear}></i>

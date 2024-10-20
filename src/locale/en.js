@@ -400,7 +400,9 @@ const en = {
         dailyConsumptions: "Daily Consumptions",
         toAccount: "To Account",
         registrar: "Registrar",
-        withdraw: 'Withdraw'
+        withdraw: 'Withdraw',
+        events: 'Events',
+        event: 'Event'
 
 
 

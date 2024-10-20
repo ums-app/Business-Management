@@ -20,8 +20,8 @@ import Menu from "../../UI/Menu/Menu"
 import { FactorType } from '../../../constants/FactorStatus';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { VisitorContractType } from '../../../constants/Others';
-import { CustomerFactor, CustomerPayment, Employee, Product, UpdateModeProps } from '../../../Types/Types';
-import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage } from '../../../Utils/FirebaseTools';
+import { CustomerFactor, CustomerPayment, Employee, Log, Product, UpdateModeProps } from '../../../Types/Types';
+import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage, sendLog } from '../../../Utils/FirebaseTools';
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
 import Circle from '../../UI/Loading/Circle';
@@ -397,6 +397,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         });
 
         try {
+            // Calculate the visitor amount if a visitor contract is defined
             let visitorAmount = 0;
             if (visitor && visitor.visitorContractType === VisitorContractType.BASED_ON_PRODUCT_NUMBER) {
                 visitorAmount = getTotalProductsOfFactor() * visitor.visitorAmount;
@@ -404,6 +405,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 visitorAmount = (totalAll() * Number(visitor?.visitorAmount) / 100);
             }
 
+            // Build visitor account data conditionally
             const visitorAccount = visitor && visitor.visitorContractType ? {
                 visitorId: visitor?.id ?? null,
                 VisitorContractType: visitor?.visitorContractType ?? null,
@@ -415,29 +417,53 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 ...customerFactor,
                 paidAmount: userPayment.amount,
                 totalAll: totalAll(),
-                ...(visitorAccount ? { visitorAccount } : {}), // Conditionally include visitorAccount,
+                ...(visitorAccount ? { visitorAccount } : {}), // Include visitorAccount if defined
                 currentRemainedAmount: remainedAmount(),
                 previousRemainedAmount: Math.abs(totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()).toFixed(2),
                 totalRemainedAmount: Math.abs((totalAmountOfAllFactors() - totalAmountOfAllCustomerPayments()) + remainedAmount()).toFixed(2)
             };
 
-            // Using transaction to add the first document
-            const factorDocRef = doc(collection(db, Collections.Sales)); // Assuming you are using 'sales' collection
+            // Using a Firestore transaction
             await runTransaction(db, async (transaction) => {
-                transaction.set(factorDocRef, factorData); // Set the factor data in the transaction
+                // Add the factor to the sales collection
+                const factorDocRef = doc(collection(db, Collections.Sales));
+                transaction.set(factorDocRef, factorData);
 
+                // If payment is made, store it in the payments collection
                 if (userPayment.amount > 0) {
                     console.log('sending payment doc: ', userPayment.amount);
-                    const paymentDocRef = doc(collection(db, Collections.Payments)); // Assuming you are using 'payments' collection
+                    const paymentDocRef = doc(collection(db, Collections.Payments));
                     transaction.set(paymentDocRef, { ...userPayment, saleId: factorDocRef.id });
                 }
-            });
 
-            // Call the update function, which will also use a transaction
-            await updateMultipleDocuments(customerFactor.productsInFactor);
+                // Update the product inventory for all products in the factor
+                for (const pr of customerFactor.productsInFactor) {
+                    const productDocRef = doc(db, Collections.Products, pr.productId);
+                    const targetProduct = products.find(item => item.id === pr.productId);
+                    if (!targetProduct) throw new Error(`Product with ID ${pr.productId} not found`);
+
+                    // Update the inventory in the transaction
+                    transaction.update(productDocRef, {
+                        inventory: Number(targetProduct.inventory) - Number(pr.total)
+                    });
+                }
+            });
+            const sanitizedCustomerFactor = Object.fromEntries(Object.entries(customerFactor).filter(([_, v]) => v != null));
+
+            // Logging the successful operation
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('successfullyAdded')} ${t('factor')}`,
+                message: `${t('successfullyAdded')} ${t('factor')} : ${customerFactor.id}`,
+                data: sanitizedCustomerFactor
+            };
+
+            await sendLog(log);
 
             toast.success(t('successfullyAdded'));
 
+            // Update local state with the new factor ID and visitor information
             setsaved(true);
             setcustomerFactor({
                 ...customerFactor,
@@ -449,7 +475,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                     visitorContractAmount: visitor?.visitorAmount ?? null,
                     visitorAmount: visitorAmount ?? null
                 } : null,
-                id: factorDocRef.id
+                id: factorDocRef.id // Set the newly created factor's ID
             });
 
         } catch (err: any) {
@@ -464,26 +490,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
         }
     };
 
-    async function updateMultipleDocuments(productsInFactor: ProductForSale[]) {
-        const batch = writeBatch(db); // Create a batch
 
-        // Loop through each document update
-        productsInFactor.forEach(pr => {
-            const docRef = doc(db, Collections.Products, pr.productId); // Get the document reference
-            const targetProduct = products.find(item => item.id === pr.productId);
-            if (!targetProduct) return;
-            batch.update(docRef, { inventory: targetProduct?.inventory - pr.total }); // Update inventory
-        });
-
-        // Commit the batch
-        try {
-            await batch.commit();
-            console.log("Batch update successfully committed!");
-        } catch (error) {
-            console.error("Error committing batch update: ", error);
-            throw error; // Rethrow the error to handle rollback in sendCustomerFactorToAPI
-        }
-    }
 
     const showDeleteModal = () => {
         dispatch({
@@ -498,53 +505,68 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
 
 
     const deleteFactor = async () => {
-        dispatch({
-            type: actionTypes.SET_GLOBAL_LOADING,
-            payload: { value: true },
-        });
-        dispatch({
-            type: actionTypes.HIDE_ASKING_MODAL,
-        });
-
-        console.log(customerFactor.id);
-        const factorDoc = doc(db, Collections.Sales, customerFactor.id);
-
         try {
+            // Set loading state and hide the modal
+            dispatch({ type: actionTypes.SET_GLOBAL_LOADING, payload: { value: true } });
+            dispatch({ type: actionTypes.HIDE_ASKING_MODAL });
+
+            console.log(customerFactor.id);
+
+            const factorDoc = doc(db, Collections.Sales, customerFactor.id);
+            const logDoc = doc(collection(db, 'Logs')); // Create a reference to the Logs collection
+
             await runTransaction(db, async (transaction) => {
-                // Delete the factor document
+                // 1. Delete the factor document
                 transaction.delete(factorDoc);
 
-                // Increase product inventory
-                const productsInFactor = customerFactor.productsInFactor;
-                for (const pr of productsInFactor) {
+                // 2. Increase product inventory for each product in the factor
+                customerFactor.productsInFactor.forEach(pr => {
                     const productDoc = doc(db, Collections.Products, pr.productId);
                     const targetProduct = products.find(item => item.id === pr.productId);
+
                     if (!targetProduct) throw new Error(`Product with ID ${pr.productId} not found`);
 
-                    // Increment inventory
+                    // Increment product inventory
                     transaction.update(productDoc, {
                         inventory: Number(targetProduct.inventory) + Number(pr.total)
                     });
+                });
+
+                // 3. If there's a payment, delete the corresponding payment
+                if (customerFactor.paidAmount > 0) {
+                    console.log('Deleting factor payments for factor id:', customerFactor.id);
+                    // Ensure deleteCustomerPaymentByFactorId is transaction-safe
+                    deleteCustomerPaymentByFactorId(customerFactor.id, transaction);
                 }
 
-                // If there's a payment, delete the corresponding payment
-                if (customerFactor.paidAmount > 0) {
-                    deleteCustomerPaymentByFactorId(customerFactor.id, transaction); // Make sure this function is updated to use transactions
-                }
+                // 4. Create and sanitize the log object
+                const log: Log = {
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`,
+                    title: `${t('successfullyDeleted')} ${t('factor')}`,
+                    message: `${t('successfullyDeleted')} ${t('factor')} : ${customerFactor.id}`,
+                    data: customerFactor,
+                };
+                const sanitizedLog = Object.fromEntries(Object.entries(log).filter(([_, v]) => v != null));
+
+                // 5. Add the log to the transaction
+                transaction.set(logDoc, sanitizedLog);
             });
 
+            // Only show success toast if the transaction completes successfully
             toast.success(t('successfullyDeleted'));
-            nav(-1);
+            nav(-1); // Navigate back
         } catch (err) {
-            toast.success(t('operationFailedMsg'))
+            // Show error toast on failure
+            toast.error(t('operationFailedMsg'));
             console.error("Transaction failed: ", err);
         } finally {
-            dispatch({
-                type: actionTypes.SET_GLOBAL_LOADING,
-                payload: { value: false },
-            });
+            // Reset loading state regardless of success or failure
+            dispatch({ type: actionTypes.SET_GLOBAL_LOADING, payload: { value: false } });
         }
     };
+
+
 
     if (!customerForSaleFactor) {
         nav(-1)

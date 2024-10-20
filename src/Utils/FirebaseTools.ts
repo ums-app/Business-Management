@@ -1,14 +1,15 @@
-import { collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, orderBy, query, Timestamp, Transaction, updateDoc, where } from "firebase/firestore"
-import { db, storage } from "../constants/FirebaseConfig"
+import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, orderBy, query, setDoc, Timestamp, Transaction, updateDoc, where } from "firebase/firestore"
+import { db, messaging, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Partner, Product, User } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Log, Partner, Product, User } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToPartner, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
+import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToLog, mapDocToPartner, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
-import { ConsumptionsType } from "../constants/Others";
+import { apiKey, ConsumptionsType, vapidKey } from "../constants/Others";
+import { getToken } from "firebase/messaging";
 
 
 
@@ -22,6 +23,7 @@ const employeesCollectionRef = collection(db, Collections.Employees);
 const filesCollectionRef = collection(db, Collections.Files);
 const partnersCollectionRef = collection(db, Collections.Partners);
 const consumptionCollectionRef = collection(db, Collections.Consumptions);
+const logCollectionsRef = collection(db, Collections.Logs);
 
 export const checkIfEmailIsAlreadyExist = async (email: string): Promise<Boolean> => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -219,6 +221,147 @@ export const getConsumptionsWithdrawOfPartner = async (partnerId: string): Promi
 
 
 
+
+
+
+// ================================= notification service ================================================== //
+
+
+export const requestPermissionAndGetToken = async () => {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const token = await getToken(messaging, {
+                vapidKey: vapidKey, // Replace with your VAPID key
+            });
+            console.log('FCM Token:', token);
+            return token;
+        } else {
+            console.log('Notification permission denied');
+        }
+    } catch (error) {
+        console.error('Error getting token:', error);
+    }
+};
+
+const requestPermissionAndStoreToken = async (userId: string) => {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const token = await getToken(messaging, {
+                vapidKey: 'YOUR_VAPID_KEY', // VAPID key from Firebase Console
+            });
+
+            // Store the token in Firestore under the user's document
+            await setDoc(doc(db, 'users', userId), { fcmToken: token }, { merge: true });
+            console.log('FCM Token saved to Firestore:', token);
+            return token;
+        } else {
+            console.log('Notification permission denied');
+        }
+    } catch (error) {
+        console.error('Error getting FCM token:', error);
+    }
+};
+
+
+export const sendNotification = async (token: string, title: string, body: string, additionalData) => {
+    const serverKey = apiKey; // Replace with your Firebase server key
+
+    const notificationPayload = {
+        to: token, // The FCM token of the device you want to send the notification to
+        notification: {
+            title: title,
+            body: body,
+        },
+        data: {
+            additionalData: additionalData,
+        },
+    };
+
+    try {
+        await axios.post('https://fcm.googleapis.com/fcm/send', notificationPayload, {
+            headers: {
+                Authorization: `key=${serverKey}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        console.log('Notification sent successfully');
+    } catch (error) {
+        console.error('Error sending notification:', error);
+    }
+};
+
+const sendNotificationToSuperAdmin = async (title: string, body: string) => {
+    try {
+        // Query Firestore to get the Super_Admin's FCM token
+        const usersRef = collection(db, 'users');
+        const superAdminQuery = query(usersRef, where('userType', '==', 'Super_Admin'));
+
+
+        const querySnapshot = await getDocs(superAdminQuery);
+        if (!querySnapshot.empty) {
+            const superAdminData = querySnapshot.docs[0].data(); // Get the first matching Super_Admin
+            const superAdminToken = superAdminData.fcmToken;
+
+            // Send a notification to the Super_Admin
+            const notificationPayload = {
+                to: superAdminToken, // Super_Admin's FCM Token
+                notification: {
+                    title: title,
+                    body: body,
+                },
+                data: {
+                    extraInfo: 'Additional information about the action',
+                },
+            };
+
+            await axios.post('https://fcm.googleapis.com/fcm/send', notificationPayload, {
+                headers: {
+                    Authorization: `key=${apiKey}`, // Firebase Server Key
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log('Notification sent to Super_Admin');
+        } else {
+            console.log('No Super_Admin found in Firestore.');
+        }
+    } catch (error) {
+        console.error('Error sending notification:', error);
+    }
+};
+
+
+
+// ======================== log service ==========================================
+
+export async function sendLog(log: Log) {
+    return await addDoc(logCollectionsRef, log);
+}
+
+
+
+export async function getAllLogs() {
+    return await getDocs(logCollectionsRef)
+}
+
+export async function getTodayLogs(): Promise<Log[]> {
+    const date = new Date();
+    // Get the start and end of today
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+    const q = query(
+        logCollectionsRef,
+        where("createdDate", ">=", Timestamp.fromDate(startOfDay)), // Start of today
+        where("createdDate", "<=", Timestamp.fromDate(endOfDay)),   // End of today
+        orderBy("createdDate", "asc")
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    // Map the documents to Consumption items
+    return querySnapshot.docs.map((doc) => mapDocToLog(doc));
+}
 
 
 
@@ -519,12 +662,6 @@ export const getTotalPriceOfFactor = (fac: CustomerFactor): number => {
 //  ======================== factors =================================
 
 
-const getTotalNumberOfFactors = async () => {
-    const snapshot = await getCountFromServer(salesCollectionRef);
-    const totalDocs = snapshot.data().count;
-    return totalDocs;
-}
-
 export const getCustomerPaymentByFactorId = async (factorId: string): Promise<CustomerPayment> => {
     const q = query(
         paymentCollectionRef,
@@ -553,12 +690,15 @@ export const deleteCustomerPaymentByFactorId = async (factorId: string, transact
 
     try {
         const querySnapshot = await getDocs(q);
+        console.log('gettings factor pays:', querySnapshot.docs);
 
         if (!querySnapshot.empty) {
             const payment = querySnapshot.docs[0];
             const paymentDocRef = doc(db, Collections.Payments, payment.id);
             // Use the transaction to delete the payment document
             transaction.delete(paymentDocRef);
+            console.log('after deleting factor pay');
+
         } else {
             throw new Error("Payment not found");
         }

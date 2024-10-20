@@ -98,6 +98,7 @@ function Layout() {
           type: actionTypes.SET_AUTHENTICATION,
           payload: localStorageAuthObj,
         });
+
       } else {
         // If user is not authenticated or localStorage is empty, redirect and dispatch logout
         dispatch({
