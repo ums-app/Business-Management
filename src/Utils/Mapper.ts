@@ -178,7 +178,7 @@ export const mapDocToLog = (docSnapshot: DocumentData): Log => {
         id: docSnapshot.id, // Use the document ID
         createdDate: docData.createdDate,
         message: docData.message,
-        rgistrar: docData.registrar,
+        registrar: docData.registrar,
         title: docData.title,
         data: docData.data
     };

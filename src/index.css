@@ -603,6 +603,8 @@ img {
   background-color: var(--main-color);
   font-size: 12px;
   color: #fff;
+  display: block;
+  width: max-content;
 }
 
 /* table */

@@ -180,4 +180,24 @@ export function getMonthsBetweenDates(startDate, endDate) {
 
 
 
+export const convertToJalali = (firebaseTimestamp) => {
+  const date = firebaseTimestamp.toDate(); // Convert Firebase Timestamp to JS Date
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // getMonth() is 0-based
+  const day = date.getDate();
+
+  // Convert Gregorian date to Jalali
+  const [jy, jm, jd] = shamsi.gregorianToJalali(year, month, day);
+
+  // Get time components
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  // Format the Jalali date and time
+  const formattedJalaliDate = `${jy}/${jm.toString().padStart(2, '0')}/${jd.toString().padStart(2, '0')} - ${hours}:${minutes}:${seconds}`;
+
+  return formattedJalaliDate;
+};
+
 
