@@ -456,7 +456,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
                 title: `${t('add')} ${t('factor')}`,
-                message: `${t('factor')} [${factorId}] ${t('successfullyAdded')} `,
+                message: `${t('factor')} [${customerFactor.customer.name} ${customerFactor.customer.lastName}] ${t('successfullyAdded')} `,
                 data: sanitizedCustomerFactor
             };
 
@@ -541,7 +541,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                     createdDate: new Date(),
                     registrar: `${authentication.name} ${authentication.lastname}`,
                     title: `${t('delete')} ${t('factor')}`,
-                    message: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
+                    message: ` ${t('factor')} [${customerFactor.customer.name} ${customerFactor.customer.lastName}] ${t('successfullyDeleted')}`,
                     data: customerFactor,
                 };
                 const sanitizedLog = Object.fromEntries(Object.entries(log).filter(([_, v]) => v != null));

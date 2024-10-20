@@ -14,13 +14,13 @@ import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateCo
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { auth, db, storage } from '../../../constants/FirebaseConfig';
 import Collections from '../../../constants/Collections';
-import { Partner, UpdateModeProps } from '../../../Types/Types';
+import { Log, Partner, UpdateModeProps } from '../../../Types/Types';
 import { ref, uploadBytes } from 'firebase/storage';
 import Folders from '../../../constants/Folders';
 import { toast } from 'react-toastify';
 import { UserTypes } from '../../../constants/Others';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { checkIfEmailIsAlreadyExist, getPartnerById, getUserImage } from '../../../Utils/FirebaseTools';
+import { checkIfEmailIsAlreadyExist, getPartnerById, getUserImage, sendLog } from '../../../Utils/FirebaseTools';
 import * as yup from "yup";
 import avatar from "../../../assets/img/profile_avatar.png";
 import ICONS from '../../../constants/Icons';
@@ -86,6 +86,15 @@ const AddPartner: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
                 await updateDoc(parnterDoc, formData);
                 console.log('Employee updated successfully');
 
+                const logUp: Log = {
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                    title: `${t('update')} ${t('partner')}`,
+                    message: `${t('partner')} [${partner.name} ${partner.lastName}] ${t('successfullyUpdated')}`,
+                    data: { ...formData, id: partnerId }
+                };
+                await sendLog(logUp)
+
                 await uploadImage(partner.email.toLowerCase());
                 console.log('Image uploaded successfully');
 
@@ -128,6 +137,14 @@ const AddPartner: React.FC<UpdateModeProps> = ({ updateMode = false }) => {
                 });
 
                 console.log('User entity saved with ID:', userDoc.id);
+                const log: Log = {
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                    title: `${t('add')} ${t('partner')}`,
+                    message: `${t('partner')} [${values.name} ${values.lastName}] ${t('successfullyAdded')}`,
+                    data: { ...values, id: partnerRes.id }
+                };
+                await sendLog(log);
 
                 console.log('Uploading image');
                 await uploadImage(values.email.toLowerCase());

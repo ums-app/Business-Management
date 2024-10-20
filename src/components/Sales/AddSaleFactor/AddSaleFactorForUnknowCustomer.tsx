@@ -372,7 +372,7 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
                 title: `${t('delete')} ${t('factor')}`,
-                message: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
+                message: ` ${t('factor')} [${customerFactor.customer.name}] ${t('successfullyDeleted')}`,
                 data: sanitizedLog
             };
 

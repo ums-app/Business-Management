@@ -12,7 +12,7 @@ import Button from "../UI/Button/Button";
 import ICONS from "../../constants/Icons";
 import { formatFirebaseDates } from "../../Utils/DateTimeUtils";
 import { mapDocToUploadedFile } from "../../Utils/Mapper";
-import { getAllUploadedFile } from "../../Utils/FirebaseTools";
+import { getAllUploadedFile, sendLog } from "../../Utils/FirebaseTools";
 import LoadingTemplateContainer from "../UI/LoadingTemplate/LoadingTemplateContainer";
 import HeadingLoadingTemplate from "../UI/LoadingTemplate/HeadingLoadingTemplate";
 import { useStateValue } from "../../context/StateProvider";
@@ -21,6 +21,7 @@ import Roles from "../../constants/Roles";
 import { useNavigate } from "react-router-dom";
 import NotFound from "../../pages/NotFound/NotFound";
 import Circle from "../UI/Loading/Circle";
+import { Log } from "../../Types/Types";
 
 
 export interface UploadedFile {
@@ -123,6 +124,14 @@ const FilesManagement: React.FC = () => {
         // End loading after all files are uploaded
         setUploading(false);
         setshowAddFile(false); // Close the file upload section after completion
+        const log: Log = {
+            createdDate: new Date(),
+            registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+            title: `${t('add')} ${t('files')}`,
+            message: `[${acceptedFiles.length}] ${t('files')} ${t('successfullyAdded')}`,
+            data: { ...acceptedFiles }
+        };
+        await sendLog(log);
         toast.success('successfullyAdded')
     };
 
