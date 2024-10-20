@@ -11,7 +11,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import Collections from '../../constants/Collections'
-import { checkIfEmailIsAlreadyExist, getUserImage } from '../../Utils/FirebaseTools.ts'
+import { checkIfEmailIsAlreadyExist, getUserImage, sendLog } from '../../Utils/FirebaseTools.ts'
 import "./Customers.css"
 import CustomDatePicker from '../UI/DatePicker/CustomDatePicker'
 import { ref, uploadBytes } from 'firebase/storage'
@@ -101,6 +101,15 @@ function AddCustomer({ updateMode = false }) {
                 const customerDoc = doc(db, Collections.Customers, customerId)
                 await updateDoc(customerDoc, { ...formData });
                 uploadImage(customer.email.toLowerCase())
+
+                const log = {
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                    title: `${t('update')} ${t('customer')}`,
+                    message: `${t('customer')} [${customerId}] ${t('successfullyUpdated')}`,
+                    data: { ...formData, id: customerId }
+                };
+                await sendLog(log);
                 toast.success(t('successfullyUpdated'))
                 nav('/customers/' + customerId)
             } else {
@@ -126,6 +135,15 @@ function AddCustomer({ updateMode = false }) {
                     userType: UserTypes.CUSTOMER,
                     disabled: false
                 })
+
+                const log = {
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                    title: `${t('add')} ${t('customer')}`,
+                    message: `${t('customer')} [${customerRes.id}] ${t('successfullyAdded')}`,
+                    data: { ...values, id: customerRes.id }
+                };
+                await sendLog(log);
 
                 toast.success(t('successfullyAdded'))
                 nav('/customers')

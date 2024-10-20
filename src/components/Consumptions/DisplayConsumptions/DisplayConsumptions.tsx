@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils'
 import { Consumption } from '../AddConsumptions/AddConsumptions'
 import { ConsumptionsType } from '../../../constants/Others'
-import { getConsumptionsByType } from '../../../Utils/FirebaseTools'
+import { getConsumptionsByType, sendLog } from '../../../Utils/FirebaseTools'
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate'
 import HeadingLoadingTemplate from '../../UI/LoadingTemplate/HeadingLoadingTemplate'
 import Button from '../../UI/Button/Button'
@@ -18,6 +18,7 @@ import { Tooltip } from 'react-tooltip'
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker'
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import { date } from 'yup'
+import { Log } from '../../../Types/Types'
 
 
 interface DisplayConsumptionsProps {
@@ -82,6 +83,16 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
         const consumptionDoc = doc(db, Collections.Consumptions, id)
         try {
             await deleteDoc(consumptionDoc)
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('delete')} ${t('consumptions')}`,
+                message: `${t('consumptions')} [${id}] ${t('successfullyDeleted')}`,
+                data: { ...filtered[index], id: id }
+            };
+
+            await sendLog(log);
+
             toast.success('successfullyDeleted')
             const temp = [...consumptions];
             temp.splice(index, 1);

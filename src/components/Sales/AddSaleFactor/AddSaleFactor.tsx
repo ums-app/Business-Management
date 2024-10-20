@@ -455,8 +455,8 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
             const log: Log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('factor')} ${t('successfullyAdded')}`,
-                message: `${t('factor')} : ${factorId} ${t('successfullyAdded')} `,
+                title: `${t('add')} ${t('factor')}`,
+                message: `${t('factor')} [${factorId}] ${t('successfullyAdded')} `,
                 data: sanitizedCustomerFactor
             };
 
@@ -510,7 +510,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
             console.log(customerFactor.id);
 
             const factorDoc = doc(db, Collections.Sales, customerFactor.id);
-            const logDoc = doc(collection(db, 'Logs')); // Create a reference to the Logs collection
+            const logDoc = doc(collection(db, Collections.Logs)); // Create a reference to the Logs collection
 
             await runTransaction(db, async (transaction) => {
                 // 1. Delete the factor document
@@ -540,7 +540,7 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
                 const log: Log = {
                     createdDate: new Date(),
                     registrar: `${authentication.name} ${authentication.lastname}`,
-                    title: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
+                    title: `${t('delete')} ${t('factor')}`,
                     message: ` ${t('factor')} [${customerFactor.id}] ${t('successfullyDeleted')}`,
                     data: customerFactor,
                 };

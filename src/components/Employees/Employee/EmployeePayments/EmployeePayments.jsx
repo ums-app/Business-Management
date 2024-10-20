@@ -10,7 +10,7 @@ import { actionTypes } from '../../../../context/reducer';
 import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { getAllCustomerPayments, getAllEmployeePayments, getCustomerFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools.ts';
+import { getAllCustomerPayments, getAllEmployeePayments, getCustomerFactors, sendLog, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools.ts';
 import Button from '../../../UI/Button/Button';
 import Modal from '../../../UI/modal/Modal';
 import { jalaliToGregorian } from 'shamsi-date-converter';
@@ -62,6 +62,16 @@ function EmployeePayments() {
             }
             console.log('sending payment doc: ', userPayment.amount);
             const added = await addDoc(paymentsCollectionRef, userPayment);
+
+            const log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('add')} ${t('payment')}`,
+                message: `${t('payment')} [${added.id}] ${t('successfullyAdded')}`,
+                data: { ...userPayment, id: added.id }
+            };
+            await sendLog(log);
+
             setPayments([{ ...userPayment, id: added.id }, ...payments])
             toast.success(t('successfullyAdded'));
             setShowPaymentModal(false)
@@ -101,6 +111,14 @@ function EmployeePayments() {
 
         try {
             await deleteDoc(paymentDoc)
+            const log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('delete')} ${t('payment')}`,
+                message: `${t('payment')} [${id}] ${t('successfullyDeleted')}`,
+                data: { ...payments[index], id: id }
+            };
+            await sendLog(log);
             const temp = [...payments];
             temp.splice(index, 1);
             setPayments(temp);

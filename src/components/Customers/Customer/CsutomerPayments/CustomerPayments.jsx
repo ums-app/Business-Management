@@ -9,7 +9,7 @@ import { actionTypes } from '../../../../context/reducer';
 import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { getAllCustomerPayments, getCustomerFactors, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools.ts';
+import { getAllCustomerPayments, getCustomerFactors, sendLog, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools.ts';
 import Button from '../../../UI/Button/Button';
 import Modal from '../../../UI/modal/Modal';
 import { jalaliToGregorian } from 'shamsi-date-converter';
@@ -83,8 +83,16 @@ function CustomerPayments() {
             // Log and send payment
             console.log('Sending payment document:', userPayment);
 
-            await addDoc(paymentsCollectionRef, userPayment);
+            const payDoc = await addDoc(paymentsCollectionRef, userPayment);
             console.log('Payment successfully sent to Firestore');
+            const log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('add')} ${t('payment')}`,
+                message: `${t('payment')} [${payDoc.id}] ${t('successfullyAdded')}`,
+                data: { ...userPayment, id: payDoc.id }
+            };
+            await sendLog(log);
 
             // Update state after successful addition
             setPayments(prevPayments => [...prevPayments, userPayment]);
@@ -134,6 +142,14 @@ function CustomerPayments() {
 
         try {
             await deleteDoc(paymentDoc)
+            const log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('delete')} ${t('payment')}`,
+                message: `${t('payment')} [${id}] ${t('successfullyDeleted')}`,
+                data: { ...payments[index], id: id }
+            };
+            await sendLog(log);
             const temp = [...payments];
             temp.splice(index, 1);
             setPayments(temp);

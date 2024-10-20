@@ -5,7 +5,7 @@ import { t } from 'i18next';
 import ICONS from '../../../constants/Icons';
 import { Consumption } from '../AddConsumptions/AddConsumptions';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
-import { getTodayConsumptions } from '../../../Utils/FirebaseTools';
+import { getTodayConsumptions, sendLog } from '../../../Utils/FirebaseTools';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import HeadingLoadingTemplate from '../../UI/LoadingTemplate/HeadingLoadingTemplate';
 import { useStateValue } from '../../../context/StateProvider';
@@ -16,6 +16,7 @@ import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
 import { Tooltip } from 'react-tooltip';
 import BtnTypes from '../../../constants/BtnTypes';
+import { Log } from '../../../Types/Types';
 
 const DailyConsumptions: React.FC = () => {
     const nav = useNavigate();
@@ -65,6 +66,16 @@ const DailyConsumptions: React.FC = () => {
         const consumptionDoc = doc(db, Collections.Consumptions, id)
         try {
             await deleteDoc(consumptionDoc)
+
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('delete')} ${t('consumptions')}`,
+                message: `${t('consumptions')} [${id}] ${t('successfullyDeleted')}`,
+                data: { ...consumptions[index], id: id }
+            };
+            await sendLog(log);
+
             toast.success('successfullyDeleted')
             const temp = [...consumptions];
             temp.splice(index, 1);

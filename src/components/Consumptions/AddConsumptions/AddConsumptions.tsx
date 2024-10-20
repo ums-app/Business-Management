@@ -1,6 +1,6 @@
 import { addDoc, collection, doc, Timestamp } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
-import { Partner } from '../../../Types/Types'
+import { Log, Partner } from '../../../Types/Types'
 import { useStateValue } from '../../../context/StateProvider'
 import { ConsumptionsType } from '../../../constants/Others'
 import { t } from 'i18next'
@@ -11,7 +11,7 @@ import * as yup from "yup";
 import { toast } from 'react-toastify'
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker'
-import { getPartners } from '../../../Utils/FirebaseTools'
+import { getPartners, sendLog } from '../../../Utils/FirebaseTools'
 import { isGcsTfliteModelOptions } from 'firebase-admin/lib/machine-learning/machine-learning-api-client'
 import { db } from '../../../constants/FirebaseConfig'
 import Collections from '../../../constants/Collections'
@@ -60,7 +60,16 @@ const AddConsumptions: React.FC = () => {
         }
 
         try {
-            addDoc(consumptionCollectionRef, consumption)
+            const consumptDoc = await addDoc(consumptionCollectionRef, consumption)
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('add')} ${t('consumptions')}`,
+                message: ` ${t('consumptions')} [${consumptDoc.id}] ${t('successfullyAdded')}`,
+                data: { ...consumption, id: consumptDoc.id }
+            };
+
+            await sendLog(log);
             toast.success('successfullyAdded')
             nav(-1)
         } catch (err) {

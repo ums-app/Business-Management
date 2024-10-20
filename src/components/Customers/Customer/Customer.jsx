@@ -19,7 +19,7 @@ import NotFound from '../../../pages/NotFound/NotFound';
 import { db } from '../../../constants/FirebaseConfig';
 import { toast } from 'react-toastify';
 import Collections from '../../../constants/Collections';
-import { disableUserAccountBy, enableUserAccountBy, getUserByEmail, getUserImage } from '../../../Utils/FirebaseTools.ts';
+import { disableUserAccountBy, enableUserAccountBy, getUserByEmail, getUserImage, sendLog } from '../../../Utils/FirebaseTools.ts';
 import DisplayLogo from "../../UI/DisplayLogo/DisplayLogo"
 import CustomerPayments from './CsutomerPayments/CustomerPayments';
 import ButtonLoadingTemplate from '../../UI/LoadingTemplate/ButtonLoadingTemplate';
@@ -152,6 +152,14 @@ function Customer() {
         try {
             await deleteDoc(customerDoc)
             await deleteDoc(userDoc);
+            const log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('delete')} ${t('customer')}`,
+                message: `${t('customer')} [${customerId}] ${t('successfullyDeleted')}`,
+                data: { ...customer, id: customerId }
+            };
+            await sendLog(log);
 
             navigate("/customers");
             toast.success('successfullyDeleted')
