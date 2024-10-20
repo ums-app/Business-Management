@@ -2,10 +2,10 @@ import { t } from 'i18next';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../../UI/Button/Button';
-import { Product, UpdateModeProps } from '../../../Types/Types';
+import { Log, Product, UpdateModeProps } from '../../../Types/Types';
 import { collection, deleteDoc, doc, getCountFromServer, runTransaction, Timestamp, writeBatch } from 'firebase/firestore';
 import ICONS from '../../../constants/Icons';
-import { getProducts } from '../../../Utils/FirebaseTools';
+import { getProducts, sendLog } from '../../../Utils/FirebaseTools';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { jalaliToGregorian } from 'shamsi-date-converter';
 import Collections from '../../../constants/Collections';
@@ -131,7 +131,6 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         const product = products.find(item => item.id == e.target.value)
         if (product) {
             const prods = [...purchaseFactor?.products]
-
             prods[index] = {
                 productName: product.name,
                 productId: product.id,
@@ -332,6 +331,15 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
             // Call the update function, which will also use a transaction
             await updateMultipleDocuments(purchaseFactor.products);
 
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('add')}  ${t('purchaseFactor')}}`,
+                message: `${t('purchaseFactor')} [${factorDocRef.id}] ${t('successfullyAdded')}`,
+                data: { ...factorTemp, id: factorDocRef.id }
+            };
+            await sendLog(log);
+
             toast.success(t('successfullyAdded'));
 
             setsaved(true);
@@ -400,6 +408,15 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
 
         try {
             await deleteDoc(factorDoc)
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('delete')}  ${t('purchaseFactor')}}`,
+                message: `${t('purchaseFactor')} [${purchaseProductId}] ${t('successfullyDeleted')}`,
+                data: { ...purchaseFactor, id: purchaseProductId }
+            };
+            await sendLog(log);
+
             toast.success(t('successfullyDeleted'));
             nav("/purchase-products")
         } catch (err) {

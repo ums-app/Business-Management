@@ -106,7 +106,7 @@ function AddCustomer({ updateMode = false }) {
                     createdDate: new Date(),
                     registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
                     title: `${t('update')} ${t('customer')}`,
-                    message: `${t('customer')} [${customerId}] ${t('successfullyUpdated')}`,
+                    message: `${t('customer')} [${customer.name} ${customer.lastName}] ${t('successfullyUpdated')}`,
                     data: { ...formData, id: customerId }
                 };
                 await sendLog(log);
@@ -140,7 +140,7 @@ function AddCustomer({ updateMode = false }) {
                     createdDate: new Date(),
                     registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
                     title: `${t('add')} ${t('customer')}`,
-                    message: `${t('customer')} [${customerRes.id}] ${t('successfullyAdded')}`,
+                    message: `${t('customer')} [${values.name} ${values.lastName}] ${t('successfullyAdded')}`,
                     data: { ...values, id: customerRes.id }
                 };
                 await sendLog(log);

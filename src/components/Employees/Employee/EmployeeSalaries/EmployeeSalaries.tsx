@@ -13,7 +13,7 @@ import ReactToPrint from 'react-to-print';
 import { useStateValue } from '../../../../context/StateProvider.js';
 import { actionTypes } from '../../../../context/reducer.js';
 import print from '../../../../constants/PrintCssStyles.js';
-import { getAllEmployeePayments } from '../../../../Utils/FirebaseTools.ts';
+import { getAllEmployeePayments, sendLog } from '../../../../Utils/FirebaseTools.ts';
 import { EmployeePaymentType } from '../../../../constants/Others.js';
 import HeadingMenuTemplate from '../../../UI/LoadingTemplate/HeadingMenuTemplate.jsx';
 import Modal from '../../../UI/modal/Modal.jsx';
@@ -22,7 +22,7 @@ import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker.jsx';
 import { db } from '../../../../constants/FirebaseConfig.js';
 import Collections from '../../../../constants/Collections.js';
 import { toast } from 'react-toastify';
-import { Employee, salaryHistory } from '../../../../Types/Types.ts';
+import { Employee, Log, salaryHistory } from '../../../../Types/Types.ts';
 
 export interface EmployeeSalariesProps {
     data: Employee;
@@ -43,7 +43,7 @@ const EmployeeSalaries: React.FC<EmployeeSalariesProps> = ({ data, setData }) =>
     const [monthlySalaries, setMonthlySalaries] = useState<MonthlySalaries[]>([]);
     const [totalPayments, setTotalPayments] = useState<number>();
     const [totalSalaries, setTotalSalaries] = useState<number>();
-    const [, dispatch] = useStateValue()
+    const [{ authentication }, dispatch] = useStateValue()
 
     let salaryRef: HTMLDivElement | null = null;
     const [updateSalary, setupdateSalary] = useState<salaryHistory>({
@@ -188,6 +188,15 @@ const EmployeeSalaries: React.FC<EmployeeSalariesProps> = ({ data, setData }) =>
                 ...data,
                 salaryHistory: salaryHistory
             })
+
+            const log: Log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('update')} ${t('salary')}`,
+                message: `${t('salary')} [${data.name} ${data.lastName}] ${t('successfullyUpdated')}`,
+                data: { ...data }
+            };
+            await sendLog(log);
 
             console.log('Employee updated successfully');
 

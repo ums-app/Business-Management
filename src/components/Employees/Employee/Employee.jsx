@@ -142,6 +142,14 @@ function Employee() {
         const employeeDoc = doc(db, 'Employees', employeeId)
         try {
             await deleteDoc(employeeDoc)
+            const log = {
+                createdDate: new Date(),
+                registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                title: `${t('delete')} ${t('employee')}`,
+                message: `${t('employee')} [${employee.name} ${employee.lastName}] ${t('successfullyDeleted')}`,
+                data: { ...employee }
+            };
+            await sendLog(log);
             navigate("/employees");
             toast.success('successfullyDeleted')
         } catch (err) {

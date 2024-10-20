@@ -15,7 +15,7 @@ import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateCo
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { createUserWithEmailAndPassword, updateEmail } from 'firebase/auth';
 import Collections from '../../../constants/Collections';
-import { checkIfEmailIsAlreadyExist, getUserImage } from '../../../Utils/FirebaseTools.ts';
+import { checkIfEmailIsAlreadyExist, getUserImage, sendLog } from '../../../Utils/FirebaseTools.ts';
 import Folders from '../../../constants/Folders';
 import { ref, uploadBytes } from 'firebase/storage';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
@@ -51,7 +51,7 @@ function AddEmployee({ updateMode = false }) {
         visitorAmount: 0
     })
     const [employee, setEmployee] = useState()
-    const [error, seterror] = useState()
+
 
     useEffect(() => {
         console.log('useeffect');
@@ -99,6 +99,14 @@ function AddEmployee({ updateMode = false }) {
 
                 await uploadImage(employee.email.toLowerCase());
                 console.log('Image uploaded successfully');
+                const log = {
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                    title: `${t('update')} ${t('employee')}`,
+                    message: `${t('employee')} [${employee.name} ${employee.lastName}] ${t('successfullyUpdated')}`,
+                    data: { ...formData, id: employeeId }
+                };
+                await sendLog(log);
 
                 toast.success(t('successfullyUpdated'));
                 nav('/employees/' + employeeId);
@@ -137,6 +145,15 @@ function AddEmployee({ updateMode = false }) {
                     userType: formData.visitorContractType == VisitorContractType.NONE ? UserTypes.EMPLOYEE : UserTypes.VISITOR,
                     disabled: false
                 });
+
+                const log = {
+                    createdDate: new Date(),
+                    registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
+                    title: `${t('add')} ${t('employee')}`,
+                    message: `${t('employee')} [${values.name} ${values.lastName}] ${t('successfullyAdded')}`,
+                    data: { ...values, id: employeeRes.id }
+                };
+                await sendLog(log);
 
                 console.log('User entity saved with ID:', userDoc.id);
 
