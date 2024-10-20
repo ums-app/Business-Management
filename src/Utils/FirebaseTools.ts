@@ -341,8 +341,10 @@ export async function sendLog(log: Log) {
 
 
 
-export async function getAllLogs() {
-    return await getDocs(logCollectionsRef)
+export async function getAllLogs(): Promise<Log[]> {
+    const querySnapshot = await getDocs(logCollectionsRef);
+    // Map the documents to Consumption items
+    return querySnapshot.docs.map((doc) => mapDocToLog(doc));
 }
 
 export async function getTodayLogs(): Promise<Log[]> {
