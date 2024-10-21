@@ -12,7 +12,6 @@ import { toast } from 'react-toastify'
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker'
 import { getPartners, sendLog } from '../../../Utils/FirebaseTools'
-import { isGcsTfliteModelOptions } from 'firebase-admin/lib/machine-learning/machine-learning-api-client'
 import { db } from '../../../constants/FirebaseConfig'
 import Collections from '../../../constants/Collections'
 import BtnTypes from '../../../constants/BtnTypes'
@@ -64,8 +63,8 @@ const AddConsumptions: React.FC = () => {
             const log: Log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('add')} ${t('consumptions')}`,
-                message: ` ${t('consumptions')} [${consumptDoc.id}] ${t('successfullyAdded')}`,
+                title: `${t('add')} ${t('consumptions')} `,
+                message: ` ${t('consumptions')} [${t('type')}:(${t(consumption.type)}) ${t('amount')}: (${consumption.amount}) ${consumption.type == ConsumptionsType.WITHDRAW && t('toAccount') + ": (" + consumption.to?.name + " " + consumption.to?.lastName})] ${t('successfullyAdded')}`,
                 data: { ...consumption, id: consumptDoc.id }
             };
 

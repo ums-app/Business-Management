@@ -83,11 +83,13 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
         const consumptionDoc = doc(db, Collections.Consumptions, id)
         try {
             await deleteDoc(consumptionDoc)
+            const consumption = consumptions[index];
             const log: Log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
                 title: `${t('delete')} ${t('consumptions')}`,
-                message: `${t('consumptions')} [${id}] ${t('successfullyDeleted')}`,
+                message: ` ${t('consumptions')} [${t('type')}:(${t(consumption.type)}) ${t('amount')}: (${consumption.amount}) ${consumption.type == ConsumptionsType.WITHDRAW && t('toAccount') + ": (" + consumption.to?.name + " " + consumption.to?.lastName})] ${t('successfullyDeleted')}`,
+
                 data: { ...filtered[index], id: id }
             };
 
