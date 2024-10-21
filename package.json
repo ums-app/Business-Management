@@ -19,7 +19,6 @@
     "chart.js": "^4.4.2",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "chartjs-plugin-zoom": "^2.0.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "firebase": "^10.13.1",
