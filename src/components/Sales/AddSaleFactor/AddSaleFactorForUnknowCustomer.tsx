@@ -20,7 +20,7 @@ import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { FactorType } from '../../../constants/FactorStatus';
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { deleteCustomerPaymentByFactorId, getProductById, getProducts, sendLog } from '../../../Utils/FirebaseTools';
+import { deleteCustomerPaymentByFactorId, getLatestFactor, getProductById, getProducts, sendLog } from '../../../Utils/FirebaseTools';
 import { Log, Product, UpdateModeProps } from '../../../Types/Types';
 import { ProductForSale, userPayment } from './AddSaleFactor';
 import Roles from '../../../constants/Roles';
@@ -67,18 +67,25 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
     })
 
     useEffect(() => {
-        const getTotalNumberOfFactors = async () => {
-            const snapshot = await getCountFromServer(salesCollectionRef);
-            const totalDocs = snapshot.data().count;
-            setcustomerFactor({
-                ...customerFactor,
-                indexNumber: Number(totalDocs) + 1001
-            })
+        if (!updateMode) {
+            getLatestFactor()
+                .then(res => {
+                    setcustomerFactor({
+                        ...customerFactor,
+                        indexNumber: Number(res.indexNumber) + 1
+                    })
+                })
+                .catch(err => {
+                    getCountFromServer(salesCollectionRef).then(snapshot => {
+                        const totalDocs = snapshot.data().count;
+                        setcustomerFactor({
+                            ...customerFactor,
+                            indexNumber: Number(totalDocs) + 1001
+                        })
+                    });
+                })
         }
 
-        if (!updateMode) {
-            getTotalNumberOfFactors();
-        }
         getProducts()
             .then(res => {
                 setProducts(res)

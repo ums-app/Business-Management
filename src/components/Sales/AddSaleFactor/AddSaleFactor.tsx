@@ -21,7 +21,7 @@ import { FactorType } from '../../../constants/FactorStatus';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 import { VisitorContractType } from '../../../constants/Others';
 import { CustomerFactor, CustomerPayment, Employee, Log, Product, UpdateModeProps } from '../../../Types/Types';
-import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getProducts, getUserImage, sendLog } from '../../../Utils/FirebaseTools';
+import { deleteCustomerPaymentByFactorId, getAllCustomerPayments, getCustomerFactors, getEmployeeById, getLatestFactor, getProducts, getUserImage, sendLog } from '../../../Utils/FirebaseTools';
 import Roles from '../../../constants/Roles';
 import NotFound from '../../../pages/NotFound/NotFound';
 import Circle from '../../UI/Loading/Circle';
@@ -106,22 +106,27 @@ const AddSaleFactor: React.FC<UpdateModeProps> = ({ updateMode }) => {
 
 
     useEffect(() => {
-        const getTotalNumberOfFactors = async () => {
-            const snapshot = await getCountFromServer(salesCollectionRef);
-            const totalDocs = snapshot.data().count;
-            setcustomerFactor({
-                ...customerFactor,
-                indexNumber: Number(totalDocs) + 1001
-            })
+        if (!updateMode) {
+            getLatestFactor()
+                .then(res => {
+                    setcustomerFactor({
+                        ...customerFactor,
+                        indexNumber: Number(res.indexNumber) + 1
+                    })
+                })
+                .catch(err => {
+                    getCountFromServer(salesCollectionRef).then(snapshot => {
+                        const totalDocs = snapshot.data().count;
+                        setcustomerFactor({
+                            ...customerFactor,
+                            indexNumber: Number(totalDocs) + 1001
+                        })
+                    });
+                })
         }
-
         addNewProdcut()
         if (updateMode) {
             setcustomerFactor(factor)
-        }
-
-        if (!updateMode) {
-            getTotalNumberOfFactors();
         }
 
     }, [])

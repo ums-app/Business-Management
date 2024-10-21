@@ -440,7 +440,8 @@ const fa = {
         events: 'رویدادها',
         event: 'رویداد',
         dailyEvents: 'رویدادهای روزانه',
-        successfullyDeleted: 'موفقانه حذف شد'
+        successfullyDeleted: 'با موفقیت حذف شد',
+        dailySales: 'فروشات روزانه',
 
 
 

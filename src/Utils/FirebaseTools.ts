@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, orderBy, query, setDoc, Timestamp, Transaction, updateDoc, where } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, limit, orderBy, query, setDoc, Timestamp, Transaction, updateDoc, where } from "firebase/firestore"
 import { db, messaging, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
@@ -599,6 +599,24 @@ export const getFactorsOfToday = async (): Promise<CustomerFactor[]> => {
         return [];
     }
 };
+
+export async function getLatestFactor(): Promise<CustomerFactor> {
+
+    // Create a query to get the most recent document
+    const q = query(salesCollectionRef, orderBy('createdAt', 'desc'), limit(1));
+
+    // Fetch the documents
+    const querySnapshot = await getDocs(q);
+
+    // Check if there's a document
+    if (!querySnapshot.empty) {
+        const latestDoc = querySnapshot.docs[0];
+        return mapDocToCustomerFactor(latestDoc.data());
+    } else {
+        console.log('No documents found');
+        throw new Error('not found')
+    }
+}
 
 
 export const getStandardFactors = async (): Promise<CustomerFactor[]> => {
