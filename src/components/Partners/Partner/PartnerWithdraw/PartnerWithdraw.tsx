@@ -9,6 +9,7 @@ import HeadingLoadingTemplate from '../../../UI/LoadingTemplate/HeadingLoadingTe
 import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
 import { useStateValue } from '../../../../context/StateProvider';
+import { jalaliToGregorian } from 'shamsi-date-converter';
 
 const PartnerWithdraw = () => {
     const { partnerId } = useParams();

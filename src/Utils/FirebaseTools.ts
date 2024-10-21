@@ -210,6 +210,8 @@ export const getConsumptionsWithdrawOfPartner = async (partnerId: string): Promi
         orderBy("date", "asc")
     );
     const querySnapshot = await getDocs(q);
+    console.log('cons: w: ', querySnapshot.docs);
+
     const items: Consumption[] = querySnapshot.docs.map((doc) => {
         return mapDocToConsumptions(doc)
     });

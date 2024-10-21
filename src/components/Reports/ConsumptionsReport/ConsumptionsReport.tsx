@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement, TimeScale } from 'chart.js';
-import 'chartjs-adapter-date-fns';  // For time-based x-axis
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement } from 'chart.js';
 import { gregorianToJalali } from 'shamsi-date-converter';
 import Collections from '../../../constants/Collections';
 import { Consumption } from '../../Consumptions/AddConsumptions/AddConsumptions';
-import { mapDocToConsumptions } from '../../../Utils/Mapper';
 import { t } from 'i18next';
-import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { getAllConsumptions } from '../../../Utils/FirebaseTools';
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement, TimeScale);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement);
 
 // Colors array for chart backgrounds
 const Colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
@@ -23,9 +19,6 @@ const dariMonths = [
     "حمل", "ثور", "جوزا", "سرطان", "اسد", "سنبله", "میزان", "عقرب", "قوس", "جدی", "دلو", "حوت"
 ];
 
-// Helper function to get titles dynamically
-const getComponentTitle = (title: string) => `${title}`;
-
 // Convert Gregorian month number to Dari
 const convertMonthToDari = (gregorianMonth: number): string => {
     return dariMonths[gregorianMonth - 1];
@@ -33,77 +26,63 @@ const convertMonthToDari = (gregorianMonth: number): string => {
 
 const ConsumptionsReport: React.FC = () => {
     const [data, setData] = useState<Consumption[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);  // For showing details of clicked date
-    const [loading, setloading] = useState<boolean>(true)
-    // Firestore reference
+    const [selectedYear, setSelectedYear] = useState<string | null>(null);  // For showing details of clicked year
+    const [loading, setLoading] = useState(true);
     const db = getFirestore();
 
     // Fetch data from Firestore
     useEffect(() => {
-        getAllConsumptions()
-            .then(res => {
-                setData(res);
+        getDocs(collection(db, Collections.Consumptions))
+            .then((querySnapshot) => {
+                const consumptions = querySnapshot.docs.map(doc => doc.data() as Consumption);
+                setData(consumptions);
             })
-            .finally(() => setloading(false))
+            .finally(() => setLoading(false));
     }, []);
 
-    // Prepare data for charts
-    const consumptionByType = {
-        CONSTANT_CONSUMPTION: 0,
-        WITHDRAW: 0,
-        RETAIL_CONSUMPTION: 0,
-        MAJOR_CONSUMPTION: 0,
-    };
-
-    const consumptionByDate: { [key: string]: { [key: string]: number } } = {};
+    // Group data by year
+    const consumptionByYear: { [key: string]: { [key: string]: number } } = {};
 
     data.forEach(entry => {
         const { type, amount, date } = entry;
-        consumptionByType[type] += parseFloat(amount);
-
-        // Convert the date to Shamsi year-month
         const dateObj = new Date(date.seconds * 1000);
         const [shamsiYear, shamsiMonth] = gregorianToJalali(dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate());
 
-        // Convert Gregorian month to Dari month
-        const monthInDari = convertMonthToDari(shamsiMonth);
-
-        const yearMonth = `${shamsiYear}-${monthInDari}`;
-
-        if (!consumptionByDate[yearMonth]) {
-            consumptionByDate[yearMonth] = { ...consumptionByType };
+        if (!consumptionByYear[shamsiYear]) {
+            consumptionByYear[shamsiYear] = {
+                CONSTANT_CONSUMPTION: 0,
+                WITHDRAW: 0,
+                RETAIL_CONSUMPTION: 0,
+                MAJOR_CONSUMPTION: 0,
+            };
         }
-        consumptionByDate[yearMonth][type] += parseFloat(amount);
+        consumptionByYear[shamsiYear][type] += parseFloat(amount);
     });
 
-    // Sort the dates (yearMonth) to ensure correct chronological order
-    const sortedDates = Object.keys(consumptionByDate).sort((a, b) => {
-        const [yearA] = a.split('-').map(Number);
-        const [yearB] = b.split('-').map(Number);
-        return yearA - yearB;
-    });
+    const sortedYears = Object.keys(consumptionByYear).sort((a, b) => Number(a) - Number(b));
 
-    const barData = {
-        labels: sortedDates,
+    // Prepare the first bar chart (grouped by year)
+    const barDataByYear = {
+        labels: sortedYears,
         datasets: [
             {
                 label: t('constantConsumptions'),
-                data: sortedDates.map(date => consumptionByDate[date].CONSTANT_CONSUMPTION),
+                data: sortedYears.map(year => consumptionByYear[year].CONSTANT_CONSUMPTION),
                 backgroundColor: Colors[0],
             },
             {
                 label: t('withdrawals'),
-                data: sortedDates.map(date => consumptionByDate[date].WITHDRAW),
+                data: sortedYears.map(year => consumptionByYear[year].WITHDRAW),
                 backgroundColor: Colors[1],
             },
             {
                 label: t('retailConsumptions'),
-                data: sortedDates.map(date => consumptionByDate[date].RETAIL_CONSUMPTION),
+                data: sortedYears.map(year => consumptionByYear[year].RETAIL_CONSUMPTION),
                 backgroundColor: Colors[2],
             },
             {
                 label: t('majorConsumptions'),
-                data: sortedDates.map(date => consumptionByDate[date].MAJOR_CONSUMPTION),
+                data: sortedYears.map(year => consumptionByYear[year].MAJOR_CONSUMPTION),
                 backgroundColor: Colors[3],
             },
         ],
@@ -124,76 +103,103 @@ const ConsumptionsReport: React.FC = () => {
         },
     };
 
-    // Handle bar chart click to display detailed data for that date
-    const handleBarClick = (elements: any) => {
-        if (elements.length > 0) {
-            const clickedIndex = elements[0].index;
-            const clickedDate = barData.labels[clickedIndex];
-            setSelectedDate(clickedDate as string);  // Set the selected date
+    // When a year is selected, prepare data for the second bar chart with all 12 months
+    const months = ["حمل", "ثور", "جوزا", "سرطان", "اسد", "سنبله", "میزان", "عقرب", "قوس", "جدی", "دلو", "حوت"];
+
+    // Track consumption types separately for each month
+    const consumptionByMonth: { [key: string]: { [key: string]: { [key: string]: number } } } = {};
+
+    data.forEach(entry => {
+        const { type, amount, date } = entry;
+        const dateObj = new Date(date.seconds * 1000);
+        const [shamsiYear, shamsiMonth] = gregorianToJalali(dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate());
+
+        if (!consumptionByMonth[shamsiYear]) {
+            consumptionByMonth[shamsiYear] = {
+                "حمل": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "ثور": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "جوزا": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "سرطان": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "اسد": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "سنبله": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "میزان": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "عقرب": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "قوس": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "جدی": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "دلو": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+                "حوت": { CONSTANT_CONSUMPTION: 0, WITHDRAW: 0, RETAIL_CONSUMPTION: 0, MAJOR_CONSUMPTION: 0 },
+            };
         }
-    };
-    const selectedBarData = selectedDate
+        const monthInDari = convertMonthToDari(shamsiMonth);
+        consumptionByMonth[shamsiYear][monthInDari][type] += parseFloat(amount);
+    });
+
+    const selectedBarData = selectedYear
         ? {
-            labels: sortedDates,
-            datasets: [{
-                label: `${t('consumptionStatsFor')} ${selectedDate}`,
-                data: [
-                    consumptionByDate[selectedDate]?.CONSTANT_CONSUMPTION ?? 0,
-                    consumptionByDate[selectedDate]?.WITHDRAW ?? 0,
-                    consumptionByDate[selectedDate]?.RETAIL_CONSUMPTION ?? 0,
-                    consumptionByDate[selectedDate]?.MAJOR_CONSUMPTION ?? 0,
-                ],
-                backgroundColor: Colors,
-            },
+            labels: months,
+            datasets: [
+                {
+                    label: t('constantConsumptions'),
+                    data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.CONSTANT_CONSUMPTION ?? 0),
+                    backgroundColor: Colors[0],
+                },
+                {
+                    label: t('withdrawals'),
+                    data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.WITHDRAW ?? 0),
+                    backgroundColor: Colors[1],
+                },
+                {
+                    label: t('retailConsumptions'),
+                    data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.RETAIL_CONSUMPTION ?? 0),
+                    backgroundColor: Colors[2],
+                },
+                {
+                    label: t('majorConsumptions'),
+                    data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.MAJOR_CONSUMPTION ?? 0),
+                    backgroundColor: Colors[3],
+                },
             ],
         }
         : null;
 
-
     if (loading) {
-        return <ShotLoadingTemplate />
+        return <ShotLoadingTemplate />;
     }
 
     return (
         <div className='display_flex flex_direction_column align_items_center full_width'>
             <h2>{t('consumptionsReport')}</h2>
 
-            {/* Bar Chart */}
+            {/* Bar Chart (Grouped by Year) */}
             <div className='input full_width padding_20' style={{ margin: '10px 30px', padding: '40px' }}>
                 <h3 className='text_align_center'>{t('collectionChart')}</h3>
                 <Bar
-                    data={barData}
+                    data={barDataByYear}
                     options={{
                         ...barOptions,
                         onClick: (event, elements) => {
                             if (elements.length > 0) {
                                 const clickedIndex = elements[0].index;
-                                const clickedDate = barData.labels[clickedIndex];
-                                setSelectedDate(clickedDate as string);
+                                const clickedYear = barDataByYear.labels[clickedIndex];
+                                setSelectedYear(clickedYear as string);
                             }
                         },
                     }}
                 />
             </div>
 
-            {/* Show detailed data when a bar is clicked */}
-            {selectedDate && (
+            {/* Show all 12 months of the selected year */}
+            {selectedYear && selectedBarData && (
                 <div className='input full_width padding_20' style={{ margin: '10px 30px', padding: '40px' }}>
-                    <h3 className='text_align_center'>{t(`${t('detailsFor')} ${selectedDate}`)}</h3>
+                    <h3 className='text_align_center'>{t(`${t('detailsFor')} ${selectedYear}`)}</h3>
                     <Bar data={selectedBarData} options={{ responsive: true }} />
                 </div>
             )}
 
-            {/* Doughnut Chart */}
-            {/* <div className='input full_width padding_20' style={{ margin: '10px 30px', padding: '40px' }}>
-                <h3 className='text_align_center'>{t('Doughnut Chart')}</h3>
-                <Doughnut data={barData} options={{ responsive: true }} />
-            </div> */}
-
             {/* Line Chart */}
             <div className='input full_width' style={{ margin: '10px 30px', padding: '40px' }}>
                 <h3 className='text_align_center'>{t('Line Chart (Based on Date)')}</h3>
-                <Line data={barData} options={{ responsive: true }} />
+                <Line data={barDataByYear} options={{ responsive: true }} />
             </div>
         </div>
     );
