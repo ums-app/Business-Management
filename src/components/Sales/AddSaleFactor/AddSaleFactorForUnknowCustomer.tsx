@@ -296,7 +296,7 @@ const AddSaleFactorForUnknowCustomer: React.FC<UpdateModeProps> = ({ updateMode 
                     createdDate: new Date(),
                     registrar: `${authentication.name} ${authentication.lastname}`, // Track the current user
                     title: `${t('add')} ${t('factor')}`,
-                    message: `${t('factor')} [${factorDocRef.id}] ${t('successfullyAdded')} `,
+                    message: `${t('factor')} [${customerFactor.customer.name}] ${t('successfullyAdded')} `,
                     data: sanitizedLog
                 };
                 await sendLog(log); // Outside the transaction

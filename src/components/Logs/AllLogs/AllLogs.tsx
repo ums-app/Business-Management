@@ -17,7 +17,7 @@ import Pagination from '../../UI/Pagination/Pagination';
 import { Tooltip } from 'react-tooltip';
 
 const AllLogs: React.FC = () => {
-    const [loading, setloading] = useState<boolean>(true)
+    const [loading, setloading] = useState<boolean>(false)
     const [logs, setlogs] = useState<Log[]>([]);
     const [filtered, setFiltered] = useState<Log[]>([])
     const [range, setrange] = useState<Date[]>([])
@@ -29,15 +29,6 @@ const AllLogs: React.FC = () => {
     const [firstVisible, setFirstVisible] = useState<DocumentData | null>(null);
     const [isPrevPageAvailable, setIsPrevPageAvailable] = useState<boolean>(false); // To disable/enable previous page button
     const logCollectionRef = collection(db, Collections.Logs);
-
-    useEffect(() => {
-        getAllLogs()
-            .then(res => {
-                setlogs(res)
-                setFiltered(res)
-            })
-            .finally(() => setloading(false))
-    }, [])
 
 
     useEffect(() => {
@@ -85,43 +76,6 @@ const AllLogs: React.FC = () => {
 
     }
 
-
-
-
-    // Function to get the documents based on search values (indexNumber or customer name)
-    const getDocsBySearchValue = async () => {
-        setloading(true);
-
-        try {
-            // Dynamically build the query based on search conditions
-            let queryConstraints: QueryConstraint[] = [orderBy("createdDate", "desc"), limit(pageSize)];
-
-
-            const firstPageQuery = query(logCollectionRef, ...queryConstraints);
-
-            const querySnapshot = await getDocs(firstPageQuery);
-
-            if (querySnapshot.empty) {
-                console.log('No documents found.');
-                setlogs([]);
-                setloading(false);
-                return;
-            }
-
-            const customerData = querySnapshot.docs.map(doc => mapDocToLog(doc));
-            setlogs(customerData);
-
-            // Set pagination boundaries
-            setFirstVisible(querySnapshot.docs[0]);
-            setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-            setIsPrevPageAvailable(false); // No previous page on the first load
-            setCurrentPage(1);
-        } catch (error) {
-            console.error('Error fetching documents: ', error);
-        } finally {
-            setloading(false);
-        }
-    };
 
     // Get the total number of documents in the collection
     const getTotalDocumentCount = async (pageSize: number) => {
