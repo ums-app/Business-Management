@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Consumption } from '../../../Consumptions/AddConsumptions/AddConsumptions';
-import DisplayConsumptions from '../../../Consumptions/DisplayConsumptions/DisplayConsumptions';
-import { ConsumptionsType } from '../../../../constants/Others';
-import { getConsumptionsByType, getConsumptionsWithdrawOfPartner } from '../../../../Utils/FirebaseTools';
+import { getConsumptionsWithdrawOfPartner } from '../../../../Utils/FirebaseTools';
 import Button from '../../../UI/Button/Button';
 import { t } from 'i18next';
 import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';

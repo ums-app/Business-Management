@@ -58,7 +58,7 @@ const AddConsumptions: React.FC = () => {
             toast.error('pleaseFillTheForm');
             return;
         }
-
+        setloading(true)
         try {
             const consumptDoc = await addDoc(consumptionCollectionRef, consumption)
             const log: Log = {
@@ -75,6 +75,8 @@ const AddConsumptions: React.FC = () => {
         } catch (err) {
             console.log(err);
 
+        } finally {
+            setloading(false)
         }
 
         console.log(consumption);

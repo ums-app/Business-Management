@@ -177,11 +177,9 @@ const EmployeePaymentsForEmployee = () => {
                     <table className='custom_table full_width'>
                         <thead>
                             <tr style={{ background: 'orange' }}>
-                                <th colSpan={7}>{t('status')}</th>
+                                <th colSpan={7}>{t('status')} {t('sales')}</th>
                             </tr>
                             <tr style={{ background: 'orange' }}>
-                                <th>{t('collection')} {t('salaries')}</th>
-                                <th>{t('totalPaymentForSalary')}</th>
                                 <th>{t('totalAll')} {t('sales')}</th>
                                 <th>{t('shareOfSales')}</th>
                                 <th>{t('payments')} {t('customers')} </th>
@@ -193,8 +191,6 @@ const EmployeePaymentsForEmployee = () => {
                             {!totalAmount.ready ? <tr><td colSpan={7}>{<HeadingLoadingTemplate />}</td></tr> :
                                 <tr>
                                     {/* <td>{allFactors.length}</td> */}
-                                    <td>{totalAmount.totalAmountSalaries.toFixed(2)}</td>
-                                    <td>{totalAmount.totalAmountPaymentForSalaries.toFixed(2)}</td>
                                     <td>
                                         {totalAmount.totalAmountOfAllFactors.toFixed(2)}
                                     </td>
@@ -208,10 +204,35 @@ const EmployeePaymentsForEmployee = () => {
                                         {totalAmount.totalAmountOfAllFactors - totalAmount.totalAmountOfCustomerPaid}
                                     </td>
                                     <td>
-                                        {Math.abs(totalAmount.totalWidrawableAmount)}
+                                        {Math.abs(totalAmount.totalWidrawableAmount).toFixed(2)}
                                         <MoneyStatus number={totalAmount.totalWidrawableAmount * -1} />
                                     </td>
 
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <table className='custom_table full_width'>
+                        <thead>
+                            <tr style={{ background: 'orange' }}>
+                                <th colSpan={7}>{t('status')} {t('salary')} </th>
+                            </tr>
+                            <tr style={{ background: 'orange' }}>
+                                <th>{t('collection')} {t('salaries')}</th>
+                                <th>{t('totalPaymentForSalary')}</th>
+                                <th>{t('result')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {!totalAmount.ready ? <tr><td colSpan={3}>{<HeadingLoadingTemplate />}</td></tr> :
+                                <tr>
+                                    {/* <td>{allFactors.length}</td> */}
+                                    <td>{totalAmount.totalAmountSalaries.toFixed(2)}</td>
+                                    <td>{totalAmount.totalAmountPaymentForSalaries.toFixed(2)}</td>
+                                    <td>
+                                        {Math.abs(totalAmount.totalAmountSalaries - totalAmount.totalAmountPaymentForSalaries).toFixed(2)}
+                                        <MoneyStatus number={totalAmount.totalAmountSalaries - totalAmount.totalAmountPaymentForSalaries} />
+                                    </td>
                                 </tr>
                             }
                         </tbody>

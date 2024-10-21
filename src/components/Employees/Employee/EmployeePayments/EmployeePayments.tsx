@@ -1,31 +1,41 @@
 import { addDoc, collection, deleteDoc, doc, getDocs, query, Timestamp, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
-import { useStateValue } from '../../../../context/StateProvider';
+import { useStateValue } from '../../../../context/StateProvider.js';
 import { t } from 'i18next';
-import { db } from '../../../../constants/FirebaseConfig';
-import Collections from '../../../../constants/Collections';
+import { db } from '../../../../constants/FirebaseConfig.js';
+import Collections from '../../../../constants/Collections.js';
 import { useNavigate, useParams } from 'react-router-dom';
-import ICONS from '../../../../constants/Icons';
-import { actionTypes } from '../../../../context/reducer';
-import { formatFirebaseDates } from '../../../../Utils/DateTimeUtils';
-import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer';
-import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate';
-import { getAllCustomerPayments, getAllEmployeePayments, getCustomerFactors, sendLog, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools.ts';
-import Button from '../../../UI/Button/Button';
-import Modal from '../../../UI/modal/Modal';
+import ICONS from '../../../../constants/Icons.js';
+import { actionTypes } from '../../../../context/reducer.js';
+import { convertFirebaseDatesToDate, formatFirebaseDates, getMonthsBetweenDates } from '../../../../Utils/DateTimeUtils.js';
+import LoadingTemplateContainer from '../../../UI/LoadingTemplate/LoadingTemplateContainer.jsx';
+import ShotLoadingTemplate from '../../../UI/LoadingTemplate/ShotLoadingTemplate.jsx';
+import { getAllCustomerPayments, getAllEmployeePayments, getAllVisitorFactors, getCustomerFactors, getCustomerPaymentByCustomerIds, getEmployeeById, sendLog, totalAmountOfAllCustomerPayments, totalAmountOfAllFactors } from '../../../../Utils/FirebaseTools.ts';
+import Button from '../../../UI/Button/Button.tsx';
+import Modal from '../../../UI/modal/Modal.jsx';
 import { jalaliToGregorian } from 'shamsi-date-converter';
-import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker';
+import CustomDatePicker from '../../../UI/DatePicker/CustomDatePicker.jsx';
 import { toast } from 'react-toastify';
-import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus';
+import MoneyStatus from '../../../UI/MoneyStatus/MoneyStatus.jsx';
 import { Tooltip } from 'react-tooltip';
-import { EmployeePaymentType } from '../../../../constants/Others';
+import { EmployeePaymentType } from '../../../../constants/Others.js';
+import { CustomerFactor, CustomerPayment, Employee, EmployeePayment } from '../../../../Types/Types.ts';
+import { FactorType } from '../../../../constants/FactorStatus.js';
+import HeadingLoadingTemplate from '../../../UI/LoadingTemplate/HeadingLoadingTemplate.jsx';
+import BtnTypes from '../../../../constants/BtnTypes.js';
 
-function EmployeePayments() {
+function EmployeePayments(): React.FC {
     const [{ authentication }, dispatch] = useStateValue()
     const { employeeId } = useParams();
-    const [payments, setPayments] = useState();
+    const [payments, setPayments] = useState<EmployeePayment[]>([]);
     const paymentsCollectionRef = collection(db, Collections.EmployeePayments);
     const [showPaymentModal, setShowPaymentModal] = useState(false)
+
+    const [allFactors, setallFactors] = useState<CustomerFactor[]>([]);
+    const [customerPayments, setCustomerPayments] = useState<CustomerPayment[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
+
+
     // this is for tracking all user payments
     const [userPayment, setUserPayment] = useState({
         amount: 0,
@@ -38,12 +48,153 @@ function EmployeePayments() {
 
 
     useEffect(() => {
+        if (employeeId)
+            getAllEmployeePayments(employeeId).then(res => {
+                console.log(res);
+                setPayments(res)
+            })
+
+    }, []);
+
+
+    const [totalAmount, setTotalAmount] = useState({
+        totalAmountOfAllFactors: 0,
+        totalAmountOfShareFromSales: 0,
+        totalAmountOfCustomerPaid: 0,
+        totalAmountSalaries: 0,
+        totalAmountPaymentForSalaries: 0,
+        totalAmountPaymentForSales: 0,
+        totalWidrawableAmount: 0,
+        ready: false
+    })
+    const [employee, setEmployee] = useState<Employee>()
+
+    useEffect(() => {
+        if (!employeeId) return;
+        // get the employee all payment which we paid to him but the sales payment
         getAllEmployeePayments(employeeId).then(res => {
-            console.log(res);
             setPayments(res)
         })
 
-    }, []);
+        getAllVisitorFactors(employeeId)
+            .then(res => {
+                setallFactors(res)
+
+            }).catch(err => {
+                setallFactors([])
+            })
+
+        getEmployeeById(employeeId)
+            .then(res => {
+                setEmployee(res)
+            })
+    }, [employeeId]);
+
+
+    useEffect(() => {
+        if (allFactors) {
+            setLoading(true);
+            // Use Array.from to ensure compatibility across all browsers (including Safari)
+            const ids: string[] = Array.from(
+                new Set(
+                    allFactors
+                        .filter(item => item.type === FactorType.STANDARD_FACTOR)
+                        .map(item => item.customer.id)
+                )
+            );
+            getCustomerPaymentByCustomerIds(ids)
+                .then(res => {
+                    setCustomerPayments(res)
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [allFactors]);
+
+    useEffect(() => {
+        calculateTotalAmount(payments, allFactors, customerPayments, employee)
+    }, [allFactors, payments, employee, customerPayments])
+
+    // calculate total payments of the employee
+    const calculateTotalAmount = (pays: EmployeePayment[], customerFactors: CustomerFactor[], customerPayments: CustomerPayment[], employee: Employee) => {
+        console.log('calculate func', pays, customerFactors, customerPayments, employee);
+
+        let totalPaidForSales = 0;
+        let totalPaidForSalaries = 0;
+        pays.forEach(pay => {
+            if (pay.type == EmployeePaymentType.SALES) {
+                totalPaidForSales += Number(pay.amount);
+            } else if (pay.type == EmployeePaymentType.SALARY) {
+                totalPaidForSalaries += Number(pay.amount);
+            }
+        })
+        let totalAmountOfFactors = 0;
+        let totalShareOfEmployee = 0
+        customerFactors.forEach(fac => {
+            totalAmountOfFactors += Number(fac.totalAll)
+            totalShareOfEmployee += fac.visitorAccount ? fac?.visitorAccount?.visitorAmount : 0;
+        })
+        let totalAmountOfCustomerPaid = 0;
+        customerPayments.forEach(cp => {
+            totalAmountOfCustomerPaid += Number(cp.amount)
+        })
+
+
+        setTotalAmount({
+            totalAmountOfAllFactors: totalAmountOfFactors,
+            totalAmountPaymentForSalaries: totalPaidForSalaries,
+            totalAmountPaymentForSales: totalPaidForSales,
+            totalAmountOfCustomerPaid: totalAmountOfCustomerPaid,
+            totalAmountOfShareFromSales: totalShareOfEmployee,
+            totalAmountSalaries: employee ? calculateMonthlySalaries(employee) : 0,
+            totalWidrawableAmount: calculateWithdrawableAmount(totalAmountOfCustomerPaid, totalShareOfEmployee, totalAmountOfFactors, totalPaidForSales),
+            ready: (customerPayments && employee && pays && allFactors) ? true : false
+
+        })
+        setLoading(false)
+    }
+
+    const calculateWithdrawableAmount = (totalCustomersPaid: number, totalShareOfEmployee: number, totalAmountOfAllFactors: number, totalPaidForSales: number) => {
+        // console.log('totalCusPaid:', totalCustomersPaid, ' totalshareOdEMp: ', totalShareOfEmployee, " totalAmountOfALLFac: ", totalAmountOfAllFactors)
+        if (totalAmountOfAllFactors == 0) return 0
+        return ((totalCustomersPaid * totalShareOfEmployee) / totalAmountOfAllFactors) - totalPaidForSales;
+    }
+
+
+    const calculateMonthlySalaries = (employee: Employee) => {
+        // console.log(employee);
+
+        const currentDate = new Date();
+
+        let joinedDate = convertFirebaseDatesToDate(employee?.joinedDate); // Convert Firestore timestamp to JS date
+        const salaryHistory = employee?.salaryHistory || []; // Fallback to an empty array if salaryHistory is undefined
+        const totalMonths = getMonthsBetweenDates(joinedDate, currentDate); // Ensure this function is correct
+
+        let total = 0;
+
+        for (let monthIndex = 0; monthIndex < totalMonths.length - 1; monthIndex++) {
+            // Calculate the start date of each month
+            let monthStartDate = new Date(joinedDate);
+            monthStartDate.setMonth(monthStartDate?.getMonth() + monthIndex);
+            let applicableSalary = employee.salary; // Default to employee's current salary
+            // Find the most recent salary change applicable to the month
+            for (let i = salaryHistory.length - 1; i >= 0; i--) {
+                const salaryChangeDate = convertFirebaseDatesToDate(salaryHistory[i]?.date);
+                if (salaryChangeDate <= monthStartDate) {
+                    applicableSalary = salaryHistory[i].amount;
+                    monthStartDate.setDate(convertFirebaseDatesToDate(salaryHistory[i].date).getDate())
+                    break;
+                }
+            }
+            total += Number(applicableSalary);
+
+        }
+        console.log('salari: ', total);
+
+        return total;
+    };
+
 
     const sendNewPaymentToAPI = async () => {
         dispatch({
@@ -66,8 +217,8 @@ function EmployeePayments() {
             const log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('add')} ${t('payment')}`,
-                message: `${t('payment')} [${added.id}] ${t('successfullyAdded')}`,
+                title: `${t('add')} ${t('payment')} ${t('of')} ${t('employee')}`,
+                message: `${t('payment')} [${employee?.name} ${employee?.lastName} : ${t('amount')}:(${userPayment.amount})] ${t('successfullyAdded')}`,
                 data: { ...userPayment, id: added.id }
             };
             await sendLog(log);
@@ -86,7 +237,7 @@ function EmployeePayments() {
         }
     }
 
-    const showDeleteModal = (id, index) => {
+    const showDeleteModal = (id: string, index: number) => {
         dispatch({
             type: actionTypes.SHOW_ASKING_MODAL,
             payload: {
@@ -98,7 +249,7 @@ function EmployeePayments() {
         });
     };
 
-    const handleDeletePayment = async (id, index) => {
+    const handleDeletePayment = async (id: string, index: number) => {
         dispatch({
             type: actionTypes.SET_GLOBAL_LOADING,
             payload: { value: true },
@@ -114,8 +265,8 @@ function EmployeePayments() {
             const log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('delete')} ${t('payment')}`,
-                message: `${t('payment')} [${id}] ${t('successfullyDeleted')}`,
+                title: `${t('delete')} ${t('payment')}  ${t('of')} ${t('employee')}`,
+                message: `${t('payment')} [${employee?.name} ${employee?.lastName} : ${t('amount')}:(${payments[index].amount})] ${t('successfullyDeleted')}`,
                 data: { ...payments[index], id: id }
             };
             await sendLog(log);
@@ -143,35 +294,54 @@ function EmployeePayments() {
 
     return (
         <div>
-            {/* <div className='full_width input margin_bottom_10'>
-                <p className='title_2'>{t('status')}</p>
+
+            <div className='full_width input margin_bottom_10'>
+                {/* <p className='title_2'>{t('status')}</p> */}
                 <div>
-                    <table className='custom_table full_width' >
+                    <table className='custom_table full_width'>
                         <thead>
-                            <tr style={{ backgroundColor: '#f744e2' }}>
-                                <th>{t('totalAmountOfAllPurchases')} </th>
-                                <th>{t('totalAmountOfAllPayments')} </th>
-                                <th>{t('totalRemainedAmount')} </th>
+                            <tr style={{ background: 'orange' }}>
+                                <th colSpan={7}>{t('status')}</th>
+                            </tr>
+                            <tr style={{ background: 'orange' }}>
+                                <th>{t('collection')} {t('salaries')}</th>
+                                <th>{t('totalPaymentForSalary')}</th>
+                                <th>{t('remainedSalari')}</th>
+                                <th>{t('shareOfSales')}</th>
+                                {/* <th>{t('payments')} {t('customers')} </th> */}
+                                <th>{t('totalPaymentForSales')}</th>
+                                <th>{t('withdrawableAmount')}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>{totalFactors}</td>
-                                <td>{totalPayments}</td>
-                                <td>
-                                    {Math.abs(totalFactors - totalPayments)}
-                                    <MoneyStatus number={totalFactors - totalPayments} />
-                                </td>
-                            </tr>
+                            {!totalAmount.ready ? <tr><td colSpan={7}>{<HeadingLoadingTemplate />}</td></tr> :
+                                <tr>
+                                    {/* salari */}
+                                    <td>{totalAmount.totalAmountSalaries.toFixed(2)}</td>
+                                    <td>{totalAmount.totalAmountPaymentForSalaries.toFixed(2)}</td>
+                                    <td>
+                                        {Math.abs(totalAmount.totalAmountSalaries - totalAmount.totalAmountPaymentForSalaries).toFixed(2)}
+                                        <MoneyStatus number={(totalAmount.totalAmountSalaries - totalAmount.totalAmountPaymentForSalaries) * -1} />
+                                    </td>
+                                    {/* sales*/}
 
+                                    <td>
+                                        {totalAmount.totalAmountOfShareFromSales.toFixed(2)}
+                                    </td>
+                                    <td>
+                                        {totalAmount.totalAmountPaymentForSales}
+                                    </td>
+                                    <td>
+                                        {Math.abs(totalAmount.totalWidrawableAmount).toFixed(2)}
+                                        <MoneyStatus number={totalAmount.totalWidrawableAmount * -1} />
+                                    </td>
+
+                                </tr>
+                            }
                         </tbody>
                     </table>
-
-
                 </div>
-
-            </div> */}
-
+            </div>
 
             <Button
                 text={t('add') + " " + t('receipt')}
@@ -316,9 +486,9 @@ function EmployeePayments() {
                                 <td>{pay.type == EmployeePaymentType.SALARY ? t('salary') : t('sales')}</td>
                                 <td>
                                     <Button
-                                        icon={ICONS.trash}
+                                        text={t('delete')}
                                         onClick={() => showDeleteModal(pay.id, index)}
-                                        type={'crossBtn'}
+                                        btnType={BtnTypes.danger}
                                         id={'delete_row'}
                                     />
                                     <Tooltip

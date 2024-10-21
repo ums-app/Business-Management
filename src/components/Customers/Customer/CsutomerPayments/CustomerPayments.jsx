@@ -20,7 +20,7 @@ import ICONS from '../../../../constants/Icons';
 import { Tooltip } from 'react-tooltip';
 import BtnTypes from '../../../../constants/BtnTypes.js';
 
-function CustomerPayments() {
+function CustomerPayments({ data }) {
     const [{ authentication }, dispatch] = useStateValue()
     const { customerId } = useParams();
     const [payments, setPayments] = useState();
@@ -88,8 +88,8 @@ function CustomerPayments() {
             const log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('add')} ${t('payment')}`,
-                message: `${t('payment')} [${payDoc.id}] ${t('successfullyAdded')}`,
+                title: `${t('add')} ${t('payment')} ${t('of')} ${t('customer')}`,
+                message: `${t('payment')} [${data?.name} ${data?.lastName} : ${t('amount')}:(${userPayment.amount})] ${t('successfullyAdded')}`,
                 data: { ...userPayment, id: payDoc.id }
             };
             await sendLog(log);
@@ -145,8 +145,8 @@ function CustomerPayments() {
             const log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('delete')} ${t('payment')}`,
-                message: `${t('payment')} [${id}] ${t('successfullyDeleted')}`,
+                title: `${t('delete')} ${t('payment')} ${t('of')} ${t('customer')}`,
+                message: `${t('payment')} [${data?.name} ${data?.lastName} : ${t('amount')}:(${payments[index].amount})] ${t('successfullyDeleted')}`,
                 data: { ...payments[index], id: id }
             };
             await sendLog(log);

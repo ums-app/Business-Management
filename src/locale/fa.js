@@ -442,6 +442,12 @@ const fa = {
         dailyEvents: 'رویدادهای روزانه',
         successfullyDeleted: 'با موفقیت حذف شد',
         dailySales: 'فروشات روزانه',
+        consumptionsReport: 'گزارشات مصارف',
+        consumptionStatsFor: 'وضعیت مصارف در',
+        collectionChart: 'نمودار کُلی',
+        chart: 'نمودار',
+        detailsFor: 'جزئیات برای',
+        remainedSalari: 'باقیمانده از معاش'
 
 
 

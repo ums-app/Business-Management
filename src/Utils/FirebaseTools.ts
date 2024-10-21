@@ -206,7 +206,7 @@ export const getConsumptionsWithdrawOfPartner = async (partnerId: string): Promi
     const q = query(
         consumptionCollectionRef,
         where("type", "==", ConsumptionsType.WITHDRAW),
-        where("to", "==", partnerId),
+        where("to.id", "==", partnerId),
         orderBy("date", "asc")
     );
     const querySnapshot = await getDocs(q);
@@ -215,6 +215,11 @@ export const getConsumptionsWithdrawOfPartner = async (partnerId: string): Promi
     });
     return items
 }
+
+export const getAllConsumptions = async (): Promise<Consumption[]> => {
+    const querySnapshot = await getDocs(collection(db, Collections.Consumptions));
+    return querySnapshot.docs.map(doc => mapDocToConsumptions(doc));
+};
 
 
 
