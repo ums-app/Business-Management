@@ -5,11 +5,12 @@ import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
 import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Log, Partner, Product, User } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToLog, mapDocToPartner, mapDocToProduct, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
+import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToLog, mapDocToPartner, mapDocToProduct, mapDocToProductPurchase, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
 import { apiKey, ConsumptionsType, vapidKey } from "../constants/Others";
 import { getToken } from "firebase/messaging";
+import { PurchaseFactor } from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts";
 
 
 
@@ -24,6 +25,7 @@ const filesCollectionRef = collection(db, Collections.Files);
 const partnersCollectionRef = collection(db, Collections.Partners);
 const consumptionCollectionRef = collection(db, Collections.Consumptions);
 const logCollectionsRef = collection(db, Collections.Logs);
+const purchasesCollectionRef = collection(db, Collections.Purchases)
 
 export const checkIfEmailIsAlreadyExist = async (email: string): Promise<Boolean> => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -222,6 +224,36 @@ export const getAllConsumptions = async (): Promise<Consumption[]> => {
     const querySnapshot = await getDocs(collection(db, Collections.Consumptions));
     return querySnapshot.docs.map(doc => mapDocToConsumptions(doc));
 };
+
+
+
+// =====================================product purchase =================================================
+
+
+export const getProductPurchases = async (): Promise<PurchaseFactor[]> => {
+    const querySnapshot = await getDocs(purchasesCollectionRef);
+    return querySnapshot.docs.map((doc) => mapDocToProductPurchase(doc));
+
+};
+
+
+export async function getLatestPurchaseProrductFactor(): Promise<PurchaseFactor> {
+
+    // Create a query to get the most recent document
+    const q = query(salesCollectionRef, orderBy('createdAt', 'desc'), limit(1));
+
+    // Fetch the documents
+    const querySnapshot = await getDocs(q);
+
+    // Check if there's a document
+    if (!querySnapshot.empty) {
+        const latestDoc = querySnapshot.docs[0];
+        return mapDocToProductPurchase(latestDoc.data());
+    } else {
+        console.log('No documents found');
+        throw new Error('not found')
+    }
+}
 
 
 

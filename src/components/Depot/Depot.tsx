@@ -1,8 +1,12 @@
 import React from 'react'
+import SalesCharts from '../Reports/DepotReports/DepotReports'
 
 const Depot: React.FC = () => {
     return (
-        <div>Depot</div>
+        <div>
+
+            <SalesCharts />
+        </div>
     )
 }
 

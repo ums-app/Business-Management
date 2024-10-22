@@ -5,7 +5,7 @@ import Button from '../../UI/Button/Button';
 import { Log, Product, UpdateModeProps } from '../../../Types/Types';
 import { collection, deleteDoc, doc, getCountFromServer, runTransaction, Timestamp, writeBatch } from 'firebase/firestore';
 import ICONS from '../../../constants/Icons';
-import { getProducts, sendLog } from '../../../Utils/FirebaseTools';
+import { getLatestPurchaseProrductFactor, getProducts, sendLog } from '../../../Utils/FirebaseTools';
 import CustomDatePicker from '../../UI/DatePicker/CustomDatePicker';
 import { jalaliToGregorian } from 'shamsi-date-converter';
 import Collections from '../../../constants/Collections';
@@ -35,6 +35,7 @@ export interface PurchasedProduct {
 }
 
 export interface PurchaseFactor {
+    id: string,
     products: PurchasedProduct[];
     totalProducts: number;
     totalAmount: number;
@@ -78,16 +79,27 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         getProducts().then(res => {
             setproducts(res)
         })
-        const getTotalNumberOfFactors = async () => {
-            const snapshot = await getCountFromServer(purchasedProductCollectionRef);
-            const totalDocs = snapshot.data().count;
-            setPurchaseFactor({
-                ...purchaseFactor,
-                indexNumber: Number(totalDocs) + 1001
-            })
+
+
+        if (!updateMode) {
+            getLatestPurchaseProrductFactor()
+                .then(res => {
+                    setPurchaseFactor({
+                        ...purchaseFactor,
+                        indexNumber: Number(res.indexNumber) + 1
+                    })
+                })
+                .catch(err => {
+                    getCountFromServer(purchasedProductCollectionRef).then(snapshot => {
+                        const totalDocs = snapshot.data().count;
+                        setPurchaseFactor({
+                            ...purchaseFactor,
+                            indexNumber: Number(totalDocs) + 1001
+                        })
+                    });
+                })
         }
 
-        getTotalNumberOfFactors();
         if (updateMode) {
             setPurchaseFactor(PurchaseFactor)
         }
@@ -108,8 +120,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
             totalPackage: 0,
             totalNumber: 0,
             pricePer: 0,
-            factoryExpenses: 0
-
+            factoryExpenses: 0,
         });
         setPurchaseFactor({
             ...purchaseFactor,

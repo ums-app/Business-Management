@@ -187,7 +187,7 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
                                 <tr><th colSpan={type == ConsumptionsType.WITHDRAW ? 8 : 7}>{getComponent(type)}</th></tr>
                                 <tr>
                                     <th>#</th>
-                                    <th>{t('createdDate')}</th>
+                                    <th>{t('date')}</th>
                                     <th>{t('amount')}</th>
                                     <th>{t('type')}</th>
                                     {type == ConsumptionsType.WITHDRAW && <th>{t('toAccount')}</th>}
@@ -200,7 +200,7 @@ const DisplayConsumptions: React.FC<DisplayConsumptionsProps> = ({ type = Consum
                                 {filtered.map((item, index) => {
                                     return <tr key={index}>
                                         <td>{index + 1}</td>
-                                        <td>{formatFirebaseDates(item.createdDate)}</td>
+                                        <td>{formatFirebaseDates(item.date)}</td>
                                         <td>{item.amount}</td>
                                         <td>{t(item.type)}</td>
                                         {type == ConsumptionsType.WITHDRAW && <td>{item.to?.name} {item.to?.lastName}</td>}

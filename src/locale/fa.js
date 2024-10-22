@@ -454,7 +454,9 @@ const fa = {
         yearlySalesAmount: 'مجموعه پول فروشات سالانه',
         monthlySalesAmount: "مجموعه پول فروشات ماهانه",
         monthlySalesQuantity: 'تعداد فروشات ماهانه',
-        quantity: 'تعداد'
+        quantity: 'تعداد',
+        productAvailabilityForYear: 'موجودی اجناس در سال',
+        productAvailabilityYeary: 'موجودی اجناس سالانه'
 
 
 

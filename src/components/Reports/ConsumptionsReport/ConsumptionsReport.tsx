@@ -69,21 +69,25 @@ const ConsumptionsReport: React.FC = () => {
                 label: t('constantConsumptions'),
                 data: sortedYears.map(year => consumptionByYear[year].CONSTANT_CONSUMPTION),
                 backgroundColor: Colors[0],
+                borderColor: Colors[0],
             },
             {
                 label: t('withdrawals'),
                 data: sortedYears.map(year => consumptionByYear[year].WITHDRAW),
                 backgroundColor: Colors[1],
+                borderColor: Colors[1],
             },
             {
                 label: t('retailConsumptions'),
                 data: sortedYears.map(year => consumptionByYear[year].RETAIL_CONSUMPTION),
                 backgroundColor: Colors[2],
+                borderColor: Colors[2],
             },
             {
                 label: t('majorConsumptions'),
                 data: sortedYears.map(year => consumptionByYear[year].MAJOR_CONSUMPTION),
                 backgroundColor: Colors[3],
+                borderColor: Colors[3],
             },
         ],
     };
@@ -142,21 +146,25 @@ const ConsumptionsReport: React.FC = () => {
                     label: t('constantConsumptions'),
                     data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.CONSTANT_CONSUMPTION ?? 0),
                     backgroundColor: Colors[0],
+                    borderColor: Colors[0],
                 },
                 {
                     label: t('withdrawals'),
                     data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.WITHDRAW ?? 0),
                     backgroundColor: Colors[1],
+                    borderColor: Colors[1],
                 },
                 {
                     label: t('retailConsumptions'),
                     data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.RETAIL_CONSUMPTION ?? 0),
                     backgroundColor: Colors[2],
+                    borderColor: Colors[2],
                 },
                 {
                     label: t('majorConsumptions'),
                     data: months.map(month => consumptionByMonth[selectedYear]?.[month]?.MAJOR_CONSUMPTION ?? 0),
                     backgroundColor: Colors[3],
+                    borderColor: Colors[3],
                 },
             ],
         }
