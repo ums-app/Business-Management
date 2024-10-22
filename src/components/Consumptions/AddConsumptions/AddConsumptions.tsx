@@ -64,7 +64,7 @@ const AddConsumptions: React.FC = () => {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
                 title: `${t('add')} ${t('consumptions')} `,
-                message: ` ${t('consumptions')} [${t('type')}:(${t(consumption.type)}) ${t('amount')}: (${consumption.amount}) ${consumption.type == ConsumptionsType.WITHDRAW && t('toAccount') + ": (" + consumption.to?.name + " " + consumption.to?.lastName})] ${t('successfullyAdded')}`,
+                message: ` ${t('consumptions')} [${t('type')}:(${t(consumption.type)}) ${t('amount')}: (${consumption.amount}) ${consumption.type == ConsumptionsType.WITHDRAW ? t('toAccount') + ": (" + consumption.to?.name + " " + consumption.to?.lastName : ''})] ${t('successfullyAdded')}`,
                 data: { ...consumption, id: consumptDoc.id }
             };
 

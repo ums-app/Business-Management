@@ -63,6 +63,19 @@ export interface CustomerFactor {
     } | null
 }
 
+export interface Product {
+    id: string;
+    code: number;
+    createdDate: Timestamp | Date;
+    inventory: number;
+    englishName: string,
+    name: string,
+    manufacturer: string,
+    price: number,
+
+}
+
+
 export interface UpdateModeProps {
     updateMode: boolean; // Change this to the correct type if necessary
 }
@@ -157,17 +170,6 @@ export interface EmployeePayment {
 }
 
 
-export interface Product {
-    id: string;
-    code: number;
-    createdDate: Timestamp | Date;
-    inventory: number;
-    englishName: string,
-    name: string,
-    manufacturer: string,
-    price: number,
-
-}
 
 
 

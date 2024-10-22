@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Roles from '../../constants/Roles';
 import NotFound from '../../pages/NotFound/NotFound';
 import Circle from '../UI/Loading/Circle';
+import SalesAnalysis from './GPTSalesReport/GPTSalesReport';
 
 
 
@@ -15,6 +16,10 @@ const components = {
     SalesReport: {
         componentName: "SalesReport",
         component: SalesReport,
+    },
+    SalesAnalysis: {
+        componentName: "SalesAnalysis",
+        component: SalesAnalysis,
     },
     ConsumptionsReport: { componentName: "ConsumptionsReport", component: ConsumptionsReport },
 };
@@ -51,6 +56,17 @@ function Reports() {
                     onClick={() => setDisplayComponent({ component: components?.SalesReport.component, componentName: components.SalesReport.componentName })}
                 >
                     {t("sales")}
+                </li>
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.SalesAnalysis?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent({ component: components?.SalesAnalysis.component, componentName: components.SalesAnalysis.componentName })}
+                >
+                    {t('analysis')} {t('sales')}
                 </li>
                 <li
                     className={

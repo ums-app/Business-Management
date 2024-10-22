@@ -447,7 +447,14 @@ const fa = {
         collectionChart: 'نمودار کُلی',
         chart: 'نمودار',
         detailsFor: 'جزئیات برای',
-        remainedSalari: 'باقیمانده از معاش'
+        remainedSalari: 'باقیمانده از معاش',
+        yearlySales: 'فروشات سالانه',
+        totalSalesAmount: 'مجموع فروشات',
+        yearlySalesQuantity: 'تعداد فروشات سالانه',
+        yearlySalesAmount: 'مجموعه پول فروشات سالانه',
+        monthlySalesAmount: "مجموعه پول فروشات ماهانه",
+        monthlySalesQuantity: 'تعداد فروشات ماهانه',
+        quantity: 'تعداد'
 
 
 
