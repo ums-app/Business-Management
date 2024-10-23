@@ -1,17 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement } from 'chart.js';
 import { CustomerFactor, Product } from '../../../Types/Types';
-import { getCustomerFactors, getFactors, getProductPurchases, getProducts } from '../../../Utils/FirebaseTools';
+import { getFactors, getProductPurchases, getProducts } from '../../../Utils/FirebaseTools';
 import { gregorianToJalali } from 'shamsi-date-converter';
 import Colors from '../../../constants/Colors';
 import { PurchaseFactor } from '../../PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts';
 import { t } from 'i18next';
-import Button from '../../UI/Button/Button';
-import BtnTypes from '../../../constants/BtnTypes';
-import PurchaseProducts from '../../PurchaseProducts/PurchaseProducts';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement);
 
 const plugins = {
     legend: {
@@ -135,14 +132,12 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                     data: soldData,
                     backgroundColor: Colors[index + 1],
                     borderColor: Colors[index + 1],
-                    type: 'bar',
                 },
                 {
                     label: `${product.name} - ${t('bought')}`,
                     data: boughtData,
                     backgroundColor: Colors[index + products.length],
                     borderColor: Colors[index + products.length],
-                    type: 'bar',
                 }
             ];
         }).flat();
@@ -163,7 +158,6 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                         data: yearly,
                         backgroundColor: Colors[index + 1],
                         borderColor: Colors[index + 1],
-                        type: 'bar',
                     },
                 ];
             }).flat();
@@ -194,6 +188,7 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
         setActiveTab(tab);
     };
 
+
     const handleYearClick = (year: string) => {
         setSelectedYear(year);
 
@@ -204,7 +199,6 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
 
         if (activeTab == 'availability') {
             const yearlyAvailability = calculateMonthlyAvailability(productPurchases, customerFactors);
-            console.log(`yealy:${year} : `, yearlyAvailability[year]);
 
             monthlyDatasets = products.map((product, i) => {
                 // Initialize sold and bought data arrays with zeros for each month
@@ -212,7 +206,6 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                     let tem = (index) < 9 ? '0' + (index + 1) : index + 1;
                     return yearlyAvailability[year][tem][product.id]
                 });
-                console.log("available: ", available);
 
                 return [
                     {
@@ -220,14 +213,12 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                         data: available,
                         backgroundColor: Colors[i],
                         borderColor: Colors[i],
-                        type: 'bar',
                     }
                 ];
             }).flat();
         } else {
             const yearlyPurchases = groupPurchasesByYear(productPurchases);
             const yearlySales = groupSalesByYear(customerFactors);
-            console.log(yearlySales);
 
             monthlyDatasets = products.map((product, index) => {
                 // Initialize sold and bought data arrays with zeros for each month
@@ -246,24 +237,17 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                         data: soldData,
                         backgroundColor: Colors[index],
                         borderColor: Colors[index],
-                        type: 'bar',
                     },
                     {
                         label: `${product.name} - ${t('bought')}`,
                         data: boughtData,
                         backgroundColor: Colors[index + products.length],
                         borderColor: Colors[index + products.length],
-                        type: 'bar',
                     }
                 ];
             }).flat();
 
         }
-
-        console.log("monthly data set: ", {
-            labels: allMonths,
-            datasets: monthlyDatasets,
-        });
 
         setMonthlyChartData({
             labels: allMonths,
@@ -422,12 +406,12 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
             <h2 className='title'>{t('status')}  {t('depot')}</h2>
             <div className='display_flex'>
                 <button
-                    className={activeTab == 'availability' ? 'active' : ''}
+                    className={activeTab == 'availability' ? 'input' : ''}
                     onClick={() => handleTabChange('availability')}
 
                 >{t('availability')}</button>
                 <button
-                    className={activeTab == 'transactions' ? 'active' : ''}
+                    className={activeTab == 'transactions' ? 'input' : ''}
                     onClick={() => handleTabChange('transactions')}
                 >{t('transactions')}</button>
             </div>
@@ -456,6 +440,9 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                                     plugins: plugins
                                 }}
                             />
+
+                            <h3 className='text_align_center'>{t('Line Chart (Based on Date)')}</h3>
+                            <Line data={monthlyChartData} options={{ responsive: true }} />
                         </div>
                     )}
                 </div>
@@ -490,7 +477,6 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                         }}
                     />
                     <div >
-
                         {selectedYear && monthlyChartData && (
                             <div>
                                 <h2 className='title_2'>{t('depotBaseOnPurchaseAndSaleMonthly')}</h2>
@@ -501,13 +487,18 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
                                         plugins: plugins
                                     }}
                                 />
+                                <h3 className='text_align_center'>{t('Line Chart (Based on Date)')}</h3>
+                                <Line data={monthlyChartData} options={{ responsive: true }} />
                             </div>
                         )}
 
+
                     </div>
+
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 
