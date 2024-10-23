@@ -456,8 +456,13 @@ const fa = {
         monthlySalesQuantity: 'تعداد فروشات ماهانه',
         quantity: 'تعداد',
         productAvailabilityForYear: 'موجودی اجناس در سال',
-        productAvailabilityYeary: 'موجودی اجناس سالانه'
-
+        productAvailabilityYearly: 'موجودی اجناس سالانه',
+        availability: 'موجودی',
+        transactions: 'معاملات',
+        sold: ' فروش',
+        bought: 'خرید',
+        depotBaseOnPurchaseAndSaleYearly: 'وضعیت خریدها و فروشات سالانه',
+        depotBaseOnPurchaseAndSaleMonthly: 'وضعیت خریدها و فروشات ماهانه'
 
 
 

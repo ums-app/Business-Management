@@ -231,7 +231,11 @@ export const getAllConsumptions = async (): Promise<Consumption[]> => {
 
 
 export const getProductPurchases = async (): Promise<PurchaseFactor[]> => {
-    const querySnapshot = await getDocs(purchasesCollectionRef);
+    const q = query(
+        purchasesCollectionRef,
+        orderBy("createdDate", "asc")
+    );
+    const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => mapDocToProductPurchase(doc));
 
 };
@@ -604,7 +608,11 @@ export const getAllCustomerPayments = async (customerId: string): Promise<Custom
 export const getFactors = async (): Promise<CustomerFactor[]> => {
 
     try {
-        const querySnapshot = await getDocs(salesCollectionRef);
+        const q = query(
+            salesCollectionRef,
+            orderBy("createdDate", "asc")
+        );
+        const querySnapshot = await getDocs(q);
         let items: CustomerFactor[] = querySnapshot.docs
             .map(doc => mapDocToCustomerFactor(doc)) // Map to data with id
 

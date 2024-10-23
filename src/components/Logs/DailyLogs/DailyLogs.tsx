@@ -35,7 +35,7 @@ const DailyLogs: React.FC = () => {
                     <HeadingLoadingTemplate />
                 </LoadingTemplateContainer>
                 :
-                <table className='custom_table margin_auto'>
+                <table className='custom_table full_width'>
                     <thead>
                         <tr><th colSpan={5}>{t('dailyEvents')}</th></tr>
                         <tr>
@@ -62,6 +62,7 @@ const DailyLogs: React.FC = () => {
                                 </td>
                             </tr>
                         })}
+                        {logs.length == 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
                     </tbody>
                 </table>
             }

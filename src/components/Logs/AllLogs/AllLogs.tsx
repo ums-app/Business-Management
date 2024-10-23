@@ -288,9 +288,11 @@ const AllLogs: React.FC = () => {
                         <HeadingLoadingTemplate />
                     </LoadingTemplateContainer>
                     :
-                    <table className='custom_table margin_auto'>
+                    <table className='custom_table full_width'>
                         <thead>
-                            <tr><th colSpan={5}>{t('dailyEvents')}</th></tr>
+                            <tr>
+                                <th colSpan={5}>{t('dailyEvents')}</th>
+                            </tr>
                             <tr>
                                 <th>#</th>
                                 <th>{t('title')}</th>
@@ -301,20 +303,21 @@ const AllLogs: React.FC = () => {
                         </thead>
                         <tbody>
                             {logs.map((item, index) => {
-                                console.log(item);
-
-                                return <tr>
-                                    <td>{index + 1}</td>
-                                    <td>{item.title}</td>
-                                    <td>{item.message}</td>
-                                    <td>{item.registrar}</td>
-                                    <td>
-                                        <span className='bullet'>
-                                            {convertToJalali(item.createdDate)}
-                                        </span>
-                                    </td>
-                                </tr>
+                                return (
+                                    <tr>
+                                        <td>{index + 1}</td>
+                                        <td>{item.title}</td>
+                                        <td>{item.message}</td>
+                                        <td>{item.registrar}</td>
+                                        <td>
+                                            <span className='bullet'>
+                                                {convertToJalali(item.createdDate)}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                )
                             })}
+                            {logs.length == 0 && <tr><td colSpan={5}>{t('notExist')}</td></tr>}
                         </tbody>
                     </table>
                 }

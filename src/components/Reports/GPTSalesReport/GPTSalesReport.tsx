@@ -205,6 +205,9 @@ const SalesAnalysis: React.FC = () => {
         return <ShotLoadingTemplate />;
     }
 
+    console.log(productSalesDataQuantity);
+
+
     return (
         <div className="sales-analysis">
             <h2 className='title text_align_center'>{t('analysis')} {t('sales')}</h2>
