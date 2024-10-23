@@ -345,7 +345,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
             const log: Log = {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
-                title: `${t('add')}  ${t('purchaseFactor')}}`,
+                title: `${t('add')}  ${t('purchaseFactor')}`,
                 message: `${t('purchaseFactor')} [${factorDocRef.id}] ${t('successfullyAdded')}`,
                 data: { ...factorTemp, id: factorDocRef.id }
             };
