@@ -871,6 +871,10 @@ th .btn i {
   overflow-x: scroll;
 }
 
+.overflow_y_scroll {
+  overflow-y: scroll;
+}
+
 /* ToolTip Style */
 .toolTip_style {
   padding: 7px 10px !important;

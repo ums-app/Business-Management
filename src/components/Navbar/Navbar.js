@@ -63,7 +63,7 @@ const Navbar = () => {
 
       {/* for admin user */}
       {authentication.userType == UserTypes.EMPLOYEE || authentication.userType == 'SUPER_ADMIN' &&
-        <div className="navbar_menu position_absolute">
+        <div className="navbar_menu position_absolute overflow_y_scroll">
           <ul className="navbar_content">
             <CustomeLinks to="/" id={'home_link'} >
               <i className={ICONS.door}></i>
