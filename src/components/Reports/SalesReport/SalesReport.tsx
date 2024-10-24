@@ -80,16 +80,22 @@ const SalesReport: React.FC = () => {
 
         if (range.length == 1) {
             console.log(range);
+            const startOfDay = range[0];
+            startOfDay.setHours(0, 0, 0, 0); // Start of today (midnight)
+
+            const endOfDay = new Date(range[0]);
+            endOfDay.setHours(23, 59, 59, 999); // End of today
 
             factors = factors.filter(item => {
-                console.log(item.createdDate.toDate());
 
-                const elementDate = item.createdDate.toDate(); // Convert Firebase Timestamp to JS Date
-                return elementDate == range[0];
+                const elementDate = item.createdDate.toDate();
+                // Convert Firebase Timestamp to JS Date
+                return elementDate >= startOfDay && elementDate <= endOfDay;
             })
             payments = payments.filter(item => {
-                const elementDate = item.createdDate.toDate(); // Convert Firebase Timestamp to JS Date
-                return elementDate == range[0];
+                const elementDate = item.createdDate.toDate();
+                // Convert Firebase Timestamp to JS Date
+                return elementDate >= startOfDay && elementDate <= endOfDay;
             })
         }
 
