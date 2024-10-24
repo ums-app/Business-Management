@@ -177,7 +177,7 @@ const ShortListedCustomers: React.FC = () => {
                     </select>
                 </div>
             </div>
-            <div ref={(value) => shortListRef = value} className='customers_list'>
+            <div ref={(value) => shortListRef = value} className='customers_list overflow_x_scroll'>
                 <div className='full_width display_flex flex_direction_column align_items_center'>
                     <p className='title'>{t('customerListTitleForShortList')}</p>
                     <div className='bold full_width display_flex justify_content_end'>
