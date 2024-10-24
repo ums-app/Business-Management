@@ -19,7 +19,8 @@ export const mapDocToCustomer = (doc: DocumentData): CustomerForSaleFactor => {
         name: data.name,
         password: data.password,
         phoneNumber: data.phoneNumber,
-        visitor: data.visitor
+        visitor: data.visitor,
+        customerType: data.customerType
     }
 }
 
