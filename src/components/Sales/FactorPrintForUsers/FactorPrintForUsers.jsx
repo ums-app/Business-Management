@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import print from '../../../constants/PrintCssStyles';
 import { actionTypes } from '../../../context/reducer';
 import Button from '../../UI/Button/Button';
@@ -13,37 +13,18 @@ import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
 import MoneyStatus from '../../UI/MoneyStatus/MoneyStatus';
 
-function FactorPrintForUsers({
-    customerFactor,
-    totalAmountOfAllFactors,
-    totalAmountOfAllCustomerPayments,
-    remainedAmount,
-    userPayment,
-    totalOfCurrent = () => 0 }) {
+function FactorPrintForUsers() {
 
     let factorRef = useRef();
 
-    const [{ authentication, factor }, dispatch] = useStateValue();
+    const [{ factor }, dispatch] = useStateValue();
 
 
-    const getTotalPriceOfFactor = () => {
-        let totalPriceOfFac = 0
-        factor.productsInFactor?.forEach(item => {
-            totalPriceOfFac += Number(item.totalPrice)
-        })
-
-        return totalPriceOfFac;
-    }
-
-    console.log(factor);
     if (!factor) {
         return <LoadingTemplateContainer>
             <ShotLoadingTemplate />
         </LoadingTemplateContainer>
     }
-
-
-
 
     return (
         <div className='factor_page'>
@@ -107,7 +88,7 @@ function FactorPrintForUsers({
                     <div className='full_width products_table'>
                         <table className='custom_table full_width'>
                             <thead>
-                                <tr>
+                                <tr style={{ height: '30px' }}>
                                     <th>{t('number')}</th>
                                     <th>{t('name')}</th>
                                     {/* <th>{t('englishName')}</th> */}
@@ -123,7 +104,7 @@ function FactorPrintForUsers({
 
                                     if (item.productId.lenght == 0) return null;
                                     return (
-                                        <tr key={index}>
+                                        <tr key={index} style={{ height: '20px' }}>
                                             <td>{index + 1}</td>
                                             <td>{item.name}</td>
                                             {/* <td>{item.englishName}</td> */}
@@ -141,67 +122,69 @@ function FactorPrintForUsers({
                         </table>
                     </div>
 
-                    {/* <div className='factor_results_container full_width  margin_top_20'> */}
-                    <div className='factor_results full_width margin_top_20  display_flex  '>
-                        <table className='custom_table full_width'>
-                            <thead>
-                                <tr><th colSpan={5}>{t('invoice')}</th></tr>
-                                <tr>
-                                    <th>{t('totalAll')} </th>
-                                    <th>{t('paidAmount')} </th>
-                                    <th>{t('remainedAmount')} {t('of')} {t('thisFactor')} </th>
-                                    <th>{t('totalPrevRemainedAmount')}</th>
-                                    <th>{t('totalRemainedAmount')} </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{factor.totalAll}</td>
-                                    <td>{factor.paidAmount}</td>
-                                    <td>{factor.currentRemainedAmount}</td>
-                                    <td>
-                                        {factor.previousRemainedAmount}
-                                        <MoneyStatus number={factor.previousRemainedAmount} />
-                                    </td>
-                                    <td>
-                                        {factor.totalRemainedAmount}
-                                        <MoneyStatus number={factor.totalRemainedAmount} />
-                                    </td>
-                                </tr>
 
-                            </tbody>
-                        </table>
-                    </div>
-                    {/* </div> */}
+                    <div className='factor_footer'>
+                        {/* <div className='factor_results_container full_width  margin_top_20'> */}
+                        <div className='factor_results full_width margin_top_20  display_flex  '>
+                            <table className='custom_table full_width'>
+                                <thead>
+                                    <tr><th colSpan={5} style={{ height: '20px' }}>{t('invoice')}</th></tr>
+                                    <tr style={{ height: '20px' }}>
+                                        <th>{t('totalAll')} </th>
+                                        <th>{t('paidAmount')} </th>
+                                        <th>{t('remainedAmount')} {t('of')} {t('thisFactor')} </th>
+                                        <th>{t('totalPrevRemainedAmount')}</th>
+                                        <th>{t('totalRemainedAmount')} </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style={{ height: '20px' }}>
+                                        <td>{factor.totalAll}</td>
+                                        <td>{factor.paidAmount}</td>
+                                        <td>{factor.currentRemainedAmount}</td>
+                                        <td>
+                                            {factor.previousRemainedAmount}
+                                            <MoneyStatus number={factor.previousRemainedAmount} />
+                                        </td>
+                                        <td>
+                                            {factor.totalRemainedAmount}
+                                            <MoneyStatus number={factor.totalRemainedAmount} />
+                                        </td>
+                                    </tr>
 
-
-                    <div className='factor_footer display_folex input margin_top_20 justify_content_space_between full_width margin_top_10'>
-                        <div className='display_flex'>
-                            <div>
-                                <span className='padding_left_10 padding_right_10'> <i className={ICONS.whatsapp}></i></span>
-                                <i className={ICONS.telegram}></i>
-                            </div>
-                            <div>
-                                <span className='padding_left_10 padding_right_10'>
-                                    0703444444
-                                </span>-
-                                <span className='padding_left_10 padding_right_10'>
-                                    0794441918
-                                </span>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
+                        {/* </div> */}
 
-                        <div className='display_flex'>
-                            <div>
-                                <span className='padding_left_10 padding_right_10'> <i className={ICONS.gps}></i></span>
+                        <div className=' factor_footer_container display_folex input margin_top_20 justify_content_space_between full_width margin_top_10'>
+                            <div className='display_flex'>
+                                <div>
+                                    <span className='padding_left_10 padding_right_10'> <i className={ICONS.whatsapp}></i></span>
+                                    <i className={ICONS.telegram}></i>
+                                </div>
+                                <div>
+                                    <span className='padding_left_10 padding_right_10'>
+                                        0703444444
+                                    </span>-
+                                    <span className='padding_left_10 padding_right_10'>
+                                        0794441918
+                                    </span>
+                                </div>
                             </div>
-                            <div>
-                                <span className='padding_left_10 padding_right_10'>
-                                    افغانستان، هرات شهرنو، جاده عیدگاه، مارکت قادر هروی طبقه همکف ، پلاک 18
-                                </span>
+
+                            <div className='display_flex'>
+                                <div>
+                                    <span className='padding_left_10 padding_right_10'> <i className={ICONS.gps}></i></span>
+                                </div>
+                                <div>
+                                    <span className='padding_left_10 padding_right_10'>
+                                        افغانستان، هرات شهرنو، جاده عیدگاه، مارکت قادر هروی طبقه همکف ، پلاک 18
+                                    </span>
+                                </div>
                             </div>
+
                         </div>
-
                     </div>
                 </div>
 

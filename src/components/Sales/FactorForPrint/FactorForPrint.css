@@ -1,5 +1,5 @@
 .factor_header {
-    height: 180px;
+    height: 160px;
     background-position: center;
     background-size: 100% 180px;
     background-repeat: no-repeat;
@@ -14,7 +14,7 @@
 }
 
 .factor_page .custom_table tr {
-    height: 30px;
+    height: 20px;
 }
 
 .factor_body {
@@ -26,16 +26,20 @@
 }
 
 .products_table table thead tr {
-    background-color: deepskyblue;
+    background-color: rgb(154 249 255);
 }
 
 .factor_results table thead tr {
-    background-color: coral;
+    background-color: rgb(187 255 187 / 80%);
+}
+
+.factor_page .custom_table tr {
+    height: 20px !important;
 }
 
 
-.factor_footer {
-    background-color: deepskyblue;
+.factor_footer_container {
+    background-color: rgba(255 206 86 / 55%);
     padding: 5px 10px;
 }
 
@@ -58,7 +62,6 @@
 .factor_footer {
     /* display: flex; */
     justify-content: space-between;
-    padding: 10px;
     /* Example background */
     position: relative;
     font-size: 12px;
@@ -72,10 +75,14 @@
 
     /* Set the page size for printing */
     .factor_page {
-        page-break-inside: avoid;
+        /* page-break-inside: ; */
         height: auto;
-        min-height: 29.7cm;
+        min-height: 21cm;
         /* A4 page height */
+    }
+
+    .factor_page .custom_table tr {
+        height: 20px !important;
     }
 
     .factor_footer {
