@@ -7,7 +7,7 @@ import ICONS from '../../../constants/Icons';
 import ReactToPrint from 'react-to-print';
 import { useStateValue } from '../../../context/StateProvider';
 import factorHeader from "../../../assets/img/factor_header.jpg"
-import "./FactorForPrint.css"
+import "../FactorForPrint/FactorForPrint.css"
 import LoadingTemplateContainer from '../../UI/LoadingTemplate/LoadingTemplateContainer';
 import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 import { formatFirebaseDates } from '../../../Utils/DateTimeUtils';
@@ -73,7 +73,7 @@ function FactorPrintForUsers({
 
 
             <div ref={(value) => (factorRef = value)}
-                className='border_1px_solkid margin_top_20'>
+                className='border_1px_solkid'>
 
                 {/* <h1> company name</h1> */}
                 <div className='factor_header full_width display_flex'
@@ -98,7 +98,7 @@ function FactorPrintForUsers({
                             <span className='info_values'>{formatFirebaseDates(factor?.createdDate)}</span>
                         </div>
                         <div className='display_flex align_items_center'>
-                            <span className='bold'>{t('indexNumber')}:</span>
+                            <span className=''>{t('indexNumber')}:</span>
                             <span className='info_value'>
                                 {factor.indexNumber}
                             </span>

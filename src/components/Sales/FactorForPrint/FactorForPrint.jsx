@@ -63,7 +63,7 @@ function FactorForPrint({
 
 
             <div ref={(value) => (factorRef = value)}
-                className='border_1px_solkid margin_top_20'>
+                className=' '>
 
                 {/* <h1> company name</h1> */}
                 <div className='factor_header full_width display_flex'
@@ -168,7 +168,7 @@ function FactorForPrint({
                     {/* </div> */}
 
 
-                    <div className='factor_footer display_folex input margin_top_20 justify_content_space_between full_width margin_top_10'>
+                    <div className='factor_footer input full_width margin_top_10'>
                         <div className='display_flex'>
                             <div>
                                 <span className='padding_left_10 padding_right_10'> <i className={ICONS.whatsapp}></i></span>

@@ -10,7 +10,7 @@
     margin: 20px 0;
     border: 1px solid var(--main-color);
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .factor_page .custom_table tr {
@@ -18,7 +18,7 @@
 }
 
 .factor_body {
-    margin: 0 40px;
+    margin: 0px;
 }
 
 .factor_results {
@@ -37,4 +37,50 @@
 .factor_footer {
     background-color: deepskyblue;
     padding: 5px 10px;
+}
+
+
+
+/*  gpt suggest for footer */
+
+.factor_page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* Ensure it fills the full page height */
+}
+
+.factor_body {
+    flex-grow: 1;
+    /* This will make the body grow to fill available space */
+}
+
+.factor_footer {
+    /* display: flex; */
+    justify-content: space-between;
+    padding: 10px;
+    /* Example background */
+    position: relative;
+    font-size: 12px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* width: 90%; */
+}
+
+@media print {
+
+    /* Set the page size for printing */
+    .factor_page {
+        page-break-inside: avoid;
+        height: auto;
+        min-height: 29.7cm;
+        /* A4 page height */
+    }
+
+    .factor_footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
 }
