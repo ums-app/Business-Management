@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Representation } from '../../Types/Types'
-import { getAllRepresentations } from '../../Utils/FirebaseTools'
+import { ImageUrls, Representation } from '../../Types/Types'
+import { getAllRepresentations, getUserImage } from '../../Utils/FirebaseTools'
 import ShotLoadingTemplate from '../UI/LoadingTemplate/ShotLoadingTemplate'
 import { t } from 'i18next'
 import DisplayLogo from '../UI/DisplayLogo/DisplayLogo'
@@ -11,7 +11,9 @@ import BtnTypes from '../../constants/BtnTypes'
 const Representations = () => {
     const [representors, setRepresentors] = useState<Representation[]>([])
     const [loading, setloading] = useState<boolean>(true)
-    const nav = useNavigate()
+    const nav = useNavigate();
+    const [imageUrls, setImageUrls] = useState<ImageUrls>()
+
 
     useEffect(() => {
         getAllRepresentations()
@@ -19,6 +21,29 @@ const Representations = () => {
             .finally(() => setloading(false));
 
     }, [])
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            const newImageUrls: ImageUrls = {};
+            await Promise.all(
+                representors.map(async (item) => {
+
+                    try {
+                        const url = await getUserImage(item.customer.email);
+                        newImageUrls[item.customer.email] = url; // Store image URL by email
+                    } catch (err) {
+
+                    }
+                })
+            );
+            setImageUrls(newImageUrls); // Update state with all image URLs
+        };
+
+        if (representors) {
+            fetchImages();
+        }
+    }, [representors]);
+
 
 
     return (
@@ -51,7 +76,7 @@ const Representations = () => {
                                 >
                                     <td>{index + 1}</td>
                                     <td>
-                                        {/* <DisplayLogo imgURL={imageUrls[emp.customer.email]} height='60px' width='60px' alt={t('user') + " " + t('image')} /> */}
+                                        <DisplayLogo imgURL={imageUrls[emp.customer.email]} height='60px' width='60px' alt={t('user') + " " + t('image')} />
                                     </td>
                                     <td>{emp.customer.name}</td>
                                     <td>{emp.customer.name}</td>
