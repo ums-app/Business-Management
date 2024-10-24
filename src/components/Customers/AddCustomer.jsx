@@ -5,7 +5,7 @@ import Button from '../UI/Button/Button'
 import { t } from 'i18next'
 import * as yup from "yup";
 import { toast } from 'react-toastify'
-import { Timestamp, addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
+import { Timestamp, addDoc, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore'
 import { auth, db, storage } from '../../constants/FirebaseConfig'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import LoadingTemplateContainer from '../UI/LoadingTemplate/LoadingTemplateContainer'
@@ -20,7 +20,7 @@ import ICONS from '../../constants/Icons'
 import avatar from "../../assets/img/profile_avatar.png"
 import { jalaliToGregorian } from 'shamsi-date-converter'
 import { mapDocToEmployee } from '../../Utils/Mapper.ts'
-import { UserTypes, VisitorContractType } from '../../constants/Others.js'
+import { CustomerType, UserTypes, VisitorContractType } from '../../constants/Others.js'
 import NotFound from '../../pages/NotFound/NotFound.jsx'
 import Roles from '../../constants/Roles.js'
 import { useStateValue } from '../../context/StateProvider.js'
@@ -44,7 +44,8 @@ function AddCustomer({ updateMode = false }) {
         email: '',
         location: '',
         password: '',
-        joinedDate: Timestamp.fromDate(new Date())
+        joinedDate: Timestamp.fromDate(new Date()),
+        CustomerType: CustomerType.HERAT
     });
     const [customer, setCustomer] = useState();
 
@@ -367,7 +368,24 @@ function AddCustomer({ updateMode = false }) {
                                 className="error_msg"
                             />
                         </div>
-
+                        <div className='display_flex flex_direction_column margin_5'>
+                            <label htmlFor="customerType">{t('customerType')}</label>
+                            <Field
+                                name="customerType"
+                                as='select'
+                                className="input"
+                            >
+                                <option value={undefined} disabled >{t('customerType')}</option>
+                                {Object.keys(CustomerType)?.map(key => {
+                                    return <option value={key} key={key}>{t(key)}</option>
+                                })}
+                            </Field>
+                            <ErrorMessage
+                                name="customerType"
+                                component="div"
+                                className="error_msg"
+                            />
+                        </div>
                         <div className='display_flex flex_direction_column margin_5'>
                             <label htmlFor="visitor">{t('visitor')}</label>
                             <Field
@@ -426,6 +444,9 @@ const CustomerSchema = yup.object().shape({
     visitor: yup
         .string()
         .required(`${t("visitor")} ${t("isRequireText")}`),
+    customerType: yup
+        .string()
+        .required(`${t("customerType")} ${t("isRequireText")}`),
     phoneNumber: yup
         .string()
         .matches(/^07[0-9]{8}$/, t("invalidContactNumber"))

@@ -91,6 +91,7 @@ export interface CustomerForSaleFactor {
     password: string;
     visitor: string | null | undefined;
     phoneNumber: string;
+    customerType: string;
 }
 
 
@@ -239,4 +240,10 @@ export interface Log {
 }
 
 
-
+export interface Representation {
+    id: string,
+    customer: CustomerForSaleFactor;
+    amountOfLoan: number;
+    currencyType: string;
+    createdDate: Date | Timestamp;
+}

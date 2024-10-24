@@ -1,5 +1,5 @@
 import { doc, DocumentData, DocumentSnapshot } from "firebase/firestore";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Log, Partner, Product, User } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Log, Partner, Product, Representation, User } from "../Types/Types";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
 import { PurchasedProduct, PurchaseFactor } from "../components/PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts";
@@ -200,3 +200,17 @@ export const mapDocToProductPurchase = (docSnapshot: DocumentData): PurchaseFact
         totalProducts: docData.totalProducts,
     };
 };
+
+
+
+export const mapDocToRepresentation = (docSnapshot: DocumentData): Representation => {
+    const docData = docSnapshot?.data(); // Extract data
+    return {
+        id: docSnapshot.id, // Use the document ID
+        createdDate: docData.createdDate,
+        currencyType: docData.currencyType,
+        amountOfLoan: docData.amountOfLoan,
+        customer: docData.customer
+    };
+};
+

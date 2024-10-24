@@ -76,19 +76,6 @@ const Navbar = () => {
             >
               {t("home")}
             </Tooltip>
-
-            <CustomeLinks to="/dashboard" id={'dashboard_link'}>
-              <i className={ICONS.dashboard}></i>
-              <span>{t("dashboard")}</span>
-            </CustomeLinks>
-            <Tooltip
-              anchorSelect="#dashboard_link"
-              place="left"
-              className="toolTip_style"
-            >
-              {t("dashboard")}
-            </Tooltip>
-
             <CustomeLinks to="/sales" id={'sales_link'}>
               <i className={ICONS.card3}></i>
               <span>{t("sales")}</span>
@@ -212,6 +199,18 @@ const Navbar = () => {
             >
               {t("customers")}
             </Tooltip>
+            <CustomeLinks to="/representations" id={'representations_link'}>
+              <i className={ICONS.geoAlt}></i>
+              <span>{t("representations")}</span>
+            </CustomeLinks>
+            <Tooltip
+              anchorSelect="#representations_link"
+              place="left"
+              className="toolTip_style"
+            >
+              {t("representations")}
+            </Tooltip>
+
             {authentication?.roles?.includes('SUPER_ADMIN') &&
               <CustomeLinks to="/events" id={'settings_link'}>
                 <i className={ICONS.logs}></i>

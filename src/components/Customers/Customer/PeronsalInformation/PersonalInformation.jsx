@@ -48,13 +48,11 @@ function PersonalInformation() {
     }
 
 
-
     if (!customer) {
         return <LoadingTemplateContainer>
             <ShotLoadingTemplate />
         </LoadingTemplateContainer>
     }
-
 
     return (
         <div className='personal_info display_flex flex_flow_wrap justify_content_center '>
@@ -73,6 +71,10 @@ function PersonalInformation() {
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('phoneNumber')} </span>
                 <span>{customer.phoneNumber}</span>
+            </div>
+            <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
+                <span>{t('customerType')} </span>
+                <span>{t(customer?.customerType)}</span>
             </div>
             <div className='info_card display_flex flex_direction_column border_1px_solid padding_10 border_radius_6 margin_5'>
                 <span>{t('email')} </span>

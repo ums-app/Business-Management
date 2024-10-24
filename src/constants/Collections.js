@@ -12,5 +12,6 @@ export default {
     Consumptions: 'Consumptions',
     Partners: 'Partners',
     Logs: "Logs",
+    Representations: 'Representations'
 
 }

@@ -3,9 +3,9 @@ import { db, messaging, storage } from "../constants/FirebaseConfig"
 import Collections from "../constants/Collections"
 import Folders from "../constants/Folders";
 import { getDownloadURL, ref } from "firebase/storage";
-import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Log, Partner, Product, User } from "../Types/Types";
+import { CustomerFactor, CustomerForSaleFactor, CustomerPayment, Employee, EmployeePayment, Log, Partner, Product, Representation, User } from "../Types/Types";
 import { FactorType } from "../constants/FactorStatus";
-import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToLog, mapDocToPartner, mapDocToProduct, mapDocToProductPurchase, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
+import { mapDocToConsumptions, mapDocToCustomer, mapDocToCustomerFactor, mapDocToCustomerPayment, mapDocToEmployee, mapDocToEmployeePayment, mapDocToLog, mapDocToPartner, mapDocToProduct, mapDocToProductPurchase, mapDocToRepresentation, mapDocToUploadedFile, mapDocToUser } from "./Mapper";
 import { UploadedFile } from "../components/FilesManagement/FilesManagement";
 import { Consumption } from "../components/Consumptions/AddConsumptions/AddConsumptions";
 import { apiKey, ConsumptionsType, vapidKey } from "../constants/Others";
@@ -25,7 +25,8 @@ const filesCollectionRef = collection(db, Collections.Files);
 const partnersCollectionRef = collection(db, Collections.Partners);
 const consumptionCollectionRef = collection(db, Collections.Consumptions);
 const logCollectionsRef = collection(db, Collections.Logs);
-const purchasesCollectionRef = collection(db, Collections.Purchases)
+const purchasesCollectionRef = collection(db, Collections.Purchases);
+const representationsCollectionRef = collection(db, Collections.Representations)
 
 export const checkIfEmailIsAlreadyExist = async (email: string): Promise<Boolean> => {
     const testQuery = query(usersCollectionRef, where("email", "==", email));
@@ -308,71 +309,71 @@ const requestPermissionAndStoreToken = async (userId: string) => {
 };
 
 
-export const sendNotification = async (token: string, title: string, body: string, additionalData) => {
-    const serverKey = apiKey; // Replace with your Firebase server key
+// export const sendNotification = async (token: string, title: string, body: string, additionalData) => {
+//     const serverKey = apiKey; // Replace with your Firebase server key
 
-    const notificationPayload = {
-        to: token, // The FCM token of the device you want to send the notification to
-        notification: {
-            title: title,
-            body: body,
-        },
-        data: {
-            additionalData: additionalData,
-        },
-    };
+//     const notificationPayload = {
+//         to: token, // The FCM token of the device you want to send the notification to
+//         notification: {
+//             title: title,
+//             body: body,
+//         },
+//         data: {
+//             additionalData: additionalData,
+//         },
+//     };
 
-    try {
-        await axios.post('https://fcm.googleapis.com/fcm/send', notificationPayload, {
-            headers: {
-                Authorization: `key=${serverKey}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        console.log('Notification sent successfully');
-    } catch (error) {
-        console.error('Error sending notification:', error);
-    }
-};
+//     try {
+//         await axios.post('https://fcm.googleapis.com/fcm/send', notificationPayload, {
+//             headers: {
+//                 Authorization: `key=${serverKey}`,
+//                 'Content-Type': 'application/json',
+//             },
+//         });
+//         console.log('Notification sent successfully');
+//     } catch (error) {
+//         console.error('Error sending notification:', error);
+//     }
+// };
 
-const sendNotificationToSuperAdmin = async (title: string, body: string) => {
-    try {
-        // Query Firestore to get the Super_Admin's FCM token
-        const usersRef = collection(db, 'users');
-        const superAdminQuery = query(usersRef, where('userType', '==', 'Super_Admin'));
+// const sendNotificationToSuperAdmin = async (title: string, body: string) => {
+//     try {
+//         // Query Firestore to get the Super_Admin's FCM token
+//         const usersRef = collection(db, 'users');
+//         const superAdminQuery = query(usersRef, where('userType', '==', 'Super_Admin'));
 
 
-        const querySnapshot = await getDocs(superAdminQuery);
-        if (!querySnapshot.empty) {
-            const superAdminData = querySnapshot.docs[0].data(); // Get the first matching Super_Admin
-            const superAdminToken = superAdminData.fcmToken;
+//         const querySnapshot = await getDocs(superAdminQuery);
+//         if (!querySnapshot.empty) {
+//             const superAdminData = querySnapshot.docs[0].data(); // Get the first matching Super_Admin
+//             const superAdminToken = superAdminData.fcmToken;
 
-            // Send a notification to the Super_Admin
-            const notificationPayload = {
-                to: superAdminToken, // Super_Admin's FCM Token
-                notification: {
-                    title: title,
-                    body: body,
-                },
-                data: {
-                    extraInfo: 'Additional information about the action',
-                },
-            };
+//             // Send a notification to the Super_Admin
+//             const notificationPayload = {
+//                 to: superAdminToken, // Super_Admin's FCM Token
+//                 notification: {
+//                     title: title,
+//                     body: body,
+//                 },
+//                 data: {
+//                     extraInfo: 'Additional information about the action',
+//                 },
+//             };
 
-            await axios.post('https://fcm.googleapis.com/fcm/send', notificationPayload, {
-                headers: {
-                    Authorization: `key=${apiKey}`, // Firebase Server Key
-                    'Content-Type': 'application/json',
-                },
-            });
-            console.log('Notification sent to Super_Admin');
-        } else {
-            console.log('No Super_Admin found in Firestore.');
-        }
-    } catch (error) {
-        console.error('Error sending notification:', error);
-    }
-};
+//             await axios.post('https://fcm.googleapis.com/fcm/send', notificationPayload, {
+//                 headers: {
+//                     Authorization: `key=${apiKey}`, // Firebase Server Key
+//                     'Content-Type': 'application/json',
+//                 },
+//             });
+//             console.log('Notification sent to Super_Admin');
+//         } else {
+//             console.log('No Super_Admin found in Firestore.');
+//         }
+//     } catch (error) {
+//         console.error('Error sending notification:', error);
+//     }
+// };
 
 
 
@@ -408,6 +409,23 @@ export async function getTodayLogs(): Promise<Log[]> {
     return querySnapshot.docs.map((doc) => mapDocToLog(doc));
 }
 
+// ============================ Representors ====================================
+
+export async function getAllRepresentations(): Promise<Representation[]> {
+    const docsRef = await getDocs(representationsCollectionRef);
+    return docsRef.docs.map(doc => mapDocToRepresentation(doc));
+}
+
+export async function getRepresentorById(docId: string): Promise<Representation> {
+    const docRef = doc(representationsCollectionRef, docId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return mapDocToRepresentation(docSnap);
+    } else {
+        throw new Error('Not found')
+    }
+
+}
 
 
 //  ========================== employee service ==================================
@@ -423,6 +441,11 @@ export async function getEmployeeById(docId: string): Promise<Employee> {
         throw new Error('Not found')
     }
 }
+
+export const getEmployees = async () => {
+    const querySnapshot = await getDocs(employeesCollectionRef);
+    return querySnapshot.docs.map((doc) => mapDocToEmployee(doc));
+};
 
 
 export const getAllEmployeePayments = async (employeeId: string): Promise<EmployeePayment[]> => {
@@ -508,6 +531,39 @@ export const getCustomers = async (): Promise<CustomerForSaleFactor[]> => {
         return []
     }
 };
+
+// this function is for customer list of other cities 
+export const getCustomersByCustomerTypes = async (types: string[]): Promise<CustomerForSaleFactor[]> => {
+
+    try {
+        const q = query(
+            customersCollectionsRef,
+            where("customerType", "in", types),
+        );
+        const querySnapshot = await getDocs(q);
+        console.log('querysnapshot is empty: ', querySnapshot.empty);
+
+        let items: any[] = querySnapshot.docs
+            .map(doc => mapDocToCustomer(doc))
+        return items;
+
+    } catch (error) {
+        console.error("Error getting documents: ", error);
+        return []
+    }
+};
+
+
+export const getCustomersByCustomerById = async (id: string): Promise<CustomerForSaleFactor> => {
+    const docRef = doc(customersCollectionsRef, id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return mapDocToCustomer(docSnap);
+    } else {
+        throw new Error('Not found')
+    }
+};
+
 
 
 

@@ -37,6 +37,13 @@ export const ConsumptionsType = {
 }
 
 
+export const CustomerType = {
+    HERAT: 'HERAT',
+    OTHER_CITY: 'OTHER_CITY',
+    DISTRICT: 'DISTRICT'
+}
+
+
 export const webCloudMessaginToken = 'BClnFNYrHB7PULoG9Q66Z8SBM0nyQZEmOds0st6SmnYDEihxiwWTwAh4BF0KbJkWXTPnK8ebDczdLOLegOO85kw';
 export const apiKey = 'AIzaSyCziOTx9MPI7m1VRAxCMb44AJTaXjaeQVE';
 export const vapidKey = 'BOtuZIuep2NoVZaqiq0xYmWseZrd5ZBDKlIgvvGZ7azf6t9aKbfRvNshKRb6zQJs-GWemsRBcNy4D8nkJIXQmtg';

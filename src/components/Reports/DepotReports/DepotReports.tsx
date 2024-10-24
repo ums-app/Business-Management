@@ -7,6 +7,7 @@ import { gregorianToJalali } from 'shamsi-date-converter';
 import Colors from '../../../constants/Colors';
 import { PurchaseFactor } from '../../PurchaseProducts/AddPurchaseProducts/AddPurchaseProducts';
 import { t } from 'i18next';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement);
 
@@ -81,12 +82,14 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
     const [productPurchases, setProductPurchases] = useState<PurchaseFactor[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const chartRef = useRef<any>(null);
+    const [loading, setloading] = useState(true)
 
 
     useEffect(() => {
         getProducts().then(res => setProducts(res));
         getFactors().then(res => setCustomerFactors(res));
-        getProductPurchases().then(res => setProductPurchases(res));
+        getProductPurchases().then(res => setProductPurchases(res))
+            .finally(() => setloading(false));
     }, []);
 
     const convertToShamsiYear = (date: { seconds: number; nanoseconds: number }) => {
@@ -124,20 +127,20 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
 
         // Data for transactions (sold/bought) chart
         const transactionDatasets: any[] = products.map((product, index) => {
-            const soldData = years.map(year => salesByYear[year]?.[product.id] || 0);
-            const boughtData = years.map(year => purchasesByYear[year]?.[product.id] || 0);
+            const soldData = years.map(year => salesByYear[year]?.[product?.id] || 0);
+            const boughtData = years.map(year => purchasesByYear[year]?.[product?.id] || 0);
             return [
                 {
-                    label: `${product.name} - ${t('sold')}`,
+                    label: `${product?.name} - ${t('sold')}`,
                     data: soldData,
                     backgroundColor: Colors[index + 1],
                     borderColor: Colors[index + 1],
                 },
                 {
-                    label: `${product.name} - ${t('bought')}`,
+                    label: `${product?.name} - ${t('bought')}`,
                     data: boughtData,
-                    backgroundColor: Colors[index + products.length],
-                    borderColor: Colors[index + products.length],
+                    backgroundColor: Colors[index + products?.length],
+                    borderColor: Colors[index + products?.length],
                 }
             ];
         }).flat();
@@ -191,7 +194,6 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
 
     const handleYearClick = (year: string) => {
         setSelectedYear(year);
-
 
         // Create an array of all months
         const allMonths = dariMonths;
@@ -399,6 +401,10 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
         return availability;
     }
 
+    if (loading) {
+        return <ShotLoadingTemplate />
+    }
+
 
 
     return (
@@ -407,12 +413,18 @@ const DepotAvailability: React.FC<DepotAvailabilityProps> = () => {
             <div className='display_flex'>
                 <button
                     className={activeTab == 'availability' ? 'input' : ''}
-                    onClick={() => handleTabChange('availability')}
+                    onClick={() => {
+                        handleTabChange('availability')
+                        setSelectedYear(null)
+                    }}
 
                 >{t('availability')}</button>
                 <button
                     className={activeTab == 'transactions' ? 'input' : ''}
-                    onClick={() => handleTabChange('transactions')}
+                    onClick={() => {
+                        handleTabChange('transactions')
+                        setSelectedYear(null)
+                    }}
                 >{t('transactions')}</button>
             </div>
 

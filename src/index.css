@@ -267,6 +267,10 @@ input:focus {
   margin-top: 10px;
 }
 
+.margin_top_5 {
+  margin-top: 5px;
+}
+
 .margin_top_20 {
   margin-top: 20px;
 }

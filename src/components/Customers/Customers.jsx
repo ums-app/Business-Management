@@ -10,6 +10,7 @@ import Roles from '../../constants/Roles'
 import { useNavigate } from 'react-router-dom'
 import NotFound from '../../pages/NotFound/NotFound'
 import Circle from '../UI/Loading/Circle'
+import CustomerListOnCustomerType from './CustomerListOnCustomerType/CustomerListOnCustomerType'
 
 
 // components for tabs
@@ -19,6 +20,7 @@ const components = {
         component: CustomersManagment,
     },
     ShortListedCustomers: { componentName: "ShortListedCustomers", component: ShortListedCustomers },
+    CustomerListOnCustomerType: { componentName: "CustomerListOnCustomerType", component: CustomerListOnCustomerType },
 };
 
 function Customers() {
@@ -67,6 +69,17 @@ function Customers() {
                     onClick={() => setDisplayComponent({ component: components?.ShortListedCustomers.component, componentName: components.ShortListedCustomers.componentName })}
                 >
                     {t('shortListedCustomers')}
+                </li>
+                <li
+                    className={
+                        displayComponent?.componentName ==
+                            components?.CustomerListOnCustomerType?.componentName
+                            ? "active"
+                            : ""
+                    }
+                    onClick={() => setDisplayComponent({ component: components?.CustomerListOnCustomerType.component, componentName: components.CustomerListOnCustomerType.componentName })}
+                >
+                    {t('customerOfOtherCities')}
                 </li>
             </TabMenu>
 

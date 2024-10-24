@@ -25,6 +25,9 @@ import Partners from "../components/Partners/Partners.tsx";
 import AddPartner from "../components/Partners/AddPartner/AddPartner.tsx";
 import Partner from "../components/Partners/Partner/Partner.tsx";
 import Logs from "../components/Logs/Logs.tsx";
+import Representations from "../components/Representations/Representations.tsx";
+import AddRepresentor from "../components/Representations/AddRepresentor.tsx";
+import Representor from "../components/Representations/Representor.tsx";
 const NotFound = React.lazy(() => import("../pages/NotFound/NotFound"));
 
 
@@ -202,6 +205,23 @@ const browserRouter = createBrowserRouter([
         path: "/events",
         element: <Logs />,
       },
+      {
+        path: "/representations",
+        element: <Representations />,
+      },
+      {
+        path: "/representations/add",
+        element: <AddRepresentor />,
+      },
+      {
+        path: "/representations/:representorId/update",
+        element: <AddRepresentor updateMode={true} />,
+      },
+      {
+        path: "/representations/:representorId",
+        element: <Representor />,
+      },
+
       {
         path: "/settings",
         element: <Settings />,

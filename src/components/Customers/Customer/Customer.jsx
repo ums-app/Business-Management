@@ -156,7 +156,7 @@ function Customer() {
                 createdDate: new Date(),
                 registrar: `${authentication.name} ${authentication.lastname}`, // Assume you have a way to track the current user
                 title: `${t('delete')} ${t('customer')}`,
-                message: `${t('customer')} [${customerId}] ${t('successfullyDeleted')}`,
+                message: `${t('customer')} [${customer.name} ${customer.lastName}] ${t('successfullyDeleted')}`,
                 data: { ...customer, id: customerId }
             };
             await sendLog(log);
@@ -243,9 +243,6 @@ function Customer() {
                     </h1>
                     <DisplayLogo imgURL={imageURL} />
                 </div>
-
-
-
 
             </section>
 

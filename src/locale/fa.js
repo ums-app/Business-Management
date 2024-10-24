@@ -462,7 +462,24 @@ const fa = {
         sold: ' فروش',
         bought: 'خرید',
         depotBaseOnPurchaseAndSaleYearly: 'وضعیت خریدها و فروشات سالانه',
-        depotBaseOnPurchaseAndSaleMonthly: 'وضعیت خریدها و فروشات ماهانه'
+        depotBaseOnPurchaseAndSaleMonthly: 'وضعیت خریدها و فروشات ماهانه',
+        HERAT: 'هرات',
+        OTHER_CITY: 'ولایات',
+        DISTRICT: 'ولسوالی ها',
+        customerType: 'نوعیت مشتری',
+        customerOfOtherCities: 'مشتریان ولایات و ولسوالی ها',
+        representations: 'نمایندگی ها',
+        representation: 'نمایندگی ',
+        selectCustomer: "انتخاب مشتری",
+        addCustomerName: 'نام مشتری را وارد کنید',
+        currencyType: 'واحد پولی',
+        USD: 'دالر',
+        EUR: 'یورو',
+        AFN: 'افغانی',
+        amountOfLoan: 'مقدار امانت',
+        selectCustomerError: 'مشتری را انتخاب کنید',
+        enterAmountOfLoan: 'مقدار امانت را وارد کنید'
+
 
 
 

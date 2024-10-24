@@ -402,11 +402,40 @@ const en = {
         registrar: "Registrar",
         withdraw: 'Withdraw',
         events: 'Events',
-        event: 'Event'
-
-
-
-
+        event: 'Event',
+        partners: 'Partners',
+        partner: 'Partner',
+        initialCapital: 'Initial Capital',
+        events: 'Events',
+        event: 'Event',
+        dailyEvents: 'Daily Event',
+        successfullyDeleted: 'Successfully deleted',
+        dailySales: ' Daily Sales',
+        consumptionsReport: ' Consumptions Report',
+        consumptionStatsFor: 'Consumption status for',
+        collectionChart: 'Summery Chart',
+        chart: 'Chart',
+        detailsFor: ' Details For',
+        remainedSalari: ' Remained Salari',
+        yearlySales: ' Yearly Sales',
+        totalSalesAmount: ' Total Sales Amount',
+        yearlySalesQuantity: '  Yearly Sales Quantity',
+        yearlySalesAmount: 'Yearly Sales Amount',
+        monthlySalesAmount: "Monthly Sales Amount",
+        monthlySalesQuantity: ' Monthly Sales Quantity',
+        quantity: 'Quantity',
+        productAvailabilityForYear: 'Product Availability For Year',
+        productAvailabilityYearly: 'Products Yearly Availability',
+        availability: 'Availability',
+        transactions: 'Transactions',
+        sold: ' Sold',
+        bought: 'Bought',
+        depotBaseOnPurchaseAndSaleYearly: 'Depot Base On Yearly Purchase And Sale ',
+        depotBaseOnPurchaseAndSaleMonthly: 'Depot Base On Monthly Purchase And Sale ',
+        HERAT: 'HERAT',
+        OTHER_CITY: 'OTHER_CITY',
+        DISTRICT: 'DISTRICT',
+        customerType: 'Customer Type'
 
 
 
