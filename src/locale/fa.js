@@ -478,7 +478,8 @@ const fa = {
         AFN: 'افغانی',
         amountOfLoan: 'مقدار امانت',
         selectCustomerError: 'مشتری را انتخاب کنید',
-        enterAmountOfLoan: 'مقدار امانت را وارد کنید'
+        enterAmountOfLoan: 'مقدار امانت را وارد کنید',
+        finalPrice: 'قیمت نهایی جنس'
 
 
 

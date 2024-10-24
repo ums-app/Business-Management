@@ -31,6 +31,7 @@ export interface PurchasedProduct {
     additionalCosts: number,
     total: number,
     pricePer: number,
+    finalProductPrice: number,
     factoryExpenses: number,
 }
 
@@ -121,6 +122,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
             totalNumber: 0,
             pricePer: 0,
             factoryExpenses: 0,
+            finalProductPrice: 0
         });
         setPurchaseFactor({
             ...purchaseFactor,
@@ -151,7 +153,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                 totalPackage: 0,
                 totalNumber: 0,
                 pricePer: 0,
-                factoryExpenses: 0
+                factoryExpenses: 0,
+                finalProductPrice: 0
             };
             setPurchaseFactor({
                 ...purchaseFactor,
@@ -170,7 +173,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         //total
         prods[index] = {
             ...prods[index],
-            total: handleTotalEachRow(prods[index])
+            total: handleTotalEachRow(prods[index]),
+            finalProductPrice: handleFinalPriceOfEachRow(prods[index])
         }
         setPurchaseFactor({
             ...purchaseFactor,
@@ -188,7 +192,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         //total
         prods[index] = {
             ...prods[index],
-            total: handleTotalEachRow(prods[index])
+            total: handleTotalEachRow(prods[index]),
+            finalProductPrice: handleFinalPriceOfEachRow(prods[index])
         }
         setPurchaseFactor({
             ...purchaseFactor,
@@ -206,7 +211,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         //total
         prods[index] = {
             ...prods[index],
-            total: handleTotalEachRow(prods[index])
+            total: handleTotalEachRow(prods[index]),
+            finalProductPrice: handleFinalPriceOfEachRow(prods[index])
         }
         setPurchaseFactor({
             ...purchaseFactor,
@@ -223,7 +229,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         //total
         prods[index] = {
             ...prods[index],
-            total: handleTotalEachRow(prods[index])
+            total: handleTotalEachRow(prods[index]),
+            finalProductPrice: handleFinalPriceOfEachRow(prods[index])
         }
         setPurchaseFactor({
             ...purchaseFactor,
@@ -240,7 +247,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         //total
         prods[index] = {
             ...prods[index],
-            total: handleTotalEachRow(prods[index])
+            total: handleTotalEachRow(prods[index]),
+            finalProductPrice: handleFinalPriceOfEachRow(prods[index])
         }
         setPurchaseFactor({
             ...purchaseFactor,
@@ -257,7 +265,8 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         //total
         prods[index] = {
             ...prods[index],
-            total: handleTotalEachRow(prods[index])
+            total: handleTotalEachRow(prods[index]),
+            finalProductPrice: handleFinalPriceOfEachRow(prods[index])
         }
         setPurchaseFactor({
             ...purchaseFactor,
@@ -268,6 +277,16 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
     const handleTotalEachRow = (product: PurchasedProduct): number => {
         return product.additionalCosts + product.factoryExpenses + product.customsCosts + (product.pricePer * product.totalNumber);
     }
+
+    const handleFinalPriceOfEachRow = (product: PurchasedProduct): number => {
+        const totalCosts = product.additionalCosts + product.customsCosts + product.factoryExpenses;
+        const costsPerProduct = totalCosts / product.totalNumber;
+        return costsPerProduct + product.pricePer;
+    }
+
+
+
+
 
     const summarize = (type: string): number => {
         let total = 0
@@ -520,6 +539,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                 <th>{t('factoryExpenses')}</th>
                                 <th>{t('additionalCosts')}</th>
                                 <th>{t("totalAll")}</th>
+                                <th>{t('finalPrice')}</th>
                                 <th>{t("actions")}</th>
                             </tr>
                         </thead>
@@ -553,6 +573,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.factoryExpenses} onChange={e => handleChangefactoryExpenses(e, index)} /></td>
                                         <td><input type="number" name="" style={{ width: '100px' }} value={item.additionalCosts} onChange={e => handleChangeAdditionalCosts(e, index)} /></td>
                                         <td>{item.total}</td>
+                                        <td>{item?.finalProductPrice?.toFixed(2)}</td>
                                         <td>
                                             <Button
                                                 text={t('delete')}
