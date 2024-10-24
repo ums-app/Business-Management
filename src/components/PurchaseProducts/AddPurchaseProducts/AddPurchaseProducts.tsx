@@ -20,6 +20,7 @@ import { CurrencyType } from '../../../constants/Others';
 import { Tooltip } from 'react-tooltip';
 import Circle from '../../UI/Loading/Circle';
 import BtnTypes from '../../../constants/BtnTypes';
+import ShotLoadingTemplate from '../../UI/LoadingTemplate/ShotLoadingTemplate';
 
 
 export interface PurchasedProduct {
@@ -471,6 +472,10 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
         return <NotFound />
     }
 
+    if (updateMode && !purchaseFactor) {
+        return <ShotLoadingTemplate />
+    }
+
     return (
         <div className='full_width fade_in'>
 
@@ -521,7 +526,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                     <div className='display_flex align_items_center'>
                         <span className='bold'>{t('indexNumber')}: </span>
                         <span className=''>
-                            {purchaseFactor.indexNumber}
+                            {purchaseFactor?.indexNumber}
                         </span>
                     </div>
                 </div>
@@ -546,7 +551,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                         <tbody>
                             {purchaseFactor?.products.map((item, index) => {
                                 return (
-                                    <tr>
+                                    <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td>
                                             <select name="" id=""
@@ -559,6 +564,7 @@ const AddPurchaseProducts: React.FC<UpdateModeProps> = ({ updateMode = false }) 
                                                         selected={item.productId == pr.id} style={{ width: 'max-content' }}
                                                         disabled={checkIfProductIsInList(pr.id)}
                                                         value={pr.id}
+                                                        key={pr.id}
                                                     >
                                                         {pr.name}
                                                     </option>

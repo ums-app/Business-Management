@@ -435,7 +435,21 @@ const en = {
         HERAT: 'HERAT',
         OTHER_CITY: 'OTHER_CITY',
         DISTRICT: 'DISTRICT',
-        customerType: 'Customer Type'
+        customerType: 'Customer Type',
+        customerOfOtherCities: 'Customer of Other Cities',
+        representations: "Representations",
+        representation: 'Representation',
+        selectCustomer: "Select Customer",
+        addCustomerName: 'Enter customer name',
+        currencyType: 'Currency',
+        USD: 'USD',
+        EUR: "EUR",
+        AFN: 'AFN',
+        amountOfLoan: "Amount of Loan",
+        selectCustomerError: "Select the customer",
+        enterAmountOfLoan: "Enter the Amount of Loan",
+        finalPrice: "Final Price"
+
 
 
 
